@@ -1,0 +1,141 @@
+openapi: 3.0.0
+
+info:
+  title: PruebaExpress
+  description: Documentación OpenAPI para la prueba
+  version: "1.0"
+  contact:
+    name: Pedro
+    email: pedro.allue.tamargo@gmail.com
+
+servers:
+  - url: http://localhost:8080
+    description: Localhost development server
+
+tags:
+  - name: "User"
+    description: "Everithing about the users"
+
+paths:
+  /user:
+  # Get users
+    get:
+      tags:
+        - "User"
+      description: Get all users
+      summary: Get all users
+
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/user"
+    # Create user
+    post:
+      tags:
+        - "User"
+      description: Create a new user
+      requestBody:
+        description: Información del usuario. El campo _id será ignorado.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/user"
+
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+
+  /user/{uid}:
+    # Get specific user
+    get:
+      tags:
+        - "User"
+      description: Get an user with uid
+      summary: Get an user with uid
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        "404":
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    
+    # Deletes specific user
+    delete:
+      tags:
+        - "User"
+      description: Deletes an user with _id = uid
+      summary: Deletes an user with _id = uid
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                example: ok
+        "404":
+          description: User doesn't exit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+
+components:
+  schemas:
+    # User Schema
+    user:
+      type: object
+      required:
+        - "name"
+        - "years"
+      properties:
+        _id:
+          type: integer
+          description: Object identifier
+        name:
+          type: string
+          description: Name of the user
+        years:
+          type: integer
+          description: Years of the user
+    # Error schema
+    error:
+      type: object
+      required: 
+        - error
+      properties:
+        error:
+          type: string
+          description: Error Message
