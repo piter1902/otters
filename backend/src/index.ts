@@ -14,7 +14,8 @@ const swaggerDocument = YAML.load("swagger.yaml");
 
 // Configuración de las variables de entorno
 import dotenv from 'dotenv';
-dotenv.config({path: __dirname});
+import sanitaryZoneRoute from './route/sanitaryZoneRoute';
+dotenv.config({ path: __dirname });
 
 // Express app
 const app = Express();
@@ -31,5 +32,8 @@ app.get("/", (req: Express.Request, res: Express.Response) => res.status(200).se
 
 // Controlador para los usuarios
 app.use("/user", userRoute);
+
+// Controlador para las zonas sanitarias
+app.use("/zone", sanitaryZoneRoute);
 
 app.listen(port, () => console.log(`Listening at ${port} 🛠`))

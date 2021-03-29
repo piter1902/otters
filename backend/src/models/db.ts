@@ -50,3 +50,4 @@ process.on('SIGTERM', () => {
 
 // Model import
 import "./User";
+import "./SanitaryZone";

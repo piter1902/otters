@@ -1,11 +1,11 @@
 openapi: 3.0.0
 
 info:
-  title: PruebaExpress
-  description: Documentación OpenAPI para la prueba
+  title: Otters API
+  description: Documentación OpenAPI
   version: "1.0"
   contact:
-    name: Pedro
+    name: Pedro Allue
     email: pedro.allue.tamargo@gmail.com
 
 servers:
@@ -15,6 +15,8 @@ servers:
 tags:
   - name: "User"
     description: "Everithing about the users"
+  - name: "Sanitary Zone"
+    description: "Sanitary Zones"
 
 paths:
   /user:
@@ -111,6 +113,50 @@ paths:
               schema:
                 $ref: "#/components/schemas/error"
 
+  # SanitaryZone Routes
+  # Get all zones
+  /zone:
+    get:
+      tags:
+        - "Sanitary Zone"
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref:  "#/components/schemas/sanitaryZone"
+  
+  # Get a zone given its id
+  /zone/{id}:
+      get:
+        tags:
+          - "Sanitary Zone"
+        parameters:
+          - in: path
+            name: id
+            description: Zone id
+            required: true
+            schema:
+              type: string
+
+        responses:
+          "200":
+            description: Successfull response
+            content: 
+              application/json:
+                schema:
+                  $ref:  "#/components/schemas/sanitaryZone"
+          "404":
+            description: Zone id not found
+            content: 
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/error"
+          
+
 
 components:
   schemas:
@@ -130,6 +176,47 @@ components:
         years:
           type: integer
           description: Years of the user
+
+    # Sanitary Zone Schema
+    sanitaryZone:
+      type: object
+      required:
+        - "name"
+        - "updatedAt"
+      properties:
+        _id:
+          type: integer
+          description: Object identifier
+        name:
+          type: string
+          description: Name of the sanitary zone
+        updatedAt:
+          type: string
+          format: date
+          description: Last date of data update
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/sanitaryZoneData"
+
+    # Data of sanitary zone        
+    sanitaryZoneData:
+      type: object
+      required:
+        - "date"
+        - "possitives"
+      properties:
+        _id:
+          type: integer
+          description: Object identifier
+        date:
+          type: string
+          format: date
+          description: Date of data
+        possitives:
+          type: integer
+          description: Number of possitives at current date
+
     # Error schema
     error:
       type: object
