@@ -20,8 +20,7 @@ const SanitaryZoneSchema = new Schema({
     },
     updatedAt: {
         type: Date,
-        required: false,
-        default: Date.now
+        required: false
     },
     data: [SanitaryZoneDataSchema]
 });

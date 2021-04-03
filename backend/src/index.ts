@@ -6,7 +6,7 @@ import logger from '@poppinss/fancy-logs';
 // Creación cron
 import cron from 'node-cron';
 // 6 veces al día (en le minuto 00) se ejecutará el fetch
-cron.schedule("* */6 * * *", () => {
+cron.schedule("* * * * *", () => {
     logger.success("Cron ejecutandose");
     sanitaryZoneService.queryDatabaseAndFetchLastData();
 });
