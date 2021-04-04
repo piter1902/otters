@@ -11,11 +11,8 @@ interface ZoneData {
     possitives: number;
 }
 
-// Parse file
-// Datos desde la línea 27 a la 85 (no incluidas)
-const readAndParseData = async (fileName: string, date: Date) => {
-    const file = await fs.readFileSync(fileName);
-    const zones: ZoneData[] = [];
+
+const parseCSV = async (file: string, zones: ZoneData[]) => {
     const data = file.toString().split("\n");
     for (let i = 28; i < 85; i++) {
         const splitted = data[i].split(",");
@@ -24,6 +21,21 @@ const readAndParseData = async (fileName: string, date: Date) => {
             possitives: parseInt(splitted[2])
         });
     }
+}
+
+const parseXLSX = async (file: string, zones: ZoneData[]) => {
+    const xlsxFile = await xlsx.readFile(file);
+    // TODO: Usar XLSX pq con el CSV hay condicion de carrera y puede que no se escriba antes de leerse
+}
+
+// Parse file
+// Datos desde la línea 27 a la 85 (no incluidas)
+const readAndParseData = async (fileName: string, date: Date) => {
+    logger.start(`Starting readAndParseData for ${fileName} : ${date.toISOString()}`);
+    const file = await fs.readFileSync(fileName, { encoding: 'utf-8' });
+    const zones: ZoneData[] = [];
+    // parseCSV(file, zones);
+    parseXLSX(file, zones);
     // Update mongo model
     for (let z of zones) {
         logger.warn(`Updating zone with name = ${z.name}`);
@@ -34,7 +46,7 @@ const readAndParseData = async (fileName: string, date: Date) => {
             logger.warn(`${z.name} exists`);
             // Comprobacion para no solapar datos existentes
             // TODO: Comprobar si esto funciona
-            if(zone.data.filter((d: { date: Date; }) => d.date == date).length == 0) {
+            if (zone.data.filter((d: { date: Date; }) => d.date == date).length == 0) {
                 // No existe, actualizacion
                 zone.data.push({
                     date,
@@ -80,17 +92,19 @@ const getZoneData = async (date2Search: Date) => {
     const request = http.get(URI + doc, async (response) => {
         if (response.statusCode == 200) {
             // Si la respuesta es 200 -> ejecutar todo
+            logger.info(`Response status for ${doc}: ${response.statusCode}`);
             const file = fs.createWriteStream(doc);
             await response.pipe(file);
             // Esperamos a la descarga del fichero
-            setTimeout(() => {
-                // Procesamiento del fichero
-                const workBook = xlsx.readFile(doc);
-                const csvFileName = doc.replace(".xlsx", ".csv");
-                xlsx.writeFile(workBook, csvFileName, { bookType: "csv" });
-                // Parse file
-                readAndParseData(csvFileName, d);
-            }, 2000);
+            // setTimeout(() => {
+            //     // Procesamiento del fichero
+            //     const workBook = xlsx.readFile(doc);
+            //     const csvFileName = doc.replace(".xlsx", ".csv");
+            //     xlsx.writeFile(workBook, csvFileName, { bookType: "csv" });
+            //     // Parse file
+            //     readAndParseData(csvFileName, d);
+            // }, 2000);
+            readAndParseData(doc, d);
         }
     });
 }
@@ -106,16 +120,16 @@ const queryDatabaseAndFetchLastData = async () => {
         logger.watch(`Existe el documento. Fecha actualizada: ${lastUpdated.toISOString()}`)
     }
     const finalDate = new Date();
-    logger.warn(`La fecha lastUpdated es: ${lastUpdated.toISOString()}`);
-    logger.warn(`La fecha actual es: ${finalDate.toISOString()}`);
+    // logger.warn(`La fecha lastUpdated es: ${lastUpdated.toISOString()}`);
+    // logger.warn(`La fecha actual es: ${finalDate.toISOString()}`);
 
     while (lastUpdated <= finalDate) {
-        logger.watch("Getting files for date: " + lastUpdated.toISOString());
+        logger.start("Getting files for date: " + lastUpdated.toISOString());
         // Buscar los ficheros con fecha
         getZoneData(lastUpdated);
         // Set lastUpdated
         lastUpdated = new Date(lastUpdated.getTime() + 86400000);
-        logger.warn(`La fecha lastUpdated es: ${lastUpdated.toISOString()}`);
+        logger.stop(`La fecha lastUpdated es: ${lastUpdated.toISOString()}`);
     }
 }
 
