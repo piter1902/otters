@@ -160,7 +160,7 @@ const updateOnePetition = (req: Express.Request, res: Express.Response) => {
               } else {
                 res
                   .status(200)
-                  .json(user);
+                  .json(petition);
               }
             });
           }

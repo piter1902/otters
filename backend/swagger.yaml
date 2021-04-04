@@ -114,7 +114,7 @@ paths:
                 $ref: "#/components/schemas/error"
 
   # User's petitions
-  /user{uid}/petitions:
+  /user/{uid}/petitions:
     get:
       tags:
         - "User"
@@ -175,118 +175,118 @@ paths:
                 $ref: "#/components/schemas/error"
   
   # Operations over a specific petition              
-  /user{uid}/petitions/{petitionId}:
-  get:
-    tags:
-      - "User"
-    description: Get a petition with _id = locationId of the user uid
-    summary: Get a specific petition
-    parameters:
-      - in: path
-        name: uid
-        description: UID of the user
-        required: true
-        schema:
-          type: string
-      - in: path
-        name: petitionId
-        description: ID of the petition
-        required: true
-        schema:
-          type: string
-    responses:
-      "200":
-        description: Petition exists
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/petitions"
-      "404":
-        description: User or petition does not exist
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/error"
-  # Update a petition
-  put:
-    tags:
-      - "User"
-    description: Update the petition with _id = locationId of the user uid
-    summary: Update a petition of an user
-    parameters:
-      - in: path
-        name: uid
-        description: UID of the user
-        required: true
-        schema:
-          type: string
-      - in: path
-        name: petitionId
-        description: ID of the petition
-        required: true
-        schema:
-          type: string
-    requestBody:
-      description: Info about the new petition. 
-      required: true
-      content:
-        application/json:
+  /user/{uid}/petitions/{petitionId}:
+    get:
+      tags:
+        - "User"
+      description: Get a petition with _id = locationId of the user uid
+      summary: Get a specific petition
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
           schema:
-            $ref: "#/components/schemas/petitions"
-
-    responses:
-      "200":
-        description: Petition updated successfully
+            type: string
+        - in: path
+          name: petitionId
+          description: ID of the petition
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Petition exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/petitions"
+        "404":
+          description: User or petition does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    # Update a petition
+    put:
+      tags:
+        - "User"
+      description: Update the petition with _id = locationId of the user uid
+      summary: Update a petition of an user
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: petitionId
+          description: ID of the petition
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Info about the new petition. 
+        required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/petitions"
-      "400":
-        description: Bad request
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/error"
-      "404":
-        description: User or petition does not exist
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/error"
-  delete:
-    tags:
-      - "User"
-    description: Delete the petition with _id = locationId of the user uid
-    summary: Delete a petition of an user
-    parameters:
-      - in: path
-        name: uid
-        description: UID of the user
-        required: true
-        schema:
-          type: string
-      - in: path
-        name: petitionId
-        description: ID of the petition
-        required: true
-        schema:
-          type: string
 
-    responses:
-      "204":
-        description: Petition deleted successfully
-      "400":
-        description: Bad request
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/error"
-      "404":
-        description: User or petition does not exist
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/error"              
+      responses:
+        "200":
+          description: Petition updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/petitions"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "404":
+          description: User or petition does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    delete:
+      tags:
+        - "User"
+      description: Delete the petition with _id = locationId of the user uid
+      summary: Delete a petition of an user
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: petitionId
+          description: ID of the petition
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "204":
+          description: Petition deleted successfully
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "404":
+          description: User or petition does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"              
 
   # SanitaryZone Routes
   # Get all zones
