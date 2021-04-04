@@ -148,3 +148,7 @@ temp/
 
 # Build directory
 compiledjs
+
+# Excel and CSV files
+*.csv
+*.xlsx
