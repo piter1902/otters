@@ -1,10 +1,12 @@
 import logger from '@poppinss/fancy-logs';
 import Mongoose, {Schema} from 'mongoose';
+import {PetitionsSchema} from './Petitions';
 
 
 const userSchema = new Schema({
     name: String,
-    years: Number
+    years: Number,
+    petitions: [PetitionsSchema]
 })
 
 
