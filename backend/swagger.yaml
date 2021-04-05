@@ -113,6 +113,181 @@ paths:
               schema:
                 $ref: "#/components/schemas/error"
 
+  # User's petitions
+  /user/{uid}/petitions:
+    get:
+      tags:
+        - "User"
+      description: Get all the petitions of the user uid
+      summary: Get user's petitions with an uid
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/petitions"
+        "404":
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    # Add a petition
+    post:
+      tags:
+        - "User"
+      description: Add new petition to the user with _id = uid
+      summary: Add new petition to the user
+      requestBody:
+        description: Info about the petition. 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/petitions"
+
+      responses:
+        "201":
+          description: Petition created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/petitions"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "404":
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+  
+  # Operations over a specific petition              
+  /user/{uid}/petitions/{petitionId}:
+    get:
+      tags:
+        - "User"
+      description: Get a petition with _id = locationId of the user uid
+      summary: Get a specific petition
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: petitionId
+          description: ID of the petition
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Petition exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/petitions"
+        "404":
+          description: User or petition does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    # Update a petition
+    put:
+      tags:
+        - "User"
+      description: Update the petition with _id = locationId of the user uid
+      summary: Update a petition of an user
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: petitionId
+          description: ID of the petition
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Info about the new petition. 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/petitions"
+
+      responses:
+        "200":
+          description: Petition updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/petitions"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "404":
+          description: User or petition does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    delete:
+      tags:
+        - "User"
+      description: Delete the petition with _id = locationId of the user uid
+      summary: Delete a petition of an user
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: petitionId
+          description: ID of the petition
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "204":
+          description: Petition deleted successfully
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "404":
+          description: User or petition does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"              
+
   # SanitaryZone Routes
   # Get all zones
   /zone:
@@ -212,7 +387,10 @@ components:
         years:
           type: integer
           description: Years of the user
-
+        petitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/petitions"
     # Sanitary Zone Schema
     sanitaryZoneWithoutData:
       title: SanitaryZone
@@ -262,6 +440,38 @@ components:
         possitives:
           type: integer
           description: Number of possitives at current date
+    
+    # Petition Schema
+    petitions:
+      type: object
+      required:
+        - "title"
+        - "body"
+        - "place"
+        - "isUrgent"
+        - "status"
+
+      properties:
+        _id:
+          type: integer
+          description: Object identifier
+        title:
+          type: string
+          description: Title of the petition
+        body:
+          type: string
+          description: A description of the petition
+          maxLength: 150
+        place:
+          type: string
+          description: Place where the petition is located
+        isUrgent:
+          type: boolean
+          description: Indicates if the petition is urgent or not
+          default: false
+        status: 
+          type: string
+          description: Status of the petition. It could be 'created', 'cancelled' or 'assigned'
 
     # Error schema
     error:

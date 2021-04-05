@@ -5,7 +5,7 @@ import Mongoose from 'mongoose';
 let dbURI: string = 'mongodb://localhost/pruebaExpress';
 if (process.env.PRODUCTION === "true") {
     dbURI = process.env.MONGO_URI!.toString();
-    // logger.info(`DB URI: ${dbURI}`);
+    logger.info(`DB URI: ${dbURI}`);
 }
 
 // Conexión a la base de datos
@@ -51,3 +51,4 @@ process.on('SIGTERM', () => {
 // Model import
 import "./User";
 import "./SanitaryZone";
+import "./Petitions";
