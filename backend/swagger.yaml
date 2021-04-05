@@ -20,7 +20,7 @@ tags:
 
 paths:
   /user:
-  # Get users
+    # Get users
     get:
       tags:
         - "User"
@@ -84,7 +84,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/error"
-    
+
     # Deletes specific user
     delete:
       tags:
@@ -117,6 +117,8 @@ paths:
   # Get all zones
   /zone:
     get:
+      description: Get all sanitary zones
+      summary: Get all sanitary zones
       tags:
         - "Sanitary Zone"
       responses:
@@ -127,36 +129,70 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref:  "#/components/schemas/sanitaryZone"
-  
+                  $ref: "#/components/schemas/sanitaryZoneWithoutData"
+
   # Get a zone given its id
   /zone/{id}:
-      get:
-        tags:
-          - "Sanitary Zone"
-        parameters:
-          - in: path
-            name: id
-            description: Zone id
-            required: true
-            schema:
-              type: string
+    get:
+      description: Get sanitary zone given id
+      summary: Get sanitary zone given id
+      tags:
+        - "Sanitary Zone"
+      parameters:
+        - in: path
+          name: id
+          description: Zone id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/sanitayZoneWithData"
+        "404":
+          description: Zone id not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
 
-        responses:
-          "200":
-            description: Successfull response
-            content: 
-              application/json:
-                schema:
-                  $ref:  "#/components/schemas/sanitaryZone"
-          "404":
-            description: Zone id not found
-            content: 
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error"
-          
+  # Fetch data from remote
+  /zone/fetchData:
+    get:
+      tags:
+        - "Sanitary Zone"
+      description: Start zone remote source fetch data
+      summary: Start zone remote source fetch data
+      responses:
+        "202":
+          description: Successful response. Server is fetching source asynchronously.
 
+  # Get data given id
+  /zone/{id}/data:
+    get:
+      tags:
+        - "Sanitary Zone"
+      description: Get zone data by id
+      summary: Get zone data by id
+      parameters:
+        - in: path
+          name: id
+          description: Sanitary zone's id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response. Data returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/sanitaryZoneData"
 
 components:
   schemas:
@@ -178,8 +214,10 @@ components:
           description: Years of the user
 
     # Sanitary Zone Schema
-    sanitaryZone:
+    sanitaryZoneWithoutData:
+      title: SanitaryZone
       type: object
+      description: Sanitary Zone Schema without data
       required:
         - "name"
         - "updatedAt"
@@ -194,12 +232,20 @@ components:
           type: string
           format: date
           description: Last date of data update
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/sanitaryZoneData"
 
-    # Data of sanitary zone        
+    sanitayZoneWithData:
+      allOf:
+        - $ref: "#/components/schemas/sanitaryZoneWithoutData"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/sanitaryZoneData"
+      title: SanitaryZone
+      description: Sanitary Zone Schema with data
+      type: object
+
+    # Data of sanitary zone
     sanitaryZoneData:
       type: object
       required:
@@ -220,7 +266,7 @@ components:
     # Error schema
     error:
       type: object
-      required: 
+      required:
         - error
       properties:
         error:

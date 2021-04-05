@@ -8,7 +8,14 @@ const sanitaryZoneRoute = Express.Router();
 sanitaryZoneRoute.route("/")
     .get(sanitaryZoneController.getAllSanitaryZones);
 
+sanitaryZoneRoute.route("/fetchData")
+    .get(sanitaryZoneController.fetchRemoteData);
+
 sanitaryZoneRoute.route("/:id")
     .get(sanitaryZoneController.getZoneById);
+
+sanitaryZoneRoute.route("/:id/data")
+    .get(sanitaryZoneController.getDataZone);
+
 
 export default sanitaryZoneRoute;
