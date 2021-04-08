@@ -52,3 +52,4 @@ process.on('SIGTERM', () => {
 import "./User";
 import "./SanitaryZone";
 import "./Petitions";
+import "./Posts";

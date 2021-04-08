@@ -2,6 +2,10 @@ import logger from '@poppinss/fancy-logs';
 import Mongoose, { Schema } from 'mongoose';
 
 const CommentsSchema = new Schema({
+    publisher: {
+        type: String,
+        required: true,
+    },
     date: {
         type: Date,
         required: true,
@@ -12,7 +16,6 @@ const CommentsSchema = new Schema({
         required: true
     }
 });
-
 
 const PostsSchema = new Schema({
     title: {
@@ -28,9 +31,16 @@ const PostsSchema = new Schema({
         required: true,
         default: Date.now
     },
-    comments: [CommentsSchema]
+    // publisher: {
+    //     type : useStringrSchema,
+    //     required :true
+    // },
+    comments: [CommentsSchema],
+    possitive_valorations: [String],
+    negative_valorations: [String]
 });
 
+export { PostsSchema };
 export default Mongoose.model('Posts', PostsSchema);
 
 logger.info("Model Posts created");
