@@ -10,7 +10,8 @@ userRoute.route("/")
 
 userRoute.route("/:uid")
     .get(userController.getUserByUID)
-    .delete(userController.deleteUserByUID);
+    .delete(userController.deleteUserByUID)
+    .post(userController.banUser);
 
 // Petitions
 userRoute.route("/:uid/petitions")
