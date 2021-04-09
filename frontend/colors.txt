@@ -1,0 +1,3 @@
+Azul fuerte #172C48
+Azul de las cajas #EEF1F5
+Azul fondo #F8F9FA (bootstrap light)
