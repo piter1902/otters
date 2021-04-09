@@ -1,5 +1,7 @@
 import logger from '@poppinss/fancy-logs';
 import Mongoose, {Schema} from 'mongoose';
+import {PetitionsSchema} from './Petitions'
+import {PostsSchema} from './Posts'
 
 const bannedSchema = new Schema({
     banned: {
@@ -43,8 +45,8 @@ const userSchema = new Schema({
         type: Boolean,
         required: true
     },
-    petitions: [String],
-    posts: [String]
+    petitions: [PetitionsSchema],
+    posts: [PostsSchema]
     
 })
 
