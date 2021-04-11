@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from './Navbar';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import EstadisticasCovid from './EstadisticasCovid';
+import EstadisticasCovid from './estadisticas/EstadisticasCovid';
 
 
 const App = () => (
