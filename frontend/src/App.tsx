@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from './Navbar';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import UserProfile from './user/UserProfile';
+import AdminPage from './user/AdminPage';
 
 
 const App = () => (
@@ -16,6 +17,10 @@ const App = () => (
           {/* Perfil del usuario propio */}
           <Route exact path="/cuenta">
             <UserProfile />
+          </Route>
+          {/* Página del administrador */}
+          <Route exact path="/admin">
+            <AdminPage />
           </Route>
         </Switch>
       </div>
