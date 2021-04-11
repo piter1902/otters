@@ -45,7 +45,9 @@ const userSchema = new Schema({
         type: Boolean,
         required: true
     },
-    petitions: [PetitionsSchema],
+    // En cuenta de almacenar toda la petition dentro de usuario, 
+    // se almacena solo su Id
+    petitions: [String],
     posts: [PostsSchema]
     
 })

@@ -389,8 +389,9 @@ components:
           description: Years of the user
         petitions:
           type: array
-          items:
-            $ref: "#/components/schemas/petitions"
+          description: IDs of the user's petitions
+          items: 
+            type: string
     # Sanitary Zone Schema
     sanitaryZoneWithoutData:
       title: SanitaryZone
@@ -462,6 +463,9 @@ components:
           type: string
           description: A description of the petition
           maxLength: 150
+        userId:
+          type: string
+          description: Petition's owner Id
         place:
           type: string
           description: Place where the petition is located

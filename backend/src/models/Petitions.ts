@@ -12,6 +12,10 @@ const PetitionsSchema = new Schema({
         maxLength: 150,
         required: true
     },
+    userId:{
+        type: String,
+        required: true
+    },
     targetDate: {
         type: Date,
         required: true
