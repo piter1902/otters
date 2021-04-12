@@ -3,6 +3,8 @@ import Navbar from './Navbar';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import UserProfile from './user/UserProfile';
 import AdminPage from './user/AdminPage';
+import EstadisticasCovid from './estadisticas/EstadisticasCovid';
+
 
 
 const App = () => (
@@ -21,6 +23,9 @@ const App = () => (
           {/* Página del administrador */}
           <Route exact path="/admin">
             <AdminPage />
+          {/* Estadisticas COVID */}
+          <Route exact path="/estadisticas">
+            <EstadisticasCovid />
           </Route>
         </Switch>
       </div>
