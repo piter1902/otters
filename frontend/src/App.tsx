@@ -23,6 +23,7 @@ const App = () => (
           {/* Página del administrador */}
           <Route exact path="/admin">
             <AdminPage />
+          </Route>
           {/* Estadisticas COVID */}
           <Route exact path="/estadisticas">
             <EstadisticasCovid />
