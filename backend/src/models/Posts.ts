@@ -2,7 +2,7 @@ import logger from '@poppinss/fancy-logs';
 import Mongoose, { Schema } from 'mongoose';
 
 const CommentsSchema = new Schema({
-    publisher: {
+    publisherId: {
         type: String,
         required: true,
     },
@@ -31,10 +31,10 @@ const PostsSchema = new Schema({
         required: true,
         default: Date.now
     },
-    // publisher: {
-    //     type : useStringrSchema,
-    //     required :true
-    // },
+    publisher: {
+        type : String,
+        required :true
+    },
     comments: [CommentsSchema],
     possitive_valorations: [String],
     negative_valorations: [String]

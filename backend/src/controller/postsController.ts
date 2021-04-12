@@ -1,6 +1,8 @@
 import logger from '@poppinss/fancy-logs';
 import Express from 'express';
+import Posts from '../models/Posts';
 import User from '../models/User';
+import mongoose from 'mongoose';
 
 const postsCreate = (req: Express.Request, res: Express.Response) => {
   // Get query params
@@ -16,7 +18,7 @@ const postsCreate = (req: Express.Request, res: Express.Response) => {
             .status(400)
             .json(err);
         } else {
-          _doAddPost(req, res, user);
+          _doAddPost(req, res, user, userId);
         }
       });
   } else {
@@ -28,13 +30,40 @@ const postsCreate = (req: Express.Request, res: Express.Response) => {
   }
 };
 
+// const ValorationCreate = (req: Express.Request, res: Express.Response) => {
+//   // Get query params
+//   const userId = req.params.uid;
+//   const postId = req.params.postId;
+//   logger.info(`Creando nuevo post para user = ${userId}`);
+//   if (userId && postId) {
+//     Posts
+//       .findById(postId)
+//       .select('posts')
+//       .exec((err: any, user: typeof User) => {
+//         if (err) {
+//           res
+//             .status(400)
+//             .json(err);
+//         } else {
+//           _doAddPost(req, res, user, userId);
+//         }
+//       });
+//   } else {
+//     res
+//       .status(404)
+//       .json({
+//         message: 'uid query param is required'
+//       });
+//   }
+// };
+
 const getPosts = (req: Express.Request, res: Express.Response) => {
   const userId = req.params.uid;
   logger.info(`Obteniendo posts de user = ${userId}`);
   if (userId) {
     User
       .findById(userId)
-      .exec((err: any, user: any) => {
+      .exec(async (err: any, user: any) => {
         if (!user) {
           res
             .status(404)
@@ -49,10 +78,20 @@ const getPosts = (req: Express.Request, res: Express.Response) => {
           return;
         }
         if (user.posts && user.posts.length > 0) {
-          const posts = user.posts;
+          // Source: https://stackoverflow.com/questions/32264225/how-to-get-multiple-document-using-array-of-mongodb-id
+          var postsId = user.posts.map(function (ele: any) {
+            return mongoose.Types.ObjectId(ele);
+          });
+
+          let userPosts= await Posts.find({
+            _id: {
+              $in: postsId
+            }
+          });
+
           res
             .status(200)
-            .json(posts);
+            .json(userPosts);
         } else {
           res
             .status(404)
@@ -76,7 +115,7 @@ const readOnePost = (req: Express.Request, res: Express.Response) => {
   if (req.params && req.params.uid && req.params.postId) {
     User
       .findById(req.params.uid)
-      .exec((err: any, user: any) => {
+      .exec(async (err: any, user: any) => {
         if (!user) {
           res
             .status(404)
@@ -87,14 +126,15 @@ const readOnePost = (req: Express.Request, res: Express.Response) => {
             .json(err);
         }
         if (user.posts && user.posts.length > 0) {
-          const post = user.posts.id(req.params.postId);
-          if (!post) {
+          const postRef = user.posts.includes(req.params.postId);
+          if (!postRef) {
             res
               .status(404)
               .json({
                 "message": "postId not found"
               });
           } else {
+            const post = await Posts.findById(req.params.postId).exec();
             res
               .status(200)
               .json(post);
@@ -117,11 +157,11 @@ const readOnePost = (req: Express.Request, res: Express.Response) => {
 }
 
 
-const deleteOnePost= (req: Express.Request, res: Express.Response) => {
+const deleteOnePost= async (req: Express.Request, res: Express.Response) => {
   if (req.params && req.params.uid && req.params.postId) {
     User
-      .findById(req.params.uid)
-      .exec((err: any, user: any) => {
+      .findByIdAndUpdate(req.params.uid, { $pull: { posts: req.params.postId } })
+      .exec(async (err: any, user: any) => {
         if (!user) {
           res
             .status(404)
@@ -132,15 +172,18 @@ const deleteOnePost= (req: Express.Request, res: Express.Response) => {
             .json(err);
         }
         if (user.posts && user.posts.length > 0) {
-          const post = user.posts.id(req.params.postId);
-          if (!post) {
+          const postRef = user.posts.includes(req.params.postId);
+          if (!postRef) {
             res
               .status(404)
               .json({
                 "message": "postId not found"
               });
           } else {
-            user.posts.id(req.params.postId).remove();
+            // En este caso el post pertenece al user y se elimina
+            // Delete post from posts collection
+            await Posts.findByIdAndDelete(req.params.postId).exec();
+
             user.save((err: any, post : typeof User) => {
               if (err) {
                 res
@@ -149,7 +192,7 @@ const deleteOnePost= (req: Express.Request, res: Express.Response) => {
               } else {
                 res
                   .status(204)
-                  .json(user);
+                  .json("Ok");
               }
             });
           }
@@ -170,7 +213,7 @@ const deleteOnePost= (req: Express.Request, res: Express.Response) => {
   }
 }
 // Private methods
-const _doAddPost = function (req: Express.Request, res: Express.Response, user: any) {
+const _doAddPost = async function (req: Express.Request, res: Express.Response, user: any, userId: String) {
   if (!user) {
     res
       .status(404)
@@ -181,27 +224,40 @@ const _doAddPost = function (req: Express.Request, res: Express.Response, user: 
     // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
     // se almacena en numeros del 0-11 por defecto
     var tempDate = new Date(req.body.date);
-    user.posts.push({
+    const post = new Posts({
       title: req.body.title,
       body: req.body.body,
       //TODO: No tengo claro que lo acabe de hacer bien
       date: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
+      publisher: userId,
       //TODO:
       // comments:
       // possitive_valorations:
       // negative:valorations:
     });
-    user.save((err: Express.ErrorRequestHandler, user: any) => {
+    user.posts.push(
+      post._id
+    );
+
+    await user.save((err: Express.ErrorRequestHandler, user: any) => {
+      if (err) {
+        logger.error(err.toString());
+        res
+          .status(400)
+          .json(err);
+      }
+    });
+
+    post.save((err: Express.ErrorRequestHandler, user: any) => {
       if (err) {
         logger.error(err.toString());
         res
           .status(400)
           .json(err);
       } else {
-        let thisPost = user.posts[user.posts.length - 1];
         res
           .status(201)
-          .json(thisPost);
+          .json(post);
       }
     });
   }

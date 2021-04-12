@@ -1,7 +1,7 @@
 import logger from '@poppinss/fancy-logs';
 import Mongoose, {Schema} from 'mongoose';
-import {PetitionsSchema} from './Petitions'
-import {PostsSchema} from './Posts'
+// import {PetitionsSchema} from './Petitions'
+// import {PostsSchema} from './Posts'
 
 const bannedSchema = new Schema({
     banned: {
@@ -48,7 +48,9 @@ const userSchema = new Schema({
     // En cuenta de almacenar toda la petition dentro de usuario, 
     // se almacena solo su Id
     petitions: [String],
-    posts: [PostsSchema]
+    // En cuenta de almacenar todo el post dentro de usuario, 
+    // se almacena solo su Id
+    posts: [String]
     
 })
 
