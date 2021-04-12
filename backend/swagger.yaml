@@ -288,6 +288,137 @@ paths:
               schema:
                 $ref: "#/components/schemas/error"              
 
+
+# User's posts
+  /user/{uid}/posts:
+    get:
+      tags:
+        - "User"
+      description: Get all the posts of the user uid
+      summary: Get user's posts with an uid
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/posts"
+        "404":
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    # Add a post
+    post:
+      tags:
+        - "User"
+      description: Add new post to the user with _id = uid
+      summary: Add new post to the user
+      requestBody:
+        description: Info about the post. 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/posts"
+
+      responses:
+        "201":
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/posts"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "404":
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+  
+  # Operations over a specific post              
+  /user/{uid}/posts/{postId}:
+    get:
+      tags:
+        - "User"
+      description: Get a post with _id = locationId of the user uid
+      summary: Get a specific post
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: postId
+          description: ID of the post
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/posts"
+        "404":
+          description: User or post does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    delete:
+      tags:
+        - "User"
+      description: Delete the post with _id = locationId of the user uid
+      summary: Delete a post of an user
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: postId
+          description: ID of the post
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "204":
+          description: Post deleted successfully
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "404":
+          description: User or post does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  
   # SanitaryZone Routes
   # Get all zones
   /zone:
@@ -392,6 +523,11 @@ components:
           description: IDs of the user's petitions
           items: 
             type: string
+        posts:
+          type: array
+          description: IDs of the user's posts
+          items: 
+            type: string
     # Sanitary Zone Schema
     sanitaryZoneWithoutData:
       title: SanitaryZone
@@ -476,6 +612,72 @@ components:
         status: 
           type: string
           description: Status of the petition. It could be 'created', 'cancelled' or 'assigned'
+
+
+    # Post Schema
+    posts:
+      type: object
+      required:
+        - "title"
+        - "body"
+        - "date"
+        - "publisher"
+
+      properties:
+        _id:
+          type: integer
+          description: Object identifier
+        title:
+          type: string
+          description: Title of the post
+        body:
+          type: string
+          description: Content of the post
+          maxLength: 150
+        publisher:
+          type: string
+          description: Petition's owner Id
+        date:
+          type: string
+          format: date
+          description: Date of the publication
+        comments:
+          type: array
+          description: Comments of the post
+          items: 
+            $ref: "#/components/schemas/comments"
+        positive_valorations:
+          type: array
+          description: Ids of users who valorate positively the post
+          items: 
+            type: string
+        negative_valorations:
+          type: array
+          description: Ids of users who valorate negatively the post
+          items: 
+            type: string
+
+    # Comments of a post
+    comments:
+      type: object
+      required:
+        - "publisherId"
+        - "date"
+        - "body"
+      properties:
+        _id:
+          type: integer
+          description: Object identifier
+        publisherId:
+          type: string
+          description: Comment's owner Id
+        date:
+          type: string
+          format: date
+          description: Date of comment
+        body:
+          type: string
+          description: Content of the comment
 
     # Error schema
     error:
