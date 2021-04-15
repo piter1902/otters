@@ -1,6 +1,7 @@
 import { useState } from "react";
 import '../Navbar.css'
 import { Link } from 'react-router-dom';
+import './Post.css'
 
 export interface PostListProps {
 
@@ -20,7 +21,6 @@ const PostList: React.JSXElementConstructor<PostListProps> = () => {
     const handleLike = () => {
         console.log("Like");
     }
-
     return (
         <div >
             <div className="container-fluid mb-4 mt-4">
@@ -41,6 +41,8 @@ const PostList: React.JSXElementConstructor<PostListProps> = () => {
             </div>
             <div className="container">
                 {posts.map(post => (
+                    <Link to="/postDetalle" className="custom-card">
+                    
                     <div className="container-fluid d-flex justify-content-center card mb-4" key={post.id} >
                         <div className="row row justify-content-between">
                             <div className="col">
@@ -66,7 +68,8 @@ const PostList: React.JSXElementConstructor<PostListProps> = () => {
                                 <i className="fas fa-chevron-down" onClick={() => handleDislike(post)}></i>
                             </div>
                         </div>
-                    </div>
+                    </div>              
+                    </Link>
                 ))}
             </div>
         </div>

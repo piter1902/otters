@@ -1,5 +1,7 @@
 import { useState } from "react";
 import '../Navbar.css'
+import { Link } from 'react-router-dom';
+import './Petition.css'
 
 export interface PetitionListProps {
 
@@ -31,6 +33,7 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
             </div>
             <div className="container">
                 {petitions.map(petition => (
+                    <Link to="/peticionDetalle" className="custom-card">
                     <div className="container-fluid d-flex justify-content-center card mb-4" key={petition.id} >
                         <h2 className="ms-3 mt-3"><b>{petition.title}</b></h2>
                         <div className="row row justify-content-between">
@@ -44,6 +47,7 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
                         </div>
                         <p className="ms-3 mt-3"> {petition.task} -- {petition.address} </p>
                     </div>
+                    </Link>
                 ))}
             </div>
         </div>

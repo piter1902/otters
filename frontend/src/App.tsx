@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from './Navbar';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import UserProfile from './user/UserProfile';
 import AdminPage from './user/AdminPage';
 import EstadisticasCovid from './estadisticas/EstadisticasCovid';
 import PostList from './posts/PostList';
 import PetitionList from './petitions/PetitionList';
 import CreatePost from './posts/CreatePost';
-
+import PostDetalle from './posts/PostDetalle';
+import PeticionDetalle from './petitions/PeticionDetalle';
 
 
 const App = () => (
@@ -30,6 +31,14 @@ const App = () => (
           {/* Estadisticas COVID */}
           <Route exact path="/estadisticas">
             <EstadisticasCovid />
+          </Route>
+          {/* Vista detallada de post */}
+          <Route exact path="/postDetalle">
+            <PostDetalle />
+          </Route>
+          {/* Vista detallada de peticion */}
+          <Route exact path="/peticionDetalle">
+            <PeticionDetalle />
           </Route>
           {/* Foro */}
           <Route exact path="/foro">
