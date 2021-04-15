@@ -34,7 +34,6 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
             <div className="container">
                 {petitions.map(petition => (
                     <Link to="/peticionDetalle" className="custom-card">
-
                     <div className="container-fluid d-flex justify-content-center card mb-4" key={petition.id} >
                         <h2 className="ms-3 mt-3"><b>{petition.title}</b></h2>
                         <div className="row row justify-content-between">

@@ -21,9 +21,6 @@ const PostList: React.JSXElementConstructor<PostListProps> = () => {
     const handleLike = () => {
         console.log("Like");
     }
-
-
-
     return (
         <div >
             <div className="container-fluid mb-4 mt-4">
@@ -47,7 +44,6 @@ const PostList: React.JSXElementConstructor<PostListProps> = () => {
                     <Link to="/postDetalle" className="custom-card">
                     
                     <div className="container-fluid d-flex justify-content-center card mb-4" key={post.id} >
-                        
                         <div className="row row justify-content-between">
                             <div className="col">
                                 <h2 className="ms-3 mt-3"><b>{post.title}</b></h2>
@@ -56,7 +52,6 @@ const PostList: React.JSXElementConstructor<PostListProps> = () => {
                                 <i className="fas fa-chevron-up" onClick={() => handleLike()}></i>
                             </div>
                         </div>
-                        
                         <div className="row row justify-content-between">
                             <div className="col">
                                 <p className="ms-3">Creado por {post.author}</p>
@@ -73,8 +68,7 @@ const PostList: React.JSXElementConstructor<PostListProps> = () => {
                                 <i className="fas fa-chevron-down" onClick={() => handleDislike(post)}></i>
                             </div>
                         </div>
-                    </div>
-                    
+                    </div>              
                     </Link>
                 ))}
             </div>
