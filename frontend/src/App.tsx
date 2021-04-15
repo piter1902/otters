@@ -1,37 +1,61 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from './Navbar';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import UserProfile from './user/UserProfile';
 import AdminPage from './user/AdminPage';
 import EstadisticasCovid from './estadisticas/EstadisticasCovid';
+import Login from './login/Login';
+import Register from './login/Register';
+import PostDetalle from './posts/PostDetalle';
+import PeticionDetalle from './petitions/PeticionDetalle';
 
 
+function App() {
+  const [token, setToken] = useState();
 
-const App = () => (
-  <Router>
-    <div>
-      <Navbar />
-      <div className="container">
-        <Switch>
-          <Route exact path="/">
-            <p className="display-2">Hola mundo</p>
+  return (
+    <Router>
+      <Switch>
+        {/* Login page */}
+        {/* Se dejan fuera para evitar la Navbar */}
+        <Route exact path="/login">
+          <Login></Login>
+        </Route>
+        <Route exact path="/register">
+          <Register></Register>
+        </Route>
+        <div>
+          <Navbar />
+          <div className="container">
+            <Route exact path="/">
+              <p className="display-2">Hola mundo</p>
+            </Route>
+            {/* Perfil del usuario propio */}
+            <Route exact path="/cuenta">
+              <UserProfile />
+            </Route>
+            {/* Página del administrador */}
+            <Route exact path="/admin">
+              <AdminPage />
+            </Route>
+            {/* Estadisticas COVID */}
+            <Route exact path="/estadisticas">
+              <EstadisticasCovid />
+            </Route>
+            {/* Vista detallada de post */}
+          <Route exact path="/postDetalle">
+            <PostDetalle />
           </Route>
-          {/* Perfil del usuario propio */}
-          <Route exact path="/cuenta">
-            <UserProfile />
+          {/* Vista detallada de peticion */}
+          <Route exact path="/peticionDetalle">
+            <PeticionDetalle />
           </Route>
-          {/* Página del administrador */}
-          <Route exact path="/admin">
-            <AdminPage />
-          </Route>
-          {/* Estadisticas COVID */}
-          <Route exact path="/estadisticas">
-            <EstadisticasCovid />
-          </Route>
-        </Switch>
-      </div>
-    </div>
-  </Router>
-)
+
+          </div>
+        </div>
+      </Switch>
+    </Router>
+  );
+}
 
 export default App;
