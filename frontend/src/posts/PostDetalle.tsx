@@ -31,7 +31,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
 
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    <h2 className="ms-3 mt-3 texto">{post.title}</h2>
+                                    <h2 className="ms-3 mt-3 texto fw-bold">{post.title}</h2>
                                 </div>
                                 <div className="col-lg-1 col-md-2 col-3 sm-12 align-self-center">
                                     <i className="fas fa-chevron-up" ></i>
@@ -55,11 +55,6 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
                                     <i className="fas fa-chevron-down" ></i>
                                 </div>
                             </div>
-
-                            
-
-                            
-                            
                             
                               
                         </div>

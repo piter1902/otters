@@ -11,9 +11,9 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
 
 
     return (
-        <div className="container row">
-        {/* Columna de la zona sanitaria seleccionada */}
         <div className="row card mt-md-4 mt-3">
+        {/* Columna de la zona sanitaria seleccionada */}
+        
             <div className="card-body px-3 py-3">
                 <p className="h2 fw-bold">Titulo de petición</p>
                 <p className="lead ">Creado por ElJosé</p>
@@ -30,7 +30,7 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
             </div>
         </div>
         
-    </div>
+  
     )
 }
 
