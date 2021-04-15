@@ -18,12 +18,12 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
             <div className="container-fluid mb-4 mt-4">
                 <div className="row justify-content-between">
                     <div className="col-4">
-                        <button className="btn navbar-azul text-light text-decoration-none" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        <button className="btn navbar-azul text-light text-decoration-none">
                             Añadir peticion <i className="fas fa-plus ms-2"></i>
                         </button>
                     </div>
                     <div className="col-4 d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button className="btn navbar-azul text-light text-decoration-none " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        <button className="btn navbar-azul text-light text-decoration-none ">
                             Filtrar <i className="fas fa-sort-down ms-2"></i>
                         </button>
                     </div>
