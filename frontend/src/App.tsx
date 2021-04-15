@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import UserProfile from './user/UserProfile';
 import AdminPage from './user/AdminPage';
 import EstadisticasCovid from './estadisticas/EstadisticasCovid';
+import PostList from './posts/PostList';
+import PetitionList from './petitions/PetitionList';
+import CreatePost from './posts/CreatePost';
 
 
 
@@ -27,6 +30,17 @@ const App = () => (
           {/* Estadisticas COVID */}
           <Route exact path="/estadisticas">
             <EstadisticasCovid />
+          </Route>
+          {/* Foro */}
+          <Route exact path="/foro">
+            <PostList />
+          </Route>
+          {/* Ayuda */}
+          <Route exact path="/peticionesayuda">
+            <PetitionList />
+          </Route>
+          <Route exact path="/createPost">
+            <CreatePost />
           </Route>
         </Switch>
       </div>
