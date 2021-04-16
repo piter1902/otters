@@ -242,7 +242,7 @@ const _doAddPost = async function (req: Express.Request, res: Express.Response, 
       post._id
     );
 
-    await user.save((err: Express.ErrorRequestHandler, user: any) => {
+   user.save((err: Express.ErrorRequestHandler, user: any) => {
       if (err) {
         logger.error(err.toString());
         res
@@ -288,13 +288,14 @@ const createNewPost = async (req: Express.Request, res: Express.Response) => {
             .status(400)
             .json(err);
         } else {
-            AddPost(req, res, user, post);
+            _addPost(req, res, user, post);
         }
       });
 
 };
 
-const AddPost = async function (req: Express.Request, res: Express.Response, user: any, post: any) {
+//Función privada
+const _addPost = async function (req: Express.Request, res: Express.Response, user: any, post: any) {
   user.posts.push(
     post._id
   );
