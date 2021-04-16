@@ -15,13 +15,8 @@ userRoute.route("/:uid")
 
 // Petitions
 userRoute.route("/:uid/petitions")
-    .get(petitionsController.getPetitions)
-    .post(petitionsController.petitionsCreate);
-
-userRoute.route("/:uid/petitions/:petitionId")
-    .get(petitionsController.readOnePetition)
-    .put(petitionsController.updateOnePetition)
-    .delete(petitionsController.deleteOnePetition);
+    .get(petitionsController.getUserPetitions);
+    
 
 // Posts
 userRoute.route("/:uid/posts")

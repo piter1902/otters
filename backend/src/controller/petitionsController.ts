@@ -9,8 +9,10 @@ mongoose.set('useFindAndModify', false);
 
 const petitionsCreate = (req: Express.Request, res: Express.Response) => {
   // Get query params
-  const userId = req.params.uid;
+  const userId = req.body.userId;
   logger.info(`Creando nueva peticion para user = ${userId}`);
+  // Se comprueba que exista el usuario indicado ya que en caso contrario
+  // no tiene sentido crear la petition
   if (userId) {
     User
       .findById(userId)
@@ -21,19 +23,20 @@ const petitionsCreate = (req: Express.Request, res: Express.Response) => {
             .status(400)
             .json(err);
         } else {
-          _doAddPetition(req, res, user, userId);
+          _doAddPetition(req, res, user);
         }
       });
   } else {
     res
       .status(404)
       .json({
-        message: 'uid query param is required'
+        message: 'userId body param is required'
       });
   }
 };
 
-const getPetitions = (req: Express.Request, res: Express.Response) => {
+// Obtiene las peticiones de un usuario en concreto
+const getUserPetitions = (req: Express.Request, res: Express.Response) => {
   const userId = req.params.uid;
   logger.info(`Obteniendo peticiones de user = ${userId}`);
   if (userId) {
@@ -87,177 +90,141 @@ const getPetitions = (req: Express.Request, res: Express.Response) => {
   }
 }
 
+// Obtiene todas las peticiones
+const getPetitions = async (req: Express.Request, res: Express.Response) => {
+  await Petition.find().exec((err: Express.ErrorRequestHandler, petitions: any) => {
+    if (err) {
+      res
+        .status(400)
+        .json(err);
+    } else {
+      res
+        .status(200)
+        .json(petitions);
+    }
+  });
 
-const readOnePetition = (req: Express.Request, res: Express.Response) => {
-  if (req.params && req.params.uid && req.params.petitionId) {
-    User
-      .findById(req.params.uid)
-      .exec(async (err: any, user: any) => {
-        if (!user) {
-          res
-            .status(404)
-            .json({ "message": "uid not found" });
-        } else if (err) {
-          res
-            .status(404)
-            .json(err);
-        }
-        if (user.petitions && user.petitions.length > 0) {
-          const petitionRef = user.petitions.includes(req.params.petitionId);
-          if (!petitionRef) {
-            res
-              .status(404)
-              .json({
-                "message": "petitionId not found"
-              });
-          } else {
-            const petition = await Petition.findById(req.params.petitionId).exec();
-            res
-              .status(200)
-              .json(petition);
-          }
-        } else {
-          res
-            .status(404)
-            .json({
-              "message": "No petitions found"
-            });
-        }
-      });
+}
+
+const readOnePetition = async (req: Express.Request, res: Express.Response) => {
+  // Get query param
+  const petId = req.params.petitionId;
+
+  if (req.params && petId) {
+    try {
+      const petition = await Petition.findById(petId).exec();
+
+      if (petition != null) {
+        res
+          .status(200)
+          .json(petition);
+      } else {
+        // Petition not found
+        res
+          .status(404)
+          .json({
+            error: `Petition with id = ${petId} doesn't exist`
+          });
+      }
+
+    } catch (err) {
+      res
+        .status(400)
+        .json(err);
+    }
   } else {
     res
       .status(404)
       .json({
-        "message": "Not found, uid and petitonId are both required"
+        "message": "Not found, petitonId is required"
       });
   }
+
 }
 
 
-const updateOnePetition = (req: Express.Request, res: Express.Response) => {
-  if (req.params && req.params.uid && req.params.petitionId) {
-    User
-      .findById(req.params.uid)
-      .exec(async (err: any, user: any) => {
-        if (!user) {
-          res
-            .status(404)
-            .json({ "message": "uid not found" });
-        } else if (err) {
-          res
-            .status(404)
-            .json(err);
-        }
-        if (user.petitions && user.petitions.length > 0) {
-          const petitionRef = user.petitions.includes(req.params.petitionId);
-          if (!petitionRef) {
-            res
-              .status(404)
-              .json({
-                "message": "petitionId not found"
-              });
-          } else {
-            const petition = await Petition.findById(req.params.petitionId).exec();
+const updateOnePetition = async (req: Express.Request, res: Express.Response) => {
+  const petId = req.params.petitionId;
 
-            // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
-            // se almacena en numeros del 0-11 por defecto
-            var tempDate = req.body.targetDate && new Date(req.body.targetDate);
+  if (req.params && petId) {
+    const petition = await Petition.findById(petId).exec();
 
-            // Shorted if-else
-            petition.title = req.body.title && req.body.title || petition.title;
-            petition.body = req.body.body && req.body.body || petition.body;
-            petition.targetDate = tempDate && new Date(tempDate.setMonth(tempDate.getMonth() + 1)) || petition.targetDate,
-              petition.place = req.body.place && req.body.place || petition.place;
-            petition.isUrgent = req.body.isUrgent && req.body.isUrgent || petition.isUrgent;
-            petition.status = req.body.status && req.body.status || petition.status;
-            petition.save((err: any, petition: typeof User) => {
-              if (err) {
-                res
-                  .status(404)
-                  .json(err);
-              } else {
-                res
-                  .status(200)
-                  .json(petition);
-              }
-            });
-          }
-        } else {
-          res
-            .status(404)
-            .json({
-              "message": "No petitions found"
-            });
-        }
-      });
+    // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
+    // se almacena en numeros del 0-11 por defecto
+    var tempDate = req.body.targetDate && new Date(req.body.targetDate);
+
+    // Shorted if-else
+    petition.title = req.body.title && req.body.title || petition.title;
+    petition.body = req.body.body && req.body.body || petition.body;
+    petition.targetDate = tempDate && new Date(tempDate.setMonth(tempDate.getMonth() + 1)) || petition.targetDate,
+      petition.place = req.body.place && req.body.place || petition.place;
+    petition.isUrgent = req.body.isUrgent && req.body.isUrgent || petition.isUrgent;
+    petition.status = req.body.status && req.body.status || petition.status;
+    petition.save((err: any, petition: typeof Petition) => {
+      if (err) {
+        res
+          .status(404)
+          .json(err);
+      } else {
+        res
+          .status(200)
+          .json(petition);
+      }
+    });
+
   } else {
     res
       .status(404)
       .json({
-        "message": "Not found, uid and petitonId are both required"
+        "message": "Not found, petitonId is required"
       });
   }
 };
 
 
 const deleteOnePetition = async (req: Express.Request, res: Express.Response) => {
-  if (req.params && req.params.uid && req.params.petitionId) {
+  const petId = req.params.petitionId;
 
-    User.findByIdAndUpdate(req.params.uid, { $pull: { petitions: req.params.petitionId } })
-      .exec(async (err: any, user: any) => {
-        if (!user) {
-          res
-            .status(404)
-            .json({ "message": "uid not found" });
-        } else if (err) {
-          res
-            .status(404)
-            .json(err);
-        }
-        if (user.petitions && user.petitions.length > 0) {
-          const petitionRef = user.petitions.includes(req.params.petitionId);
-          if (!petitionRef) {
-            res
-              .status(404)
-              .json({
-                "message": "petitionId not found"
-              });
-          } else {
-            // En este caso la petition pertenece al user y se elimina
-            // Delete petition from petitions collection
-            await Petition.findByIdAndDelete(req.params.petitionId).exec();
+  if (req.params && petId) {
+    try {
+      // Se busca la peticion para obtener su usuario
+      const petition = await Petition.findByIdAndDelete(petId).exec();
+      if (petition) {
+        // Si se ha eliminado la peticion correctamente, se actualiza la info del usuario
+        User.findByIdAndUpdate(petition.userId, { $pull: { petitions: petId } })
+          .exec(async (err: any, user: any) => {
+            if (err) {
+              res
+                .status(404)
+                .json(err);
+            }
+          });
+        res
+          .status(204)
+          .json("ok");
+      } else {
+        // Petition not found
+        res.status(404).json({
+          error: `Petition with id = ${petId} doesn't exist`
+        });
+      }
+    } catch (err) {
+      res
+        .status(400)
+        .json(err);
+    }
 
-            user.save((err: any, user: typeof User) => {
-              if (err) {
-                res
-                  .status(404)
-                  .json(err);
-              } else {
-                res
-                  .status(204)
-                  .json("Ok");
-              }
-            });
-          }
-        } else {
-          res
-            .status(404)
-            .json({
-              "message": "No petitions found"
-            });
-        }
-      });
   } else {
     res
       .status(404)
       .json({
-        "message": "Not found, uid and petitonId are both required"
+        "message": "Not found, petitonId is required"
       });
   }
 }
 
 // Private methods
-const _doAddPetition = async function (req: Express.Request, res: Express.Response, user: any, userId: String) {
+const _doAddPetition = async function (req: Express.Request, res: Express.Response, user: any) {
   if (!user) {
     res
       .status(404)
@@ -270,7 +237,7 @@ const _doAddPetition = async function (req: Express.Request, res: Express.Respon
     var tempDate = new Date(req.body.targetDate);
     const petition = new Petition({
       title: req.body.title,
-      userId: userId,
+      userId: req.body.userId,
       body: req.body.body,
       place: req.body.place,
       targetDate: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
@@ -308,6 +275,7 @@ const _doAddPetition = async function (req: Express.Request, res: Express.Respon
 };
 
 export default {
+  getUserPetitions,
   getPetitions,
   petitionsCreate,
   readOnePetition,

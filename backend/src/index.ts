@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import userRoute from './route/userRoute';
 import postRoute from './route/postRoute';
 import logger from '@poppinss/fancy-logs';
+import petitionsRoute from './route/petitionsRoute';
 
 // Conexión a la bd
 import "./models/db";
@@ -40,5 +41,8 @@ app.use("/post", postRoute);
 
 // Controlador para las zonas sanitarias
 app.use("/zone", sanitaryZoneRoute);
+
+// Controlador para las peticiones
+app.use("/petitions", petitionsRoute);
 
 app.listen(port, () => console.log(`Listening at ${port} 🛠`))
