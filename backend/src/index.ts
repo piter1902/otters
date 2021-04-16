@@ -1,6 +1,7 @@
 import Express from 'express';
 import bodyParser from 'body-parser';
 import userRoute from './route/userRoute';
+import postRoute from './route/postRoute';
 import logger from '@poppinss/fancy-logs';
 
 // Conexión a la bd
@@ -33,6 +34,9 @@ app.get("/", (req: Express.Request, res: Express.Response) => res.status(200).se
 
 // Controlador para los usuarios
 app.use("/user", userRoute);
+
+// Controlador para los posts
+app.use("/post", postRoute);
 
 // Controlador para las zonas sanitarias
 app.use("/zone", sanitaryZoneRoute);
