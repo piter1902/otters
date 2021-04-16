@@ -4,6 +4,8 @@ import Posts from '../models/Posts';
 import User from '../models/User';
 import mongoose from 'mongoose';
 
+//Operaciones sobre los post de un usuario concreto /user/uid/posts
+
 const postsCreate = (req: Express.Request, res: Express.Response) => {
   // Get query params
   const userId = req.params.uid;
@@ -235,11 +237,12 @@ const _doAddPost = async function (req: Express.Request, res: Express.Response, 
       // possitive_valorations:
       // negative:valorations:
     });
+    
     user.posts.push(
       post._id
     );
 
-    await user.save((err: Express.ErrorRequestHandler, user: any) => {
+   user.save((err: Express.ErrorRequestHandler, user: any) => {
       if (err) {
         logger.error(err.toString());
         res
@@ -262,9 +265,152 @@ const _doAddPost = async function (req: Express.Request, res: Express.Response, 
     });
   }
 };
+
+//Operaciones sobre los posts /post
+const createNewPost = async (req: Express.Request, res: Express.Response) => {
+    // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
+    // se almacena en numeros del 0-11 por defecto
+    var tempDate = new Date(req.body.date);
+    const post = new Posts({
+      title: req.body.title,
+      body: req.body.body,
+      //TODO: No tengo claro que lo acabe de hacer bien
+      date: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
+      publisher: req.body.publisher,
+    });
+
+    User
+      .findById(req.body.publisher)
+      .select('posts')
+      .exec(async (err: any, user: typeof User) => {
+        if (err) {
+          res
+            .status(400)
+            .json(err);
+        } else {
+            _addPost(req, res, user, post);
+        }
+      });
+
+};
+
+//Función privada
+const _addPost = async function (req: Express.Request, res: Express.Response, user: any, post: any) {
+  user.posts.push(
+    post._id
+  );
+  await user.save((err: Express.ErrorRequestHandler, user: any) => {
+    if (err) {
+      logger.error(err.toString());
+      res
+        .status(400)
+        .json(err);
+    }
+  });
+
+  post.save((err: Express.ErrorRequestHandler, user: any) => {
+    if (err) {
+      logger.error(err.toString());
+      res
+        .status(400)
+        .json(err);
+    } else {
+      res
+        .status(201)
+        .json(post);
+    }
+  });
+}
+
+const getAllPosts = async (req: Express.Request, res: Express.Response) => {
+  res.status(200).send(await Posts.find().exec());
+}
+
+const getPostByID = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  logger.info(`Getting post with id = ${id}`);
+  // Obtenemos al usuario de la bd
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+    res.status(200).json(post);
+  } else {
+    res.status(404).send();
+  }
+};
+
+const deletePostByID = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  logger.info(`Deleting post with uid = ${id}`);
+  if(id){
+    Posts.findById(id)
+    .exec((err: any, post: typeof Posts) => {
+      if (err) {
+        res
+          .status(400)
+          .json(err);
+      } else {
+          doDeletePost(req, res, post, id);
+      }
+    });
+  }
+  
+} 
+
+const doDeletePost = async function (req: Express.Request, res: Express.Response, post: any ,id:any) {
+  User
+  .findByIdAndUpdate(post.publisher, { $pull: { posts: id } })
+  .exec(async (err: any, user: any) => {
+    if (!user) {
+      res
+        .status(404)
+        .json({ "message": "uid not found"+ post.publisher });
+    } else if (err) {
+      res
+        .status(404)
+        .json(err);
+    }
+    if (user.posts && user.posts.length > 0) {
+      const postRef = user.posts.includes(id);
+      if (!postRef) {
+        res
+          .status(404)
+          .json({
+            "message": "postId not found"
+          });
+      } else {
+        // En este caso el post pertenece al user y se elimina
+        // Delete post from posts collection
+        await Posts.findByIdAndDelete(id).exec();
+
+        user.save((err: any, post : typeof User) => {
+          if (err) {
+            res
+              .status(404)
+              .json(err);
+          } else {
+            res
+              .status(204)
+              .json("Ok");
+          }
+        });
+      }
+    } else {
+      res
+        .status(404)
+        .json({
+          "message": "No posts found"
+        });
+    }
+  });
+}
+
 export default {
   getPosts,
   postsCreate,
   readOnePost,
-  deleteOnePost
+  deleteOnePost,
+  createNewPost,
+  getAllPosts,
+  getPostByID,
+  deletePostByID,
 }
