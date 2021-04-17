@@ -1,4 +1,6 @@
 import React, { JSXElementConstructor } from 'react'
+import PetitionListComponent from '../petitions/PetitionListComponent';
+import PostListComponent from '../posts/PostListComponent';
 import ChangeUserData from './ChangeUserData';
 
 interface UserProfileProps {
@@ -11,6 +13,18 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
     const username = "elPepe";
     const email = "elpepe@unizar.es";
     const zonaSanitaria = "El Arrabal";
+
+    const petitions = [
+        { title: 'Titulo de peticion', task: 'Comprar cerveza', address: 'Calle Alfonso Artero', author: 'ElJosé', id: 1, done: false },
+        { title: 'Titulo de peticion', task: 'Comprar cerveza', address: 'Calle Alfonso Artero', author: 'ElJosé', id: 2, done: true },
+        { title: 'Titulo de peticion', task: 'Comprar cerveza', address: 'Calle Alfonso Artero', author: 'ElJosé', id: 3, done: false }
+    ];
+
+    const posts = [
+        { title: 'Titulo del post', body: 'lorem ipsum...', author: 'ElJosé', id: 1, likes: 17 },
+        { title: 'Titulo del post', body: 'lorem ipsum...', author: 'ElJosé', id: 2, likes: 17 },
+        { title: 'Titulo del post', body: 'lorem ipsum...', author: 'ElJosé', id: 3, likes: 17 }
+    ];
 
     return (
         <div className="container-fluid d-flex justify-content-center card">
@@ -50,12 +64,12 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                 {/* Lista de Posts */}
                 <div className="container-fluid mt-md-4 mt-3">
                     <p className="display-6">Posts:</p>
-                    <p className="display-3 text-danger card bg-secondary">Incluir aqui el componente de lista de posts con datos personalizados</p>
+                    <PostListComponent posts={posts} />
                 </div>
                 {/* Lista de Peticiones de ayuda */}
                 <div className="container-fluid mt-md-4 mt-3">
                     <p className="display-6">Peticiones de ayuda:</p>
-                    <p className="display-3 text-danger card bg-secondary">Incluir aqui el componente de lista de peticiones con datos personalizados</p>
+                    <PetitionListComponent petitions={petitions} />
                 </div>
             </div>
         </div>
