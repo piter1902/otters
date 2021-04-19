@@ -542,6 +542,166 @@ const deleteCommentById = async (req: Express.Request, res: Express.Response) =>
   }
 }
 
+//Valoraciones positivas
+const getPositiveValoration = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+      res.status(200).json(post.possitive_valorations);
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
+const addPositiveValoration = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+    const userRef = post.possitive_valorations.includes(req.body.userId);
+    if(!userRef){
+      post.possitive_valorations.push(
+        req.body.userId
+      );
+      post.save((err: Express.ErrorRequestHandler, user: any) => {
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        } else{
+          res
+            .status(200)
+            .json(req.body.userId);
+        }
+      });
+    } else{
+        res
+          .status(204)
+          .json({"message": "Repetida valoración"});
+    }
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
+const deletePositiveValoration = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+    const userRef = post.possitive_valorations.includes(req.body.userId);
+    if(userRef){
+      post.possitive_valorations.pull(
+        req.body.userId
+      );
+      post.save((err: Express.ErrorRequestHandler, user: any) => {
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        } else{
+          res
+            .status(200)
+            .json(req.body.userId);
+        }
+      });
+    } else{
+        res
+          .status(204)
+          .json({"message": "No existe valoración"});
+    }
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
+//Valoraciones negativas
+const getNegativeValoration = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+      res.status(200).json(post.negative_valorations);
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
+
+
+const addNegativeValoration = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+    const userRef = post.negative_valorations.includes(req.body.userId);
+    if(!userRef){
+      post.negative_valorations.push(
+        req.body.userId
+      );
+      post.save((err: Express.ErrorRequestHandler, user: any) => {
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        } else{
+          res
+            .status(200)
+            .json(req.body.userId);
+        }
+      });
+    } else{
+        res
+          .status(204)
+          .json({"message": "Repetida valoración"});
+    }
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
+const deleteNegativeValoration = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+    const userRef = post.negative_valorations.includes(req.body.userId);
+    if(userRef){
+      post.negative_valorations.pull(
+        req.body.userId
+      );
+      post.save((err: Express.ErrorRequestHandler, user: any) => {
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        } else{
+          res
+            .status(200)
+            .json(req.body.userId);
+        }
+      });
+    } else{
+        res
+          .status(204)
+          .json({"message": "No existe valoración"});
+    }
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
 export default {
   getPosts,
   postsCreate,
@@ -555,4 +715,10 @@ export default {
   createComment,
   getCommentById,
   deleteCommentById,
+  getPositiveValoration,
+  addPositiveValoration,
+  deletePositiveValoration,
+  getNegativeValoration,
+  addNegativeValoration,
+  deleteNegativeValoration,
 }
