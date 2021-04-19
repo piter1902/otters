@@ -33,33 +33,6 @@ const postsCreate = (req: Express.Request, res: Express.Response) => {
   }
 };
 
-// const ValorationCreate = (req: Express.Request, res: Express.Response) => {
-//   // Get query params
-//   const userId = req.params.uid;
-//   const postId = req.params.postId;
-//   logger.info(`Creando nuevo post para user = ${userId}`);
-//   if (userId && postId) {
-//     Posts
-//       .findById(postId)
-//       .select('posts')
-//       .exec((err: any, user: typeof User) => {
-//         if (err) {
-//           res
-//             .status(400)
-//             .json(err);
-//         } else {
-//           _doAddPost(req, res, user, userId);
-//         }
-//       });
-//   } else {
-//     res
-//       .status(404)
-//       .json({
-//         message: 'uid query param is required'
-//       });
-//   }
-// };
-
 const getPosts = (req: Express.Request, res: Express.Response) => {
   const userId = req.params.uid;
   logger.info(`Obteniendo posts de user = ${userId}`);
@@ -233,10 +206,6 @@ const _doAddPost = async function (req: Express.Request, res: Express.Response, 
       //TODO: No tengo claro que lo acabe de hacer bien
       date: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
       publisher: userId,
-      //TODO:
-      // comments:
-      // possitive_valorations:
-      // negative:valorations:
     });
     
     user.posts.push(
