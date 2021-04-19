@@ -1,6 +1,7 @@
 import logger from '@poppinss/fancy-logs';
 import Express from 'express';
 import Posts from '../models/Posts';
+import Comments from '../models/Comments';
 import User from '../models/User';
 import mongoose from 'mongoose';
 
@@ -404,6 +405,143 @@ const doDeletePost = async function (req: Express.Request, res: Express.Response
   });
 }
 
+//Funciones de comentarios en posts
+
+const getComments = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+      res.status(200).json(post.comments);
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
+const createComment = async (req: Express.Request, res: Express.Response) => {
+  // Get query params
+  const postId = req.params.id;
+  logger.info(`Creando objeto de comentario para post = ${postId}`);
+  if (postId != null) {
+    const post = await Posts
+      .findById(postId)
+      .select('comments')
+      .exec();
+    if (post == null) {
+      res.status(400).json({
+        error: "El post no existe"
+      });
+    } else {
+      _doAddCommentObj(req, res, post);
+    }
+  } else {
+    res
+      .status(404)
+      .json({
+        message: 'id query param is required'
+      });
+  }
+};
+
+// Private methods
+const _doAddCommentObj = (req: Express.Request, res: Express.Response, post: any) => {
+  if (!post) {
+    res
+      .status(404)
+      .json({
+        message: "userId not found"
+      });
+  } else {
+    var tempDate = new Date(req.body.date);
+    const comment = new Comments({
+      body: req.body.body,
+      //TODO: No tengo claro que lo acabe de hacer bien
+      date: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
+      publisherId: req.body.publisherId,
+    });
+    
+    post.comments.push(
+      comment
+    );
+
+   post.save((err: Express.ErrorRequestHandler, user: any) => {
+      if (err) {
+        logger.error(err.toString());
+        res
+          .status(400)
+          .json(err);
+      }
+    });
+
+    comment.save((err: Express.ErrorRequestHandler, user: any) => {
+      if (err) {
+        logger.error(err.toString());
+        res
+          .status(400)
+          .json(err);
+      } else {
+        res
+          .status(201)
+          .json(post);
+      }
+    });
+  }
+};
+
+const getCommentById = async (req: Express.Request, res: Express.Response) => {
+    const cid = req.params.cid;
+    const comment = await Comments.findById(cid).exec();
+    if (comment != null) {
+        res.status(200).json(comment);
+    } else {
+        res.status(404).json({
+            error: `Comment with id = ${cid} doesn't exist`
+        })
+    }
+}
+
+const deleteCommentById = async (req: Express.Request, res: Express.Response) => {
+  if (req.params && req.params.id && req.params.cid) {
+    Posts
+      .findByIdAndUpdate(req.params.id, { $pull: { comments: req.params.cid } })
+      .exec(async (err: any, post: any) => {
+        if (!post) {
+          res
+            .status(404)
+            .json({ "message": "id not found" });
+        } else if (err) {
+          res
+            .status(404)
+            .json(err);
+        }
+        if (post.comments && post.comments.length > 0) {
+            // En este caso el post pertenece al user y se elimina
+            // Delete post from posts collection
+            await Comments.findByIdAndDelete(req.params.cid).exec();
+            post.save((err: any, post : typeof User) => {
+              if (err) {
+                res
+                  .status(404)
+                  .json(err);
+              } else {
+                res
+                  .status(204)
+                  .json("Ok");
+              }
+            });
+            //TODO: Eliminar del post
+          }
+      });
+  } else {
+    res
+      .status(404)
+      .json({
+        "message": "Not found, id and cid are both required"
+      });
+  }
+}
+
 export default {
   getPosts,
   postsCreate,
@@ -413,4 +551,8 @@ export default {
   getAllPosts,
   getPostByID,
   deletePostByID,
+  getComments,
+  createComment,
+  getCommentById,
+  deleteCommentById,
 }
