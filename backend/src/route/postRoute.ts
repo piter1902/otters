@@ -29,10 +29,10 @@ postRoute.route("/:id/postitivevaloration/:pvid")
 
         //Valoraciones negativas
 postRoute.route("/:id/negativevaloration")
-.get(postsController.getNegativeValoration)
-.post(postsController.addNegativeValoration)
+    .get(postsController.getNegativeValoration)
+    .post(postsController.addNegativeValoration)
 
 postRoute.route("/:id/negativevaloration/:nvid")
-.delete(postsController.deleteNegativeValoration)
+    .delete(postsController.deleteNegativeValoration)
 
 export default postRoute;
