@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import './Login.css';
 
 export interface RegisterProps {
@@ -17,11 +16,9 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
     }
 
     return (
-        <div className="row fondo">
-            <div className="d-flex flex-column justify-content-center align-items-center col-md-4 col mx-md-5 my-sm-3 mx-5 my-1 h-75 grupoInput">
-                
+        <div className="row fondo d-flex justify-content-center" style={{marginLeft: "0"}}>
+            <div className="d-flex flex-column justify-content-center align-items-center col-md-4 col-12 mx-sm-5 my-sm-4 mx-3 my-3 h-75 grupoInput">
                     <div className="d-grid gap-1 gap-sm-2 gap-md-2 gap-xl-4 mt-sm-6 mt-3 w-md-75">
-
                         <div className="input-group">
                             <input type="text" className="form-control p-xl-4 p-md-2 p-0 rounded-pill" placeholder="Nombre de usuario"></input>
                         </div>
