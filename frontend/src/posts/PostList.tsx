@@ -1,6 +1,8 @@
 import { useState } from "react";
 import '../Navbar.css'
 import { Link } from 'react-router-dom';
+import './Post.css'
+import PostListComponent from "./PostListComponent";
 
 export interface PostListProps {
 
@@ -13,13 +15,6 @@ const PostList: React.JSXElementConstructor<PostListProps> = () => {
         { title: 'Titulo del post', body: 'lorem ipsum...', author: 'ElJosé', id: 2, likes: 17 },
         { title: 'Titulo del post', body: 'lorem ipsum...', author: 'ElJosé', id: 3, likes: 17 }
     ])
-
-    const handleDislike = (post: any) => {
-        console.log("Dislike");
-    }
-    const handleLike = () => {
-        console.log("Like");
-    }
 
     return (
         <div >
@@ -40,34 +35,7 @@ const PostList: React.JSXElementConstructor<PostListProps> = () => {
                 </div>
             </div>
             <div className="container">
-                {posts.map(post => (
-                    <div className="container-fluid d-flex justify-content-center card mb-4" key={post.id} >
-                        <div className="row row justify-content-between">
-                            <div className="col">
-                                <h2 className="ms-3 mt-3"><b>{post.title}</b></h2>
-                            </div>
-                            <div className="col-1 sm-12 align-self-center">
-                                <i className="fas fa-chevron-up" onClick={() => handleLike()}></i>
-                            </div>
-                        </div>
-                        <div className="row row justify-content-between">
-                            <div className="col">
-                                <p className="ms-3">Creado por {post.author}</p>
-                            </div>
-                            <div className="col-1 sm-12">
-                                <p> {post.likes}</p>
-                            </div>
-                        </div>
-                        <div className="row row justify-content-between">
-                            <div className="col">
-                                <p className="ms-3 mt-3"> {post.body} </p>
-                            </div>
-                            <div className="col-1 sm-12 align-self-start">
-                                <i className="fas fa-chevron-down" onClick={() => handleDislike(post)}></i>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                <PostListComponent posts={posts} />
             </div>
         </div>
     );

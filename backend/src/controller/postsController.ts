@@ -1,8 +1,11 @@
 import logger from '@poppinss/fancy-logs';
 import Express from 'express';
 import Posts from '../models/Posts';
+import Comments from '../models/Comments';
 import User from '../models/User';
 import mongoose from 'mongoose';
+
+//Operaciones sobre los post de un usuario concreto /user/uid/posts
 
 const postsCreate = (req: Express.Request, res: Express.Response) => {
   // Get query params
@@ -29,33 +32,6 @@ const postsCreate = (req: Express.Request, res: Express.Response) => {
       });
   }
 };
-
-// const ValorationCreate = (req: Express.Request, res: Express.Response) => {
-//   // Get query params
-//   const userId = req.params.uid;
-//   const postId = req.params.postId;
-//   logger.info(`Creando nuevo post para user = ${userId}`);
-//   if (userId && postId) {
-//     Posts
-//       .findById(postId)
-//       .select('posts')
-//       .exec((err: any, user: typeof User) => {
-//         if (err) {
-//           res
-//             .status(400)
-//             .json(err);
-//         } else {
-//           _doAddPost(req, res, user, userId);
-//         }
-//       });
-//   } else {
-//     res
-//       .status(404)
-//       .json({
-//         message: 'uid query param is required'
-//       });
-//   }
-// };
 
 const getPosts = (req: Express.Request, res: Express.Response) => {
   const userId = req.params.uid;
@@ -230,16 +206,13 @@ const _doAddPost = async function (req: Express.Request, res: Express.Response, 
       //TODO: No tengo claro que lo acabe de hacer bien
       date: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
       publisher: userId,
-      //TODO:
-      // comments:
-      // possitive_valorations:
-      // negative:valorations:
     });
+    
     user.posts.push(
       post._id
     );
 
-    await user.save((err: Express.ErrorRequestHandler, user: any) => {
+   user.save((err: Express.ErrorRequestHandler, user: any) => {
       if (err) {
         logger.error(err.toString());
         res
@@ -262,9 +235,459 @@ const _doAddPost = async function (req: Express.Request, res: Express.Response, 
     });
   }
 };
+
+//Operaciones sobre los posts /post
+const createNewPost = async (req: Express.Request, res: Express.Response) => {
+    // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
+    // se almacena en numeros del 0-11 por defecto
+    var tempDate = new Date(req.body.date);
+    const post = new Posts({
+      title: req.body.title,
+      body: req.body.body,
+      //TODO: No tengo claro que lo acabe de hacer bien
+      date: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
+      publisher: req.body.publisher,
+    });
+
+    User
+      .findById(req.body.publisher)
+      .select('posts')
+      .exec(async (err: any, user: typeof User) => {
+        if (err) {
+          res
+            .status(400)
+            .json(err);
+        } else {
+            _addPost(req, res, user, post);
+        }
+      });
+
+};
+
+//Función privada
+const _addPost = async function (req: Express.Request, res: Express.Response, user: any, post: any) {
+  user.posts.push(
+    post._id
+  );
+  await user.save((err: Express.ErrorRequestHandler, user: any) => {
+    if (err) {
+      logger.error(err.toString());
+      res
+        .status(400)
+        .json(err);
+    }
+  });
+
+  post.save((err: Express.ErrorRequestHandler, user: any) => {
+    if (err) {
+      logger.error(err.toString());
+      res
+        .status(400)
+        .json(err);
+    } else {
+      res
+        .status(201)
+        .json(post);
+    }
+  });
+}
+
+const getAllPosts = async (req: Express.Request, res: Express.Response) => {
+  res.status(200).send(await Posts.find().exec());
+}
+
+const getPostByID = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  logger.info(`Getting post with id = ${id}`);
+  // Obtenemos al usuario de la bd
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+    res.status(200).json(post);
+  } else {
+    res.status(404).send();
+  }
+};
+
+const deletePostByID = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  logger.info(`Deleting post with uid = ${id}`);
+  if(id){
+    Posts.findById(id)
+    .exec((err: any, post: typeof Posts) => {
+      if (err) {
+        res
+          .status(400)
+          .json(err);
+      } else {
+          doDeletePost(req, res, post, id);
+      }
+    });
+  }
+  
+} 
+
+const doDeletePost = async function (req: Express.Request, res: Express.Response, post: any ,id:any) {
+  User
+  .findByIdAndUpdate(post.publisher, { $pull: { posts: id } })
+  .exec(async (err: any, user: any) => {
+    if (!user) {
+      res
+        .status(404)
+        .json({ "message": "uid not found"+ post.publisher });
+    } else if (err) {
+      res
+        .status(404)
+        .json(err);
+    }
+    if (user.posts && user.posts.length > 0) {
+      const postRef = user.posts.includes(id);
+      if (!postRef) {
+        res
+          .status(404)
+          .json({
+            "message": "postId not found"
+          });
+      } else {
+        // En este caso el post pertenece al user y se elimina
+        // Delete post from posts collection
+        await Posts.findByIdAndDelete(id).exec();
+
+        user.save((err: any, post : typeof User) => {
+          if (err) {
+            res
+              .status(404)
+              .json(err);
+          } else {
+            res
+              .status(204)
+              .json("Ok");
+          }
+        });
+      }
+    } else {
+      res
+        .status(404)
+        .json({
+          "message": "No posts found"
+        });
+    }
+  });
+}
+
+//Funciones de comentarios en posts
+
+const getComments = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+      res.status(200).json(post.comments);
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
+const createComment = async (req: Express.Request, res: Express.Response) => {
+  // Get query params
+  const postId = req.params.id;
+  logger.info(`Creando objeto de comentario para post = ${postId}`);
+  if (postId != null) {
+    const post = await Posts
+      .findById(postId)
+      .select('comments')
+      .exec();
+    if (post == null) {
+      res.status(400).json({
+        error: "El post no existe"
+      });
+    } else {
+      _doAddCommentObj(req, res, post);
+    }
+  } else {
+    res
+      .status(404)
+      .json({
+        message: 'id query param is required'
+      });
+  }
+};
+
+// Private methods
+const _doAddCommentObj = (req: Express.Request, res: Express.Response, post: any) => {
+  if (!post) {
+    res
+      .status(404)
+      .json({
+        message: "userId not found"
+      });
+  } else {
+    var tempDate = new Date(req.body.date);
+    const comment = new Comments({
+      body: req.body.body,
+      //TODO: No tengo claro que lo acabe de hacer bien
+      date: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
+      publisherId: req.body.publisherId,
+    });
+    
+    post.comments.push(
+      comment
+    );
+
+   post.save((err: Express.ErrorRequestHandler, user: any) => {
+      if (err) {
+        logger.error(err.toString());
+        res
+          .status(400)
+          .json(err);
+      }
+    });
+
+    comment.save((err: Express.ErrorRequestHandler, user: any) => {
+      if (err) {
+        logger.error(err.toString());
+        res
+          .status(400)
+          .json(err);
+      } else {
+        res
+          .status(201)
+          .json(post);
+      }
+    });
+  }
+};
+
+const getCommentById = async (req: Express.Request, res: Express.Response) => {
+    const cid = req.params.cid;
+    const comment = await Comments.findById(cid).exec();
+    if (comment != null) {
+        res.status(200).json(comment);
+    } else {
+        res.status(404).json({
+            error: `Comment with id = ${cid} doesn't exist`
+        })
+    }
+}
+
+const deleteCommentById = async (req: Express.Request, res: Express.Response) => {
+  if (req.params && req.params.id && req.params.cid) {
+    Posts
+      .findByIdAndUpdate(req.params.id, { $pull: { comments: req.params.cid } })
+      .exec(async (err: any, post: any) => {
+        if (!post) {
+          res
+            .status(404)
+            .json({ "message": "id not found" });
+        } else if (err) {
+          res
+            .status(404)
+            .json(err);
+        }
+        if (post.comments && post.comments.length > 0) {
+            // En este caso el post pertenece al user y se elimina
+            // Delete post from posts collection
+            await Comments.findByIdAndDelete(req.params.cid).exec();
+            post.save((err: any, post : typeof User) => {
+              if (err) {
+                res
+                  .status(404)
+                  .json(err);
+              } else {
+                res
+                  .status(204)
+                  .json("Ok");
+              }
+            });
+            //TODO: Eliminar del post
+          }
+      });
+  } else {
+    res
+      .status(404)
+      .json({
+        "message": "Not found, id and cid are both required"
+      });
+  }
+}
+
+//Valoraciones positivas
+const getPositiveValoration = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+      res.status(200).json(post.possitive_valorations);
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
+const addPositiveValoration = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+    const userRef = post.possitive_valorations.includes(req.body.userId);
+    if(!userRef){
+      post.possitive_valorations.push(
+        req.body.userId
+      );
+      post.save((err: Express.ErrorRequestHandler, user: any) => {
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        } else{
+          res
+            .status(200)
+            .json(req.body.userId);
+        }
+      });
+    } else{
+        res
+          .status(204)
+          .json({"message": "Repetida valoración"});
+    }
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
+const deletePositiveValoration = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+    const userRef = post.possitive_valorations.includes(req.body.userId);
+    if(userRef){
+      post.possitive_valorations.pull(
+        req.body.userId
+      );
+      post.save((err: Express.ErrorRequestHandler, user: any) => {
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        } else{
+          res
+            .status(200)
+            .json(req.body.userId);
+        }
+      });
+    } else{
+        res
+          .status(204)
+          .json({"message": "No existe valoración"});
+    }
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
+//Valoraciones negativas
+const getNegativeValoration = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+      res.status(200).json(post.negative_valorations);
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
+
+
+const addNegativeValoration = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+    const userRef = post.negative_valorations.includes(req.body.userId);
+    if(!userRef){
+      post.negative_valorations.push(
+        req.body.userId
+      );
+      post.save((err: Express.ErrorRequestHandler, user: any) => {
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        } else{
+          res
+            .status(200)
+            .json(req.body.userId);
+        }
+      });
+    } else{
+        res
+          .status(204)
+          .json({"message": "Repetida valoración"});
+    }
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
+const deleteNegativeValoration = async (req: Express.Request, res: Express.Response) => {
+  const id = req.params.id;
+  const post = await Posts.findById(id).exec();
+  if (post != null) {
+    const userRef = post.negative_valorations.includes(req.body.userId);
+    if(userRef){
+      post.negative_valorations.pull(
+        req.body.userId
+      );
+      post.save((err: Express.ErrorRequestHandler, user: any) => {
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        } else{
+          res
+            .status(200)
+            .json(req.body.userId);
+        }
+      });
+    } else{
+        res
+          .status(204)
+          .json({"message": "No existe valoración"});
+    }
+  } else {
+      res.status(404).json({
+          error: `Post with id = ${id} doesn't exist`
+      })
+  }
+}
+
 export default {
   getPosts,
   postsCreate,
   readOnePost,
-  deleteOnePost
+  deleteOnePost,
+  createNewPost,
+  getAllPosts,
+  getPostByID,
+  deletePostByID,
+  getComments,
+  createComment,
+  getCommentById,
+  deleteCommentById,
+  getPositiveValoration,
+  addPositiveValoration,
+  deletePositiveValoration,
+  getNegativeValoration,
+  addNegativeValoration,
+  deleteNegativeValoration,
 }

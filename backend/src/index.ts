@@ -1,7 +1,12 @@
 import Express from 'express';
 import bodyParser from 'body-parser';
 import userRoute from './route/userRoute';
+import postRoute from './route/postRoute';
 import logger from '@poppinss/fancy-logs';
+import petitionsRoute from './route/petitionsRoute';
+import sanitaryZoneRoute from './route/sanitaryZoneRoute';
+import sanitaryZoneService from './service/sanitaryZoneService';
+import cron from 'node-cron';
 
 // Conexión a la bd
 import "./models/db";
@@ -14,9 +19,15 @@ const swaggerDocument = YAML.load("swagger.yaml");
 
 // Configuración de las variables de entorno
 import dotenv from 'dotenv';
-import sanitaryZoneRoute from './route/sanitaryZoneRoute';
+
 const result = dotenv.config();
 
+// CreaciÃ³n cron
+// 6 veces al dÃ­a (en le minuto 00) se ejecutarÃ¡ el fetch
+cron.schedule("* */6 * * *", () => {
+    logger.success("Cron ejecutandose");
+    sanitaryZoneService.queryDatabaseAndFetchLastData();
+});
 
 // Express app
 const app = Express();
@@ -34,7 +45,13 @@ app.get("/", (req: Express.Request, res: Express.Response) => res.status(200).se
 // Controlador para los usuarios
 app.use("/user", userRoute);
 
+// Controlador para los posts
+app.use("/post", postRoute);
+
 // Controlador para las zonas sanitarias
 app.use("/zone", sanitaryZoneRoute);
+
+// Controlador para las peticiones
+app.use("/petitions", petitionsRoute);
 
 app.listen(port, () => console.log(`Listening at ${port} 🛠`))

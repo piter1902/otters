@@ -1,6 +1,6 @@
 import React from 'react';
 import './Navbar.css'
-import logo from './otter.png';
+import logo from './otter2.png';
 import { Link } from 'react-router-dom';
 
 export interface NavbarProps {
