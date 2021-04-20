@@ -1,22 +1,73 @@
-import React, { JSXElementConstructor, useState } from 'react'
+import React, { JSXElementConstructor, useEffect, useState } from 'react'
 
+// Modelos
+interface ZbsData {
+    _id: string;
+    date: Date;
+    possitives: number;
+}
+
+interface ZbsWithData {
+    _id: string;
+    name: string;
+    updatedAt: Date;
+    data: ZbsData[];
+}
+
+// Props
 interface CasosPorFechaProps {
     idZona: string;
 }
 
 const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona }) => {
 
+    // Datos para la zona sanitaria
+    const [datos, setDatos] = useState<ZbsWithData>();
+
     // Fecha de los datos
     const [date, setDate] = useState<Date>(new Date());
 
+    // Casos para la fecha (date) seleccionada
+    const [casos, setCasos] = useState<number>(0);
+
+    // Para ver si se tienen datos de la fecha
     const [hasData, setHasData] = useState<boolean>(false);
 
-    const dateChange = (event: { target: { value: string; }; }) => {
-        console.log(event.target.value);
-        if (!hasData) {
-            setHasData(true);
+    // Obtención de los casos por la zona de salud seleccionada
+    useEffect(() => {
+        const fetchDataForSelectedZBS = async () => {
+            const response = await fetch(`http://localhost:8080/zone/${idZona}`, { method: "GET" });
+            if (response.status == 200) {
+                // Respuesta correcta, cargamos los datos
+                setDatos(await response.json());
+            }
         }
-        setDate(new Date(Date.parse(event.target.value)));
+        if (idZona != "0") {
+            // Si se ha escogido una zona -> en caso de no es 0
+            fetchDataForSelectedZBS();
+        }
+        return () => { }
+    }, [idZona]);
+
+    // Control del cambio de fecha
+    const dateChange = (event: { target: { value: string; }; }) => {
+        const selected = new Date(Date.parse(event.target.value));
+        console.log(selected.toString());
+        if (datos !== undefined) {
+            const casos = datos.data.filter((d) =>
+                (new Date(Date.parse(d.date.toString().substr(0, 10)))).getTime() == selected.getTime()
+            );
+            setDate(selected);
+            if (casos.length !== 0) {
+                // console.log("Hay casos. Numero de positivos " + casos[0].possitives);
+                // Hay casos -> Nos quedamos con el primero
+                setHasData(true);
+                setCasos(casos[0].possitives);
+            } else {
+                // No hay coincidencias -> 0 casos
+                setCasos(0);
+            }
+        }
     }
 
     return (
@@ -34,7 +85,7 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona }) =>
                     {/* Hay datos */}
                     {hasData && (
                         <p className="display-4 fw-bold">
-                            55
+                            {casos}
                         </p>
                     )
                     }

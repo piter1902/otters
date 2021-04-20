@@ -172,6 +172,7 @@ const queryDatabaseAndFetchLastData = async () => {
         lastUpdated = new Date(lastUpdated.getTime() + 86400000);
         logger.stop(`La fecha lastUpdated es: ${lastUpdated.toISOString()}`);
     }
+    // TODO: Crear la zona sanitaria aragon como un sumatorio de las existentes para cada día
 }
 
 export default {

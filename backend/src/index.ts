@@ -7,6 +7,7 @@ import petitionsRoute from './route/petitionsRoute';
 import sanitaryZoneRoute from './route/sanitaryZoneRoute';
 import sanitaryZoneService from './service/sanitaryZoneService';
 import cron from 'node-cron';
+import cors from 'cors';
 
 // Conexión a la bd
 import "./models/db";
@@ -36,6 +37,9 @@ const port = process.env.PORT || 8080;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// CORS
+app.use(cors());
 
 // Swagger JSON
 app.use("/api_docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
