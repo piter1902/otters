@@ -1,15 +1,20 @@
 .fondo {
-  background-image: url('../otter-background.png');
+  background-image: url("../otter-background.png");
   height: 100vh;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  background-attachment:fixed;
 }
 .grupoInput {
-    background-color: white;
-    border-radius: 50px;
+  background-color: white;
+  border-radius: 50px;
 }
 
 .registerButton {
   background-color: chocolate;
+}
+.mt-6,
+.mt-lg-6 {
+  margin-top: 6rem !important;
 }

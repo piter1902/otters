@@ -11,36 +11,39 @@ export interface LoginProps {
 const Login: React.JSXElementConstructor<LoginProps> = () => {
     return (
         <div className="row fondo">
-            <div className="col-md-4 col mx-md-5 mx-4 my-5 grupoInput">
-                <form>
-                    <div className="input-group mt-5 pt-5 px-sm-5">
-                        <input type="text" className="form-control rounded-pill" placeholder="Correo"></input>
+            <div className="d-flex flex-column justify-content-center align-items-center col-md-4 col mx-md-5 my-sm-3 mx-3 my-1 h-75 grupoInput">
+                <div className="form-group">
+                    <div className="d-grid gap-2 gap-md-3 mt-sm-6 mt-3 px-3">
+                        <div className="input-group pt-2">
+                            <input type="text" className="form-control p-md-2 p-xl-4 rounded-pill" placeholder="Correo"></input>
+                        </div>
+                        <div className="input-group">
+                            <input type="text" className="form-control p-md-2 p-xl-4 rounded-pill" placeholder="Contraseña"></input>
+                        </div>
+
                     </div>
-                    <div className="input-group py-1 mt-5 px-sm-5">
-                        <input type="text" className="form-control rounded-pill" placeholder="Contraseña"></input>
-                    </div>
-                    <div className="text-center pt-5 mb-3">
-                        <Link to="/" className="btn btn-lg btn-light rounded-pill">
-                            Inicia sesión
+                    <div className="d-grid gap-2 gap-md-3 mt-2 mt-xl-6 p-4">
+                        <div className="text-center mb-3">
+                            <Link to="/" className="btn btn-md-lg btn-light rounded-pill">
+                                Inicia sesión
                         </Link>
-                    </div>
-                    <div className="text-center mb-3">
-                        <button type="button" className="btn btn-lg btn-light btn-labeled rounded-pill">
-                            <span className="btn-label pe-1"><i className="fab fa-google"></i></span>
+                        </div>
+                        <div className="text-center mb-3">
+                            <button type="button" className="btn btn-md-lg btn-light btn-labeled rounded-pill">
+                                <span className="btn-label pe-1"><i className="fab fa-google"></i></span>
                             Iniciar sesión con Google
                         </button>
-                    </div>
+                        </div>
 
-                    <div className="d-flex justify-content-between p-5 mx-5">
-                        <div className="float-left">
+                        <div className="d-flex align-self-center mt-2 mt-xl-6">
                             <p className="font-weight-bold">¿No tienes cuenta?</p>
-                        </div>
-                        <div className="float-right">
                             <Link to="/register">Regístrate</Link>
-                        </div>
 
+                        </div>
                     </div>
-                </form>
+
+
+                </div>
             </div>
             <div className="col px-md-3 mt-2">
 
