@@ -1,13 +1,5 @@
-import useD3 from "./useD3";
-import * as d3 from "d3";
-
-// <div className="card mt-4">
-//     <div className="card-body">
-//         <p className="display-1">
-//             Gráfica aquí
-//         </p>
-//     </div>
-// </div>
+import { Chart, registerables } from "chart.js";
+import React, { JSXElementConstructor, useEffect, useRef } from "react";
 
 const GraficaCasos = () => {
   // Datos mock de prueba
@@ -34,100 +26,45 @@ const GraficaCasos = () => {
     { date: "2007-05-20", value: 111.98 },
   ];
 
-  // Referencia de la gráfica d3
-  const ref = useD3(
-    (svg) => {
-      const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+  // Referencia al canvas
+  const canvas = useRef(null);
 
-      const height = 500;
-
-      const width = 500;
-
-      const x = d3
-        .scaleUtc()
-        .domain(d3.extent(data, (d) => Date.parse(d.date)))
-        .range([margin.left, width - margin.right]);
-
-      const y = d3
-        .scaleLinear()
-        .domain([0, d3.max(data, (d) => d.value)])
-        .nice()
-        .range([height - margin.bottom, margin.top]);
-
-      const line = d3
-        .line()
-        .defined((d) => !isNaN(d.value))
-        .x((d) => x(d.date))
-        .y((d) => y(d.value));
-
-      const xAxis = (g) =>
-        g.attr("transform", `translate(0,${height - margin.bottom})`).call(
-          d3
-            .axisBottom(x)
-            .ticks(width / 80)
-            .tickSizeOuter(0)
-        );
-
-      const yAxis = (g) =>
-        g
-          .attr("transform", `translate(${margin.left},0)`)
-          .call(d3.axisLeft(y))
-          .call((g) => g.select(".domain").remove())
-          .call((g) =>
-            g
-              .select(".tick:last-of-type text")
-              .clone()
-              .attr("x", 3)
-              .attr("text-anchor", "start")
-              .attr("font-weight", "bold")
-              .text(data.y)
-          );
-
-      // Definición
-      svg
-        .attr("viewBox", [0, 0, width, height])
-        .attr("fill", "none")
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round");
-
-      svg.append("g").call(xAxis);
-
-      svg.append("g").call(yAxis);
-
-      svg
-        .append("path")
-        .datum(data.filter(line.defined()))
-        .attr("stroke", "#ccc")
-        .attr("d", line);
-
-      svg
-        .append("path")
-        .datum(data)
-        .attr("stroke", "black")
-        .attr("stroke-width", 1.5)
-        .attr("d", line);
-    },
-    [data.length]
-  );
+  // Creación del gráfico
+  useEffect(() => {
+    const ctx = canvas.current.getContext('2d');
+    Chart.register(...registerables);
+    const myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(d => d.date),
+        datasets: [
+          {
+            label: "# casos",
+            data: data.map(d => d.value),
+            borderColor: 'rgb(255, 0, 0)',
+            backgroundColor: 'rgba(255, 0, 0, 0.5)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: "top"
+        },
+        title: {
+          display: true,
+          text: "Numero de casos de la zona sanitaria"
+        }
+      }
+    });
+    return () => { }
+  }, [])
 
   return (
     <div>
-      <svg
-        ref={ref}
-        style={{
-          height: 500,
-          width: "100%",
-          marginRight: "0px",
-          marginLeft: "0px",
-          backgroundColor: "white",
-        }}
-        className="card mt-md-4 mt-5 mb-md-3 mb-2"
-        id="svgGrafica"
-      >
-        <g className="plot-area" />
-        <g className="x-axis" />
-        <g className="y-axis" />
-      </svg>
+      {/* Aqui aparecera la grafica */}
+      <canvas ref={canvas}>
+      </canvas>
       <p className="text-danger fw-bold">No consigo sacar la gráfica</p>
     </div>
   );

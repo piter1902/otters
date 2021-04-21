@@ -25,7 +25,7 @@ const result = dotenv.config();
 
 // CreaciÃ³n cron
 // 6 veces al dÃ­a (en le minuto 00) se ejecutarÃ¡ el fetch
-cron.schedule("* */6 * * *", () => {
+cron.schedule("0 */6 * * *", () => {
     logger.success("Cron ejecutandose");
     sanitaryZoneService.queryDatabaseAndFetchLastData();
 });
