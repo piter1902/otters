@@ -17,9 +17,10 @@ interface ZbsWithData {
 // Props
 interface CasosPorFechaProps {
     idZona: string;
+    setDataFunction: (d: ZbsData[]) => void;
 }
 
-const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona }) => {
+const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setDataFunction }) => {
 
     // Datos para la zona sanitaria
     const [datos, setDatos] = useState<ZbsWithData>();
@@ -39,7 +40,10 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona }) =>
             const response = await fetch(`http://localhost:8080/zone/${idZona}`, { method: "GET" });
             if (response.status == 200) {
                 // Respuesta correcta, cargamos los datos
-                setDatos(await response.json());
+                const jsonData = await response.json();
+                setDatos(jsonData);
+                // Se devuelven los datos al estado del componente padre
+                setDataFunction(jsonData.data);
             }
         }
         if (idZona != "0") {

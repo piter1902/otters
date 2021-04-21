@@ -3,6 +3,12 @@ import CasosPorFecha from './CasosPorFecha';
 import GraficaCasos from './GraficaCasos';
 import useZBS from './useZBS';
 
+interface ZbsData {
+    _id: string;
+    date: Date;
+    possitives: number;
+}
+
 interface EstadisticasCovidProps {
 
 }
@@ -12,6 +18,9 @@ const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = (
     // Zona de salud elegida (identificador)
     const [zonaSaludSelected, setZonaSaludSelected] = useState<string>("0");
 
+    // Datos de la zona de salud selecionada
+    const [datos, setDatos] = useState<ZbsData[]>([]);
+
     // const zonasSalud = useZBS("https://stw-otters-backend.herokuapp.com");
     const zonasSalud = useZBS("http://localhost:8080");
 
@@ -19,8 +28,6 @@ const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = (
     const zonaSaludChanged = (event: { target: { value: string; }; }) => {
         setZonaSaludSelected(event.target.value);
     }
-
-    
 
     return (
         <div className="container row">
@@ -46,10 +53,10 @@ const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = (
                         </select>
                     </div>
                     {/* Selector de casos por día y visualizar */}
-                    <CasosPorFecha idZona={zonaSaludSelected} />
+                    <CasosPorFecha idZona={zonaSaludSelected} setDataFunction={setDatos} />
                 </div>
                 {/* Gráficas */}
-                <GraficaCasos />
+                <GraficaCasos data={datos}/>
             </div>
             {/* Columna de Aragón */}
             <div className="col-md px-md-3 mt-md-2 mt-5">
@@ -65,7 +72,7 @@ const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = (
                     {/* <CasosPorFecha idZona="aragon" /> */}
                 </div>
                 {/* Gráficas */}
-                <GraficaCasos />
+                <GraficaCasos data={datos}/>
             </div>
         </div>
     )
