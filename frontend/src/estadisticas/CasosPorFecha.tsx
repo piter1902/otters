@@ -32,7 +32,7 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setD
     const [casos, setCasos] = useState<number>(0);
 
     // Para ver si se tienen datos de la fecha
-    const [hasData, setHasData] = useState<boolean>(false);
+    const [hasStarted, setHasStarted] = useState<boolean>(false);
 
     // Obtención de los casos por la zona de salud seleccionada
     useEffect(() => {
@@ -62,10 +62,10 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setD
                 (new Date(Date.parse(d.date.toString().substr(0, 10)))).getTime() == selected.getTime()
             );
             setDate(selected);
+            setHasStarted(true);
             if (casos.length !== 0) {
                 // console.log("Hay casos. Numero de positivos " + casos[0].possitives);
                 // Hay casos -> Nos quedamos con el primero
-                setHasData(true);
                 setCasos(casos[0].possitives);
             } else {
                 // No hay coincidencias -> 0 casos
@@ -82,20 +82,16 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setD
                     <label htmlFor="fechacasos" className="input-group-text">
                         Casos a día
                     </label>
-                    <input type="date" id="fechacasos" className="form-control" onChange={dateChange} />
+                    <input type="date" id="fechacasos" className="form-control" onChange={dateChange} 
+                    disabled={datos == undefined}/>
                 </div>
                 {/* Casos */}
                 <div className="container-fluid d-flex justify-content-center mt-3">
                     {/* Hay datos */}
-                    {hasData && (
+                    {hasStarted && (
                         <p className="display-4 fw-bold">
                             {casos}
                         </p>
-                    )
-                    }
-                    {/* No hay datos */}
-                    {!hasData && (
-                        <p className="text-danger fw-bold">Seleccione una fecha</p>
                     )
                     }
                 </div>

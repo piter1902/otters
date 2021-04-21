@@ -59,7 +59,7 @@ const GraficaCasos = ({ data }) => {
         const fechaUnoMas = new Date(fecha.getTime() + 86400000);
         if (fechaUnoMas.getTime() != siguiente.getTime()) {
           // si no se añade 0
-          console.log("Se añade el día: " + fechaUnoMas.toISOString())
+          // console.log("Se añade el día: " + fechaUnoMas.toISOString())
           data.push({
             date: fechaUnoMas.toISOString(),
             possitives: 0,
