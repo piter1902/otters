@@ -37,7 +37,7 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setD
     // Obtención de los casos por la zona de salud seleccionada
     useEffect(() => {
         const fetchDataForSelectedZBS = async () => {
-            const response = await fetch(`http://localhost:8080/zone/${idZona}`, { method: "GET" });
+            const response = await fetch(`${process.env.REACT_APP_BASEURL!}/zone/${idZona}`, { method: "GET" });
             if (response.status == 200) {
                 // Respuesta correcta, cargamos los datos
                 const jsonData = await response.json();

@@ -2,9 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+import dotenv from 'dotenv';
 // Bootstrap
 import 'bootstrap';
+
+// Configuración de las variables de entorno
+const result = dotenv.config();
 
 ReactDOM.render(
   <React.StrictMode>

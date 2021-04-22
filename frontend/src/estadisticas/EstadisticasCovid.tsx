@@ -22,7 +22,8 @@ const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = (
     const [datos, setDatos] = useState<ZbsData[]>([]);
 
     // const zonasSalud = useZBS("https://stw-otters-backend.herokuapp.com");
-    const zonasSalud = useZBS("http://localhost:8080");
+    console.log("BASEURL: " + process.env.REACT_APP_BASEURL);
+    const zonasSalud = useZBS(process.env.REACT_APP_BASEURL!);
 
     // Cambio de la zona de salud a visualizar
     const zonaSaludChanged = (event: { target: { value: string; }; }) => {
