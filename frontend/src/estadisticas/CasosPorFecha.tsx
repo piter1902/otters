@@ -47,6 +47,8 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setD
             }
         }
         if (idZona != "0") {
+            // Se pone el componente en el estado inicial
+            setHasStarted(false);
             // Si se ha escogido una zona -> en caso de no es 0
             fetchDataForSelectedZBS();
         }

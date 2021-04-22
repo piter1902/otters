@@ -3,6 +3,7 @@ import exceljs from 'exceljs';
 import fs from 'fs';
 import SanitaryZone from '../models/SanitaryZone';
 import logger from '@poppinss/fancy-logs';
+import { Mongoose } from 'mongoose';
 
 const URI = "https://transparencia.aragon.es/sites/default/files/documents/"
 
@@ -33,7 +34,7 @@ const parseXLSX = async (filename: string, zones: ZoneData[]) => {
     for (let i = 28; i < 85; i++) {
         // const data = workSheet.getRow(i);
         const name = workSheet.getCell('B' + i).value?.toString();
-        if (name != undefined && name && name.trim() != "" 
+        if (name != undefined && name && name.trim() != ""
             && !name.trim().toUpperCase().match("ZBS")   // No es una fila de ZBS sin identificar...
             && !name.trim().toUpperCase().match("TOTAL") // No sea fila de total
             && name.match("^[a-zA-Z].*$")) {             // Para evitar valores numéricos extraños se pide que el nombre empiece por una letra            
@@ -46,7 +47,7 @@ const parseXLSX = async (filename: string, zones: ZoneData[]) => {
                     possitives
                 });
             }
-        } else if(name != undefined && name.trim().toUpperCase().match("TOTAL")) {
+        } else if (name != undefined && name.trim().toUpperCase().match("TOTAL")) {
             // Fila final (total)
             // Guardar los datos como si fuera aragon
             break;
@@ -182,6 +183,29 @@ const queryDatabaseAndFetchLastData = async () => {
     // TODO: Crear la zona sanitaria aragon como un sumatorio de las existentes para cada día
 }
 
+const findAndJoinDuplicates = async () => {
+    // Obtener todos los datos
+    const data = await SanitaryZone.find().exec();
+    // Elementos a eliminar
+    const duplicated: any[] = [];
+    // Join por el nombre
+    data.forEach((element: { name: any; data: any[]; }) => {
+        const matched = data.find((value: { name: any; }) => value.name === element.name);
+        // Se eliminará el elemento que menos datos tenga en su repertorio
+        // y se guardan los datos del elemento a eliminar
+        if (element.data.length > matched.data.length) {
+            duplicated.push(matched);
+            element.data.push(matched.data);
+        } else {
+            duplicated.push(element);
+            matched.data.push(element.data);
+        }
+    });
+    // Eliminar el duplicado
+    duplicated.forEach((el) => SanitaryZone.findByIdAndDelete(el._id).exec());
+}
+
 export default {
-    queryDatabaseAndFetchLastData
+    queryDatabaseAndFetchLastData,
+    findAndJoinDuplicates
 }
