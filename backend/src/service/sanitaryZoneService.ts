@@ -34,8 +34,9 @@ const parseXLSX = async (filename: string, zones: ZoneData[]) => {
         // const data = workSheet.getRow(i);
         const name = workSheet.getCell('B' + i).value?.toString();
         if (name != undefined && name && name.trim() != "" 
+            && !name.trim().toUpperCase().match("ZBS")   // No es una fila de ZBS sin identificar...
             && !name.trim().toUpperCase().match("TOTAL") // No sea fila de total
-            && name.match("^[a-zA-Z].*$")) { // Para evitar valores numéricos extraños se pide que el nombre empiece por una letra            
+            && name.match("^[a-zA-Z].*$")) {             // Para evitar valores numéricos extraños se pide que el nombre empiece por una letra            
             // Parsear cuando se sepa que tiene que tener un valor
             const possitives = parseInt(workSheet.getCell('C' + i).value?.toString() ?? "0");
             if (possitives != undefined && !isNaN(possitives)) {
@@ -45,6 +46,10 @@ const parseXLSX = async (filename: string, zones: ZoneData[]) => {
                     possitives
                 });
             }
+        } else if(name != undefined && name.trim().toUpperCase().match("TOTAL")) {
+            // Fila final (total)
+            // Guardar los datos como si fuera aragon
+            break;
         }
     }
 }
@@ -52,7 +57,7 @@ const parseXLSX = async (filename: string, zones: ZoneData[]) => {
 // Parse file
 // Datos desde la línea 27 a la 85 (no incluidas)
 const readAndParseData = async (fileName: string, date: Date) => {
-    logger.start(`Starting readAndParseData for ${fileName} : ${date.toISOString()}`);
+    logger.start(`Starting readAndParseData for ${fileName} : ${new Date(date.getTime() + 86400000).toISOString()}`);
     // const file = await fs.readFileSync(fileName, { encoding: 'utf-8' });
     const zones: ZoneData[] = [];
     // parseCSV(file, zones);
@@ -74,12 +79,14 @@ const readAndParseData = async (fileName: string, date: Date) => {
             if (coincidencias.length == 0) {
                 // No existe, actualizacion
                 zone.data.push({
-                    date,
+                    // Hay que sumarle un día a la fecha 
+                    date: new Date(date.getTime() + 86400000),
+                    // date,
                     possitives: z.possitives
                 });
                 if (zone.updatedAt.getTime() <= date.getTime()) {
                     // Se actualiza ya que la fecha de la bd es menor
-                    zone.updatedAt = date;
+                    zone.updatedAt = new Date(date.getTime() + 86400000);
                 }
                 zone.save();
             }
@@ -89,10 +96,10 @@ const readAndParseData = async (fileName: string, date: Date) => {
             // logger.watch("----- " + z.name.toString() + " valor: " + z.possitives + " en el fichero: " + fileName);
             zone = new SanitaryZone({
                 name: z.name,
-                updatedAt: date,
+                updatedAt: new Date(date.getTime() + 86400000),
                 data: [
                     {
-                        date,
+                        date: new Date(date.getTime() + 86400000),
                         possitives: z.possitives
                     }
                 ]

@@ -14,8 +14,19 @@ const useZBS = (baseURL: string) => {
             const response = await fetch(`${baseURL}/zone`, {method: "GET"});
             if (response.status == 200) {
                 // Nos devuelve las zonas sanitarias
-                const jsonBody = await response.json();
-                setZones(jsonBody);
+                let jsonBody = await response.json();
+                
+                // Busqueda de nombres duplicados
+                const zbsArray: any[] = [];
+                jsonBody.forEach((element: { name: string; }) => {
+                    const matched = zbsArray.find((value) => value.name == element.name);
+                    if(matched === undefined) {
+                        // El elemento no existe, lo añadimos
+                        zbsArray.push(element);
+                    }
+                });
+
+                setZones(zbsArray);
             }
         };
 
