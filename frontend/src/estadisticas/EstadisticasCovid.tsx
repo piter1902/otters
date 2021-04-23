@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import CasosPorFecha from './CasosPorFecha';
 import GraficaCasos from './GraficaCasos';
 import useZBS from './useZBS';
