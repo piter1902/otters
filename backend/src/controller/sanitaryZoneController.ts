@@ -41,6 +41,30 @@ const getZoneById = async (req: Express.Request, res: Express.Response) => {
     }
 }
 
+// Get aragon data
+const getAragonZone = async (req: Express.Request, res: Express.Response) => {
+    const zone = await SanitaryZone.findOne({name: "Aragon"}).exec();
+    if(zone != null) {
+        res.status(200).json(zone);
+    } else {
+        res.status(404).json({
+            error: `Zone with id = aragon doesn't exist`
+        })
+    }
+}
+
+// Get aragon zone data
+const getAragonZoneData = async (req: Express.Request, res: Express.Response) => {
+    const zone = await SanitaryZone.findOne({name: "Aragon"}).exec();
+    if(zone != null) {
+        res.status(200).json(zone.data);
+    } else {
+        res.status(404).json({
+            error: `Zone with id = aragon doesn't exist`
+        })
+    }
+}
+
 // Get data from zone
 const getDataZone = async (req: Express.Request, res: Express.Response) => {
     const id = req.params.id;
@@ -69,5 +93,7 @@ export default {
     getAllSanitaryZones,
     getZoneById,
     fetchRemoteData,
-    getDataZone
+    getDataZone,
+    getAragonZone,
+    getAragonZoneData
 }
