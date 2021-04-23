@@ -28,30 +28,35 @@ const parseCSV = async (file: string, zones: ZoneData[]) => {
 
 const parseXLSX = async (filename: string, zones: ZoneData[]) => {
     // const xlsxFile = await xlsx.readFile(file);
-    const xlsxFile = new exceljs.Workbook();
-    const workbook = await xlsxFile.xlsx.readFile(filename);
-    const workSheet = workbook.worksheets[0];
-    for (let i = 28; i < 85; i++) {
-        // const data = workSheet.getRow(i);
-        const name = workSheet.getCell('B' + i).value?.toString();
-        if (name != undefined && name && name.trim() != ""
-            && !name.trim().toUpperCase().match("ZBS")   // No es una fila de ZBS sin identificar...
-            && !name.trim().toUpperCase().match("TOTAL") // No sea fila de total
-            && name.match("^[a-zA-Z].*$")) {             // Para evitar valores numéricos extraños se pide que el nombre empiece por una letra            
-            // Parsear cuando se sepa que tiene que tener un valor
-            const possitives = parseInt(workSheet.getCell('C' + i).value?.toString() ?? "0");
-            if (possitives != undefined && !isNaN(possitives)) {
-                // Es una zona de salud válida (número de positivos es válido)
-                zones.push({
-                    name,
-                    possitives
-                });
+    try {
+
+        const xlsxFile = new exceljs.Workbook();
+        const workbook = await xlsxFile.xlsx.readFile(filename);
+        const workSheet = workbook.worksheets[0];
+        for (let i = 28; i < 85; i++) {
+            // const data = workSheet.getRow(i);
+            const name = workSheet.getCell('B' + i).value?.toString();
+            if (name != undefined && name && name.trim() != ""
+                && !name.trim().toUpperCase().match("ZBS")   // No es una fila de ZBS sin identificar...
+                && !name.trim().toUpperCase().match("TOTAL") // No sea fila de total
+                && name.match("^[a-zA-Z].*$")) {             // Para evitar valores numéricos extraños se pide que el nombre empiece por una letra            
+                // Parsear cuando se sepa que tiene que tener un valor
+                const possitives = parseInt(workSheet.getCell('C' + i).value?.toString() ?? "0");
+                if (possitives != undefined && !isNaN(possitives)) {
+                    // Es una zona de salud válida (número de positivos es válido)
+                    zones.push({
+                        name,
+                        possitives
+                    });
+                }
+            } else if (name != undefined && name.trim().toUpperCase().match("TOTAL")) {
+                // Fila final (total)
+                // Guardar los datos como si fuera aragon
+                break;
             }
-        } else if (name != undefined && name.trim().toUpperCase().match("TOTAL")) {
-            // Fila final (total)
-            // Guardar los datos como si fuera aragon
-            break;
         }
+    } catch (error) {
+        logger.error(`File: ${filename} -- Error: ${error}`);
     }
 }
 
