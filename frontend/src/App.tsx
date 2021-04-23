@@ -9,6 +9,7 @@ import Register from './login/Register';
 import PostList from './posts/PostList';
 import PetitionList from './petitions/PetitionList';
 import CreatePost from './posts/CreatePost';
+import CreatePetition from './petitions/CreatePetition';
 import PostDetalle from './posts/PostDetalle';
 import PeticionDetalle from './petitions/PeticionDetalle';
 
@@ -65,6 +66,9 @@ const App = () => {
             </Route>
             <Route exact path="/createPost">
               <CreatePost />
+            </Route>
+            <Route exact path="/createPetition">
+              <CreatePetition />
             </Route>
           </div>
         </div>
