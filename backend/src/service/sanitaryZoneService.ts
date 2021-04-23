@@ -38,7 +38,7 @@ const parseXLSX = async (filename: string, zones: ZoneData[]) => {
             const name = workSheet.getCell('B' + i).value?.toString();
             if (filename == "20210418_casos_confirmados_zbs.xlsx") {
                 // Es uno de los días que no procesa bien
-                logger.warn("B" + i + "  " + name || "nombre??");
+                logger.warn("B" + i + "  " + name || "nombre??");
             }
             if (name != undefined && name && name.trim() != ""
                 && !name.trim().toUpperCase().match("ZBS")   // No es una fila de ZBS sin identificar...
@@ -186,7 +186,7 @@ const getZoneData = async (date2Search: Date) => {
 
 // Busca la última actualización de la base de datos y realiza las peticiones necesarias
 const queryDatabaseAndFetchLastData = async () => {
-    const document = await SanitaryZone.findOne().exec();
+    const document = await SanitaryZone.findOne({ name: "Aragon" }).exec();
     // Ajustado a las 00:00:00:000
     // Fecha de inicio arbitraria
     let lastUpdated = new Date(Date.parse("Mar 1, 2021"));
@@ -216,7 +216,6 @@ const queryDatabaseAndFetchLastData = async () => {
         lastUpdated = new Date(lastUpdated.getTime() + 86400000);
         logger.stop(`La fecha lastUpdated es: ${lastUpdated.toISOString()}`);
     }
-    // TODO: Crear la zona sanitaria aragon como un sumatorio de las existentes para cada día
 }
 
 const findAndJoinDuplicates = async () => {
