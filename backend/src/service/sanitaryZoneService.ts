@@ -28,30 +28,66 @@ const parseCSV = async (file: string, zones: ZoneData[]) => {
 
 const parseXLSX = async (filename: string, zones: ZoneData[]) => {
     // const xlsxFile = await xlsx.readFile(file);
-    const xlsxFile = new exceljs.Workbook();
-    const workbook = await xlsxFile.xlsx.readFile(filename);
-    const workSheet = workbook.worksheets[0];
-    for (let i = 28; i < 85; i++) {
-        // const data = workSheet.getRow(i);
-        const name = workSheet.getCell('B' + i).value?.toString();
-        if (name != undefined && name && name.trim() != ""
-            && !name.trim().toUpperCase().match("ZBS")   // No es una fila de ZBS sin identificar...
-            && !name.trim().toUpperCase().match("TOTAL") // No sea fila de total
-            && name.match("^[a-zA-Z].*$")) {             // Para evitar valores numéricos extraños se pide que el nombre empiece por una letra            
-            // Parsear cuando se sepa que tiene que tener un valor
-            const possitives = parseInt(workSheet.getCell('C' + i).value?.toString() ?? "0");
-            if (possitives != undefined && !isNaN(possitives)) {
-                // Es una zona de salud válida (número de positivos es válido)
-                zones.push({
-                    name,
-                    possitives
-                });
+    try {
+        const xlsxFile = new exceljs.Workbook();
+        const workbook = await xlsxFile.xlsx.readFile(filename);
+        const workSheet = workbook.worksheets[0];
+        logger.info("Procesando File " + filename);
+        for (let i = 28; ; i++) {
+            // const data = workSheet.getRow(i);
+            const name = workSheet.getCell('B' + i).value?.toString();
+            if (filename == "20210418_casos_confirmados_zbs.xlsx") {
+                // Es uno de los días que no procesa bien
+                logger.warn("B" + i + "  " + name || "nombre??");
             }
-        } else if (name != undefined && name.trim().toUpperCase().match("TOTAL")) {
-            // Fila final (total)
-            // Guardar los datos como si fuera aragon
-            break;
+            if (name != undefined && name && name.trim() != ""
+                && !name.trim().toUpperCase().match("ZBS")   // No es una fila de ZBS sin identificar...
+                && !name.trim().toUpperCase().match("Zona")  // No es una fila de ZBS sin identificar...
+                && !name.trim().toUpperCase().match("TOTAL") // No sea fila de total
+                && name.match("^[a-zA-Z].*$")) {             // Para evitar valores numéricos extraños se pide que el nombre empiece por una letra            
+                // Parsear cuando se sepa que tiene que tener un valor
+                const possitives = parseInt(workSheet.getCell('C' + i).value?.toString() ?? "0");
+                if (filename == "20210418_casos_confirmados_zbs.xlsx") {
+                    // Es uno de los días que no procesa bien
+                    logger.warn("C" + i + "  " + possitives?.toString() || "positivos??");
+                }
+                if (possitives != undefined && !isNaN(possitives)) {
+                    // Es una zona de salud válida (número de positivos es válido)
+                    zones.push({
+                        name,
+                        possitives
+                    });
+                }
+            } else if (name != undefined && name.trim().toUpperCase().match("TOTAL")) {
+                // Fila final (total)
+                // Guardar los datos como si fuera aragon
+                const possitives = parseInt(workSheet.getCell('C' + i).value?.toString() ?? "0");
+                if (possitives != undefined && !isNaN(possitives)) {
+                    logger.watch("File: " + filename + " Zona sanitaria aragon encontrada. NPos = " + possitives);
+                    zones.push({
+                        name: "Aragon",
+                        possitives
+                    });
+                }
+                break;
+            } else if (name == undefined) {
+                // Casilla vacía -> fin del bucle
+                break;
+            }
         }
+        // Comprobación de si existe aragon
+        if (zones.findIndex(z => z.name === "Aragon") == -1) {
+            // No existe -> se crea
+            let pos = 0;
+            zones.forEach(z => pos += z.possitives);
+            logger.watch("File: " + filename + " Zona sanitaria aragon no encontrada. Calculando NPos = " + pos);
+            zones.push({
+                name: "Aragon",
+                possitives: pos
+            });
+        }
+    } catch (error) {
+        logger.error(`File: ${filename} -- Error: ${error}`);
     }
 }
 
@@ -142,7 +178,7 @@ const getZoneData = async (date2Search: Date) => {
             //     readAndParseData(csvFileName, d);
             // }, 2000);
             // Es asincrona
-            await delay(1000);
+            await delay(3000);
             await readAndParseData(doc, d);
         }
     });
@@ -150,7 +186,7 @@ const getZoneData = async (date2Search: Date) => {
 
 // Busca la última actualización de la base de datos y realiza las peticiones necesarias
 const queryDatabaseAndFetchLastData = async () => {
-    const document = await SanitaryZone.findOne().exec();
+    const document = await SanitaryZone.findOne({ name: "Aragon" }).exec();
     // Ajustado a las 00:00:00:000
     // Fecha de inicio arbitraria
     let lastUpdated = new Date(Date.parse("Mar 1, 2021"));
@@ -180,7 +216,6 @@ const queryDatabaseAndFetchLastData = async () => {
         lastUpdated = new Date(lastUpdated.getTime() + 86400000);
         logger.stop(`La fecha lastUpdated es: ${lastUpdated.toISOString()}`);
     }
-    // TODO: Crear la zona sanitaria aragon como un sumatorio de las existentes para cada día
 }
 
 const findAndJoinDuplicates = async () => {
