@@ -21,9 +21,11 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
             <div className="container-fluid mb-4 mt-4">
                 <div className="row justify-content-between">
                     <div className="col-4">
+                    <Link to="/createPetition" >
                         <button className="btn navbar-azul text-light text-decoration-none">
                             Añadir peticion <i className="fas fa-plus ms-2"></i>
                         </button>
+                    </Link>
                     </div>
                     <div className="col-4 d-grid gap-2 d-md-flex justify-content-md-end">
                         <button className="btn navbar-azul text-light text-decoration-none ">
