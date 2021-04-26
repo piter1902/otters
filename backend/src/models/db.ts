@@ -1,12 +1,20 @@
 import logger from '@poppinss/fancy-logs';
 import Mongoose from 'mongoose';
+import poblacionBD from '../poblacionBD';
+
+
 
 // URI de la bd de desarrollo
 let dbURI: string = 'mongodb://localhost/pruebaExpress';
 if (process.env.PRODUCTION === "true") {
     dbURI = process.env.MONGO_URI!.toString();
     logger.info(`DB URI: ${dbURI}`);
+    
 }
+//process.env.POPULATEDB="true"; //DESCOMENTAR PARA POBLAR uwu
+if (process.env.POPULATEDB === "true") {
+    poblacionBD.populateDB();
+} 
 
 // Conexión a la base de datos
 Mongoose.connect(dbURI, {useUnifiedTopology: true, useNewUrlParser: true});
@@ -47,6 +55,9 @@ process.on('SIGTERM', () => {
         process.exit(0);
     });
 });
+
+
+
 
 // Model import
 import "./User";
