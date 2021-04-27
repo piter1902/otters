@@ -11,7 +11,7 @@ if (process.env.PRODUCTION === "true") {
     logger.info(`DB URI: ${dbURI}`);
     
 }
-//process.env.POPULATEDB="true"; //DESCOMENTAR PARA POBLAR uwu
+process.env.POPULATEDB="true"; //DESCOMENTAR PARA POBLAR uwu
 if (process.env.POPULATEDB === "true") {
     poblacionBD.populateDB();
 } 

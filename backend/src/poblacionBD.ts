@@ -16,7 +16,7 @@ const populateDB = async () => {
         
         mail = userArrayName[i].substring(0,1)+userArraySurname[i].substring(0,1)+"@gmail.com";
         const user = new User({
-            name: userArrayName[i]+userArraySurname[j],
+            name: userArrayName[i]+" "+userArraySurname[j],
             email: mail,//userArray[i].email,
             sanitaryZone: 1,
             password: "xxxxxxx",
@@ -32,21 +32,21 @@ const populateDB = async () => {
         }
     }
     const userArray:InstanceType<typeof User>[] = await await User.find().exec();
-    var randomUser = Math.floor(Math.random() * (userArray.length + 1));
+    var randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPetition(userArray[randomUser]);
-    randomUser = Math.floor(Math.random() * (userArray.length + 1));
+    randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPetition(userArray[randomUser]);
-    randomUser = Math.floor(Math.random() * (userArray.length + 1));
+    randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPetition(userArray[randomUser]);
-    randomUser = Math.floor(Math.random() * (userArray.length + 1));
+    randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPetition(userArray[randomUser]);
-    randomUser = Math.floor(Math.random() * (userArray.length + 1));
+    randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPost(userArray[randomUser]);
-    randomUser = Math.floor(Math.random() * (userArray.length + 1));
+    randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPost(userArray[randomUser]);
-    randomUser = Math.floor(Math.random() * (userArray.length + 1));
+    randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPost(userArray[randomUser]);
-    randomUser = Math.floor(Math.random() * (userArray.length + 1));
+    randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPost(userArray[randomUser]);
     logger.info("DB populated");
     //petitionModel
@@ -58,8 +58,8 @@ const petArrayPlace:string[] = ["San Jose","Las Fuentes","Centro","Calle de la p
 const petBody:string = "Eam ex integre quaeque bonorum, ea assum solet scriptorem pri. At eius choro sit, possit recusabo corrumpit vim ne.";
 
 const _doAddPetition = async function (user: any) {
-    var numTitle = Math.floor(Math.random() * (petArrayTitle.length + 1));
-    var numPlace = Math.floor(Math.random() * (petArrayPlace.length + 1));
+    var numTitle = Math.floor(Math.random() * (petArrayTitle.length ));
+    var numPlace = Math.floor(Math.random() * (petArrayPlace.length ));
     var urgent = Math.floor(Math.random() * (1 + 1));
     
     if (urgent = 0){
@@ -84,7 +84,7 @@ const _doAddPetition = async function (user: any) {
     );
 
     // Update user info
-    await user.save();
+    //await user.save();
 
     // Save petition to mongoDb
     petition.save(); 
@@ -93,7 +93,7 @@ const _doAddPetition = async function (user: any) {
 
   const postArrayTitle:string[] = ["Post de prueba","Hoy comi macarrones","Covid T.T", "A tope de covid","Cuando acaba esta wea"];
   const _doAddPost = async function (user: any) {
-    var numTitle = Math.floor(Math.random() * (petArrayTitle.length + 1));
+    var numTitle = Math.floor(Math.random() * (petArrayTitle.length ));
     var urgent = Math.floor(Math.random() * (1 + 1));
     
     if (urgent = 0){
@@ -115,7 +115,7 @@ const _doAddPetition = async function (user: any) {
     );
 
     // Update user info
-    await user.save();
+    //await user.save();
 
     // Save petition to mongoDb
     
