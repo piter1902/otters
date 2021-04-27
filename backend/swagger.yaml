@@ -518,7 +518,11 @@ components:
       type: object
       required:
         - "name"
-        - "years"
+        - "email"
+        - "sanitaryZone"
+        - "password"
+        - "strikes"
+        - "isAdmin"
       properties:
         _id:
           type: integer
@@ -526,9 +530,21 @@ components:
         name:
           type: string
           description: Name of the user
-        years:
-          type: integer
-          description: Years of the user
+        email:
+          type: string
+          description: Email of the user
+        sanitaryZone:
+          type: string
+          password: SanitaryZone of the user
+        bannedObject:
+          type: bannedSchema
+          description: Info about ban of the user
+        strikes:
+          type: number
+          password: Number of strikes of the user
+        isAdmin:
+          type: boolean
+          password: True if the user is admin, false if not
         petitions:
           type: array
           description: IDs of the user's petitions
@@ -539,6 +555,21 @@ components:
           description: IDs of the user's posts
           items:
             type: string
+    bannedSchema:
+      type: object
+      required:
+        - "banned"
+        - "bannedUntil"
+      properties:
+        _id:
+          type: integer
+          description: Object identifier
+        banned:
+          type: boolean
+          description: True if the user is banned, false if not
+        bannedUntil:
+          type: date
+          description: Date until the user is banned
     # Sanitary Zone Schema
     sanitaryZoneWithoutData:
       title: SanitaryZone
