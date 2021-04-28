@@ -13,7 +13,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
 
     // Realiza el login del usuario
     const login = async () => {
-        await fetch(`http://localhost:8080/auth/login`,
+        const result =await fetch(`http://localhost:8080/auth/login`,
             {
                 method: "POST",
                 headers: {
@@ -25,7 +25,8 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                     password: userPassword,
                     email: userMail,
                 })
-            }).then(async (res) => console.log(await res));
+            });
+        console.log("Result: " + await result.text());
         // TODO: Faltan las redirecciones
     };
 
