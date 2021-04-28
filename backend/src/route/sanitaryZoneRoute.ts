@@ -11,6 +11,12 @@ sanitaryZoneRoute.route("/")
 sanitaryZoneRoute.route("/fetchData")
     .get(sanitaryZoneController.fetchRemoteData);
 
+sanitaryZoneRoute.route("/aragon")
+    .get(sanitaryZoneController.getAragonZone);
+
+sanitaryZoneRoute.route("/aragon/data")
+    .get(sanitaryZoneController.getAragonZoneData);
+
 sanitaryZoneRoute.route("/:id")
     .get(sanitaryZoneController.getZoneById);
 

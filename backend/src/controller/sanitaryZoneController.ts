@@ -1,6 +1,7 @@
 import Express from 'express';
 import SanitaryZone from '../models/SanitaryZone';
 import sanitaryZoneService from '../service/sanitaryZoneService';
+import Utils from '../Utils';
 
 interface SanitaryZoneWithoutData {
     _id: any;
@@ -41,6 +42,30 @@ const getZoneById = async (req: Express.Request, res: Express.Response) => {
     }
 }
 
+// Get aragon data
+const getAragonZone = async (req: Express.Request, res: Express.Response) => {
+    const zone = await SanitaryZone.findOne({name: "Aragon"}).exec();
+    if(zone != null) {
+        res.status(200).json(zone);
+    } else {
+        res.status(404).json({
+            error: `Zone with id = aragon doesn't exist`
+        })
+    }
+}
+
+// Get aragon zone data
+const getAragonZoneData = async (req: Express.Request, res: Express.Response) => {
+    const zone = await SanitaryZone.findOne({name: "Aragon"}).exec();
+    if(zone != null) {
+        res.status(200).json(zone.data);
+    } else {
+        res.status(404).json({
+            error: `Zone with id = aragon doesn't exist`
+        })
+    }
+}
+
 // Get data from zone
 const getDataZone = async (req: Express.Request, res: Express.Response) => {
     const id = req.params.id;
@@ -56,11 +81,14 @@ const getDataZone = async (req: Express.Request, res: Express.Response) => {
 
 // Fetch data
 const fetchRemoteData = async (req: Express.Request, res: Express.Response) => {
-    await sanitaryZoneService.queryDatabaseAndFetchLastData();
-    // Busqueda de duplicados
-    await sanitaryZoneService.findAndJoinDuplicates();
     // Se envia la respuesta vacía
     res.status(202).json();
+    // Busqueda de datos
+    await sanitaryZoneService.queryDatabaseAndFetchLastData();
+    // Sleep de 20 segundos para asegurarnos de que se ha hecho el proceso
+    await Utils.delay(20000);
+    // Busqueda de duplicados
+    await sanitaryZoneService.findAndJoinDuplicates();
 }
 
 
@@ -69,5 +97,7 @@ export default {
     getAllSanitaryZones,
     getZoneById,
     fetchRemoteData,
-    getDataZone
+    getDataZone,
+    getAragonZone,
+    getAragonZoneData
 }

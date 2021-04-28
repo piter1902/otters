@@ -27,14 +27,17 @@ const swaggerDocument = YAML.load("swagger.yaml");
 
 // Configuración de las variables de entorno
 import dotenv from 'dotenv';
+import Utils from './Utils';
 
 const result = dotenv.config();
 
-// CreaciÃ³n cron
-// 6 veces al dÃ­a (en le minuto 00) se ejecutarÃ¡ el fetch
+// Creación cron
+// 6 veces al día (en le minuto 00) se ejecutará el fetch
 cron.schedule("0 */6 * * *", async () => {
     logger.success("Cron ejecutandose");
     await sanitaryZoneService.queryDatabaseAndFetchLastData();
+    // Sleep de 20 segundos para asegurarnos de que se ha hecho el proceso
+    await Utils.delay(20000);
     // Busqueda de duplicados
     await sanitaryZoneService.findAndJoinDuplicates();
 });

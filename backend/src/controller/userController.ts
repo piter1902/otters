@@ -91,6 +91,7 @@ const _doAddBannedObj = (req: Express.Request, res: Express.Response, user: any)
   } else {
     user.bannedObject.banned = req.body.banned;
     user.bannedObject.bannedUntil = req.body.bannedUntil;
+    //user.strikes= user.strikes+1;
     user.save((err: Express.ErrorRequestHandler, user: any) => {
       if (err) {
         logger.error(err.toString());
@@ -104,6 +105,44 @@ const _doAddBannedObj = (req: Express.Request, res: Express.Response, user: any)
           .json(0);
       }
     });
+  }
+};
+
+const updateUser = async (req: Express.Request, res: Express.Response) => {
+  const userId = req.params.userId;
+
+  if (req.params && userId) {
+    const user = await User.findById(userId).exec();
+
+    // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
+    // se almacena en numeros del 0-11 por defecto
+    var tempDate = req.body.targetDate && new Date(req.body.targetDate);
+
+    // Shorted if-else
+    user.name = req.body.name && req.body.name || user.name;
+    user.email = req.body.email && req.body.email || user.email;
+    user.sanitaryZone = req.body.sanitaryZone && req.body.sanitaryZone || user.sanitaryZone;
+    user.password = req.body.password && req.body.password || user.password;
+    user.strikes = req.body.strikes && req.body.strikes || user.strikes;
+    user.isAdmin = req.body.isAdmin && req.body.isAdmin || user.isAdmin;
+    user.save((err: any, user: typeof User) => {
+      if (err) {
+        res
+          .status(404)
+          .json(err);
+      } else {
+        res
+          .status(200)
+          .json(user);
+      }
+    });
+
+  } else {
+    res
+      .status(404)
+      .json({
+        "message": "Not found, userId is required"
+      });
   }
 };
 

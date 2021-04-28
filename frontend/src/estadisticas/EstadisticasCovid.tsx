@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import CasosPorFecha from './CasosPorFecha';
 import GraficaCasos from './GraficaCasos';
 import useZBS from './useZBS';
@@ -20,6 +20,9 @@ const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = (
 
     // Datos de la zona de salud selecionada
     const [datos, setDatos] = useState<ZbsData[]>([]);
+
+    // Datos de la zona de salud ARAGON
+    const [datosAragon, setDatosAragon] = useState<ZbsData[]>([]);
 
     // Obtencion de las zonas de salud
     const zonasSalud = useZBS(process.env.REACT_APP_BASEURL!);
@@ -69,10 +72,10 @@ const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = (
                         <input type="text" id="aragontext" className="form-control" value="Aragón" disabled />
                     </div>
                     {/* Selector de casos por día y visualizar */}
-                    {/* <CasosPorFecha idZona="aragon" /> */}
+                    <CasosPorFecha idZona="aragon" setDataFunction={setDatosAragon}/>
                 </div>
                 {/* Gráficas */}
-                <GraficaCasos data={datos}/>
+                <GraficaCasos data={datosAragon}/>
             </div>
         </div>
     )
