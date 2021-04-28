@@ -4,6 +4,7 @@ import fs from 'fs';
 import SanitaryZone from '../models/SanitaryZone';
 import logger from '@poppinss/fancy-logs';
 import { Mongoose } from 'mongoose';
+import Utils from '../Utils';
 
 const URI = "https://transparencia.aragon.es/sites/default/files/documents/"
 
@@ -11,9 +12,6 @@ interface ZoneData {
     name: string;
     possitives: number;
 }
-
-// Funcion para hacer un sleep
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const parseCSV = async (file: string, zones: ZoneData[]) => {
     const data = file.toString().split("\n");
@@ -178,7 +176,7 @@ const getZoneData = async (date2Search: Date) => {
             //     readAndParseData(csvFileName, d);
             // }, 2000);
             // Es asincrona
-            await delay(3000);
+            await Utils.delay(3000);
             await readAndParseData(doc, d);
         }
     });
@@ -219,25 +217,30 @@ const queryDatabaseAndFetchLastData = async () => {
 }
 
 const findAndJoinDuplicates = async () => {
+    logger.start("Find and join duplicates");
     // Obtener todos los datos
     const data = await SanitaryZone.find().exec();
+    logger.watch(`Elementos a analizar: ${data.length}`)
     // Elementos a eliminar
     const duplicated: any[] = [];
     // Join por el nombre
-    data.forEach((element: { name: any; data: any[]; }) => {
-        const matched = data.find((value: { name: any; }) => value.name === element.name);
+    data.forEach((element: { _id: string; name: any; data: any[]; }) => {
+        const matched = data.find((value: { _id: string; name: any; }) => value.name === element.name && value._id !== element._id);
         // Se eliminará el elemento que menos datos tenga en su repertorio
         // y se guardan los datos del elemento a eliminar
-        if (element.data.length > matched.data.length) {
+        if (matched != undefined && element.data.length > matched.data.length) {
             duplicated.push(matched);
             element.data.push(matched.data);
-        } else {
+        } else if (matched != undefined) {
             duplicated.push(element);
             matched.data.push(element.data);
         }
+        // match === undefined -> no hacemos nada pq implica que es único
     });
     // Eliminar el duplicado
-    duplicated.forEach((el) => SanitaryZone.findByIdAndDelete(el._id).exec());
+    logger.watch(`Duplicados a eliminar: ${duplicated.length}`)
+    duplicated.forEach(async (el) => await SanitaryZone.findByIdAndDelete(el._id).exec());
+    logger.stop("Find and join duplicates");
 }
 
 export default {
