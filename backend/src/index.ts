@@ -49,7 +49,6 @@ app.use(bodyParser.json());
 
 // CORS
 app.use(cors({
-    origin: 'http://localhost:3000', // React app location
     credentials: true
 }));
 

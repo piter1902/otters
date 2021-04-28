@@ -16,7 +16,7 @@ authRoute.post("/login", (req, res, next) => {
 
     if (!user) {
       res
-        .status(404)
+        .status(401)
         .json({
           error: `User does not exists`
         });

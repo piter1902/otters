@@ -19,24 +19,26 @@ passport.deserializeUser((id, done) => {
  * Sign in using Email and Password.
  */
 
-passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-  logger.info("Usando estrategia local: " + email);
-  User.findOne({ email: email.toLowerCase() }, async (err: any, user: any) => {
-    if (err) { return done(err); }
+passport.use(new LocalStrategy({ usernameField: "email" }, async (email, password, done) => {
+  try {
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       logger.info("No se ha encontrado user");
       return done(null, false, { message: `Email ${email} not found.` });
     }
 
-    bcrypt.compare(password, user.password, (err: Error, result: any) => {
-      if (err) { return done(err); }
-      if (result === true) {
-        logger.info("Password correcta");
-        return done(undefined, user);
-      }
+    const result = await bcrypt.compare(password, user.password);
+    if (result === true) {
+      logger.info("Password correcta");
+      return done(undefined, user);
+    } else {
+
       logger.error("Password incorrecta: " + password + " --- " + user.password);
       return done(null, false, { message: "Invalid email or password." });
-    });
-  });
+    }
+  } catch (err) {
+    logger.error(err);
+    return done(err);
+  }
 }));
 
