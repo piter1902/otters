@@ -1,13 +1,16 @@
 import logger from '@poppinss/fancy-logs';
 import Express from 'express';
 import User, { bannedSchema } from '../models/User';
+import bcrypt from 'bcrypt';
 
 const createNewUser = async (req: Express.Request, res: Express.Response) => {
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
   const user = new User({
     name: req.body.name,
     email: req.body.email,
     sanitaryZone: req.body.sanitaryZone,
-    password: req.body.password,
+    password: hashedPassword,
     bannedObject: { "banned": false },
     strikes: req.body.strikes,
     isAdmin: req.body.isAdmin,
