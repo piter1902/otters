@@ -85,8 +85,8 @@ const fetchRemoteData = async (req: Express.Request, res: Express.Response) => {
     res.status(202).json();
     // Busqueda de datos
     await sanitaryZoneService.queryDatabaseAndFetchLastData();
-    // Sleep de 10 segundos para asegurarnos de que se ha hecho el proceso
-    await Utils.delay(10000);
+    // Sleep de 20 segundos para asegurarnos de que se ha hecho el proceso
+    await Utils.delay(20000);
     // Busqueda de duplicados
     await sanitaryZoneService.findAndJoinDuplicates();
 }

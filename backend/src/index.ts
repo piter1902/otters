@@ -29,8 +29,8 @@ const result = dotenv.config();
 cron.schedule("0 */6 * * *", async () => {
     logger.success("Cron ejecutandose");
     await sanitaryZoneService.queryDatabaseAndFetchLastData();
-    // Sleep de 10 segundos para asegurarnos de que se ha hecho el proceso
-    await Utils.delay(10000);
+    // Sleep de 20 segundos para asegurarnos de que se ha hecho el proceso
+    await Utils.delay(20000);
     // Busqueda de duplicados
     await sanitaryZoneService.findAndJoinDuplicates();
 });

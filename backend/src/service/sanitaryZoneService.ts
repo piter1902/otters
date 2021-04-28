@@ -123,7 +123,12 @@ const readAndParseData = async (fileName: string, date: Date) => {
                     // Se actualiza ya que la fecha de la bd es menor
                     zone.updatedAt = new Date(date.getTime() + 86400000);
                 }
-                zone.save();
+
+                // Update de los datos
+                const zoneToUpdate = Object.assign({}, zone);
+                delete zoneToUpdate._id;
+
+                await SanitaryZone.findOneAndUpdate({_id: zone._id}, zoneToUpdate).exec();
             }
         } else {
             // Doesn't exists -> create new zone
@@ -139,7 +144,7 @@ const readAndParseData = async (fileName: string, date: Date) => {
                     }
                 ]
             });
-            zone.save();
+            await zone.save();
         }
         // logger.info(`Fecha actualizada: ${date.toISOString()}`);
     }
