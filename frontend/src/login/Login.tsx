@@ -25,7 +25,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                     password: userPassword,
                     email: userMail,
                 })
-            }).then(async (res) => console.log(await res.json()));
+            }).then(async (res) => console.log(await res));
         // TODO: Faltan las redirecciones
     };
 

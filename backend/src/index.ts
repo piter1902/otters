@@ -48,7 +48,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // CORS
+// La URI admitida varia en funcion de si estamos en produccion
+let corsURI: string = 'http://localhost:3000'; // React app location
+if (process.env.PRODUCTION === "true") {
+    corsURI = process.env.CORS_URI!.toString();
+    logger.info(`DB URI: ${corsURI}`);
+}
+
 app.use(cors({
+    origin: corsURI, // React app location
     credentials: true
 }));
 
