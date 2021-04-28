@@ -81,13 +81,14 @@ const getDataZone = async (req: Express.Request, res: Express.Response) => {
 
 // Fetch data
 const fetchRemoteData = async (req: Express.Request, res: Express.Response) => {
+    // Se envia la respuesta vacía
+    res.status(202).json();
+    // Busqueda de datos
     await sanitaryZoneService.queryDatabaseAndFetchLastData();
     // Sleep de 10 segundos para asegurarnos de que se ha hecho el proceso
     await Utils.delay(10000);
     // Busqueda de duplicados
     await sanitaryZoneService.findAndJoinDuplicates();
-    // Se envia la respuesta vacía
-    res.status(202).json();
 }
 
 
