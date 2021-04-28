@@ -9,10 +9,10 @@ let dbURI: string = 'mongodb://localhost/pruebaExpress';
 if (process.env.PRODUCTION === "true") {
     dbURI = process.env.MONGO_URI!.toString();
     logger.info(`DB URI: ${dbURI}`);
-    
 }
-process.env.POPULATEDB="true"; //DESCOMENTAR PARA POBLAR uwu
+
 if (process.env.POPULATEDB === "true") {
+    logger.start("Populate DB");
     poblacionBD.populateDB();
 } 
 
