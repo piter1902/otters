@@ -17,8 +17,22 @@ tags:
     description: "Everithing about the users"
   - name: "Sanitary Zone"
     description: "Sanitary Zones"
+  - name: "Statistics"
+    description: "Statistics about system"
 
 paths:
+  /stats:
+    get:
+      tags:
+        - "Statistics"
+      description: Get stats for system
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/stats"
   /user:
     # Get users
     get:
@@ -513,6 +527,48 @@ paths:
 
 components:
   schemas:
+    # Stats scheme
+    stats:
+      type: object
+      required:
+        - "peticiones"
+        - "foro"
+        - "usuarios"
+      properties:
+        peticiones:
+          type: object
+          required:
+            - "realizadas"
+            - "atendidas"
+            - "canceladas"
+          properties:
+            realizadas:
+              type: number
+            atendidas:
+              type: number
+            canceladas:
+              type: number
+        foro:
+          type: object
+          required:
+            - "escritos"
+            - "diaConMasPublicaciones"
+          properties:
+            escritos:
+              type: number
+            diaConMasPublicaciones:
+              type: string
+              format: date
+        usuarios:
+          type: object
+          required:
+            - "registrados"
+            - "verificados"
+          properties:
+            registrados:
+              type: number
+            verificados:
+              type: number
     # User Schema
     user:
       type: object
@@ -535,16 +591,17 @@ components:
           description: Email of the user
         sanitaryZone:
           type: string
-          password: SanitaryZone of the user
+          description: SanitaryZone of the user
         bannedObject:
-          type: bannedSchema
+          type: object
+          $ref: "#/components/schemas/bannedSchema"
           description: Info about ban of the user
         strikes:
           type: number
-          password: Number of strikes of the user
+          description: Number of strikes of the user
         isAdmin:
           type: boolean
-          password: True if the user is admin, false if not
+          description: True if the user is admin, false if not
         petitions:
           type: array
           description: IDs of the user's petitions
@@ -568,7 +625,8 @@ components:
           type: boolean
           description: True if the user is banned, false if not
         bannedUntil:
-          type: date
+          type: string
+          format: date
           description: Date until the user is banned
     # Sanitary Zone Schema
     sanitaryZoneWithoutData:
