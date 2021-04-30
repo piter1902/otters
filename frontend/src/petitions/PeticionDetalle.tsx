@@ -19,6 +19,8 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
     const targetDate = new Date((petition as any).targetDate);
     const isUrgent = (petition as any).isUrgent;
     const expTime = (petition as any).expTime;
+    const userInfo = (petition as any).userInfo;
+    
     return (
         <div className="row card mt-md-4 mt-3">
             <div style={{ textAlign: "center", verticalAlign: "middle" }}>
@@ -33,7 +35,7 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
                 < div className="card-body px-3 py-3">
                     <p className="h2 fw-bold">{title}</p>
                     {/* TODO: Deberiamos mostrar el Id del usuario */}
-                    <p className="lead ">Creado por {userId}</p>
+                    <p className="lead ">Creado por {userInfo.userName}</p>
 
                     <p >{(petition as any).body}</p>
 

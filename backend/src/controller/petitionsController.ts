@@ -232,46 +232,58 @@ const _doAddPetition = async function (req: Express.Request, res: Express.Respon
         message: "userId not found"
       });
   } else {
-    // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
-    // se almacena en numeros del 0-11 por defecto
-    var tempDate = new Date(req.body.targetDate);
-    const petition = new Petition({
-      title: req.body.title,
-      userId: req.body.userId,
-      body: req.body.body,
-      place: req.body.place,
-      targetDate: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
-      isUrgent: req.body.isUrgent,
-      status: 'Created',
-      expTime: req.body.expTime
-    });
-    user.petitions.push(
-      petition._id
-    );
 
-    // Update user info
-    await user.save((err: Express.ErrorRequestHandler, user: any) => {
-      if (err) {
-        logger.error(err.toString());
-        res
-          .status(400)
-          .json(err);
-      }
-    });
+    // Debemos volver a hacer una peticion ya que el objeto 'user' solo tiene campos _id y petitions
+    const userInfo = await User.findById(user._id);
+    if (userInfo) {
+      const userName = userInfo.name;
+      // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
+      // se almacena en numeros del 0-11 por defecto
+      var tempDate = new Date(req.body.targetDate);
+      const petition = new Petition({
+        title: req.body.title,
+        userInfo: { userId: user._id, userName: userName },
+        body: req.body.body,
+        place: req.body.place,
+        targetDate: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
+        isUrgent: req.body.isUrgent,
+        status: 'Created',
+        expTime: req.body.expTime
+      });
+      user.petitions.push(
+        petition._id
+      );
 
-    // Save petition to mongoDb
-    petition.save((err: Express.ErrorRequestHandler, user: any) => {
-      if (err) {
-        logger.error(err.toString());
-        res
-          .status(400)
-          .json(err);
-      } else {
-        res
-          .status(201)
-          .json(petition);
-      }
-    });
+      // Update user info
+      await user.save((err: Express.ErrorRequestHandler, user: any) => {
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        }
+      });
+
+      // Save petition to mongoDb
+      petition.save((err: Express.ErrorRequestHandler, user: any) => {
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        } else {
+          res
+            .status(201)
+            .json(petition);
+        }
+      });
+    } else {
+      res
+        .status(404)
+        .json({
+          message: "userId not found"
+        });
+    }
   }
 };
 
