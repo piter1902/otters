@@ -620,23 +620,6 @@ components:
           type: integer
           description: Number of possitives at current date
 
-    # Data of petition's user
-    userInfo:
-      type: object
-      required:
-        - "userId"
-        - "userName"
-      properties:
-        _id:
-          type: integer
-          description: Object identifier
-        userId:
-          type: string
-          description: Petition's owner Id
-        userName:
-          type: string
-          description: Petition's owner name
-
     # Petition Schema
     petitions:
       type: object
@@ -646,7 +629,6 @@ components:
         - "place"
         - "isUrgent"
         - "status"
-        - "userInfo"
 
       properties:
         _id:
@@ -659,9 +641,9 @@ components:
           type: string
           description: A description of the petition
           maxLength: 150
-        userInfo:
-          $ref: "#/components/schemas/userInfo"
-          description: Petition's owner information
+        userId:
+          type: string
+          description: Petition's owner Id
         place:
           type: string
           description: Place where the petition is located

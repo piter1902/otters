@@ -15,7 +15,7 @@ const PetitionListComponent: JSXElementConstructor<PetitionListComponentProps> =
                             <h2 className="ms-3 mt-3"><b>{petition.title}</b></h2>
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    <p className="ms-3">Creado por {petition.userInfo.userName}</p>
+                                    <p className="ms-3">Creado por {petition.userId}</p>
                                 </div>
                                 <div className="col-1 sm-12">
                                     {petition.status=="Done"  && <i className="fas fa-check"></i>}

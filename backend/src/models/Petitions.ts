@@ -1,17 +1,5 @@
 import logger from '@poppinss/fancy-logs';
-import Mongoose, { Schema } from 'mongoose';
-
-
-const UserInfoSchema = new Schema({
-    userId: {
-        type: String,
-        required: true
-    },
-    userName: {
-        type: String,
-        required: true
-    }
-});
+import Mongoose, {Schema} from 'mongoose';
 
 const PetitionsSchema = new Schema({
     title: {
@@ -24,8 +12,8 @@ const PetitionsSchema = new Schema({
         maxLength: 150,
         required: true
     },
-    userInfo: {
-        type: UserInfoSchema,
+    userId:{
+        type: String,
         required: true
     },
     targetDate: {
