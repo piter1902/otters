@@ -12,6 +12,9 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
     // Title
     const title = "OTTERS";
 
+    // Admin property
+    const isAdmin = true;
+
     return (
         <div className="mb-3">
             <nav className="navbar navbar-expand-md navbar-light bg-light">
@@ -49,12 +52,17 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
                             <li className="nav-item mx-2">
                                 <Link to="/estadisticas" className="text-light text-decoration-none">Estadísticas COVID</Link>
                             </li>
-                            < li className="nav-item text-light mx-2">
+                            <li className="nav-item text-light mx-2">
                                 <Link to="/foro" className="text-light text-decoration-none">Foro</Link>
                             </li>
-                            < li className="nav-item text-light mx-2">
+                            <li className="nav-item text-light mx-2">
                                 <Link to="/peticionesayuda" className="text-light text-decoration-none">Ayuda</Link>
                             </li>
+                            {isAdmin &&
+                                <li className="nav-item text-light mx-2">
+                                    <Link to="/admin" className="text-light text-decoration-none">Admin</Link>
+                                </li>
+                            }
                         </ul>
                     </div>
                 </div>

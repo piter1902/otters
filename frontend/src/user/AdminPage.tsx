@@ -1,4 +1,6 @@
 import React, { JSXElementConstructor } from 'react'
+import { ClipLoader } from 'react-spinners';
+import useGetFetch from '../useGetFetch';
 
 interface AdminPageProps {
 
@@ -6,13 +8,21 @@ interface AdminPageProps {
 
 const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
 
+    // Datos de ayuda
+    const { data: stats, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/stats`)
+
     const reloadDataSource = () => {
         console.log("Recargando la fuente de datos");
     }
 
     return (
         <div className="container-fluid d-flex justify-content-center card">
-            <div className="card-body">
+            {isPending &&
+                <div style={{ textAlign: "center", verticalAlign: "middle" }}>
+                    <ClipLoader color="#172c48" loading={isPending} size={50} />
+                </div>
+            }
+            {!isPending && <div className="card-body">
                 <div className="row">
                     {/* Columna de ayuda */}
                     <div className="col">
@@ -26,15 +36,15 @@ const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
                                 <ul className="list-group">
                                     <li className="list-group-item">
                                         <span className="fw-bold">Peticiones realizadas: </span>
-                                        298
+                                        {stats.peticiones.realizadas}
                                     </li>
                                     <li className="list-group-item">
                                         <span className="fw-bold">Peticiones atendidas: </span>
-                                        201
+                                        {stats.peticiones.atendidas}
                                     </li>
                                     <li className="list-group-item">
                                         <span className="fw-bold">Peticiones canceladas: </span>
-                                        97
+                                        {stats.peticiones.canceladas}
                                     </li>
                                 </ul>
                             </div>
@@ -53,11 +63,11 @@ const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
                                 <ul className="list-group">
                                     <li className="list-group-item">
                                         <span className="fw-bold">Posts escritos: </span>
-                                        567
+                                        {stats.foro.escritos}
                                     </li>
                                     <li className="list-group-item">
                                         <span className="fw-bold">Día con más publicaciones: </span>
-                                        25/04/2021
+                                        {stats.foro.diaConMasPublicaciones}
                                     </li>
                                 </ul>
                             </div>
@@ -76,11 +86,11 @@ const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
                             <ul className="list-group">
                                 <li className="list-group-item">
                                     <span className="fw-bold">Usuarios registrados: </span>
-                                    345
+                                    {stats.usuarios.registrados}
                                 </li>
                                 <li className="list-group-item">
                                     <span className="fw-bold">Usuarios verificados: </span>
-                                        278
+                                    {stats.usuarios.verificados}
                                 </li>
                             </ul>
                         </div>
@@ -121,7 +131,7 @@ const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>}
         </div>
     )
 }
