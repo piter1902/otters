@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from "react-router";
-import GetFetch from '../getFetch';
+import useGetFetch from '../useGetFetch';
 import ClipLoader from "react-spinners/ClipLoader";
 
 interface PeticionDetalleProps {
-    id: string
 }
 
 const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () => {
-    const { id } = useParams<PeticionDetalleProps>();
+    const { id } = useParams<{ id: string }>();
 
     // Obtenemos la información de la peticion
-    const { data: petition, error, isPending } = GetFetch(`${process.env.REACT_APP_BASEURL}/petitions/` + id);
+    const { data: petition, error, isPending } = useGetFetch(`${process.env.REACT_APP_BASEURL}/petitions/` + id);
 
     // Variables a mostrar
     const userId = (petition as any).userId;
@@ -19,7 +18,6 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
     const place = (petition as any).place;
     const targetDate = (petition as any).targetDate;
     const isUrgent = (petition as any).isUrgent;
-
 
     return (
         <div className="row card mt-md-4 mt-3">

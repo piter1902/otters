@@ -3,7 +3,7 @@ import '../Navbar.css'
 import { Link } from 'react-router-dom';
 import './Petition.css'
 import PetitionListComponent from "./PetitionListComponent";
-import GetFetch from '../getFetch';
+import useGetFetch from '../useGetFetch';
 import ClipLoader from "react-spinners/ClipLoader";
 
 export interface PetitionListProps {
@@ -12,7 +12,7 @@ export interface PetitionListProps {
 
 const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
 
-    const { data, isPending, error } = GetFetch(`${process.env.REACT_APP_BASEURL}/petitions`);
+    const { data, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/petitions`);
     console.log(data);
     return (
         <div>

@@ -53,8 +53,8 @@ const App = () => {
               <PostDetalle />
             </Route>
             {/* Vista detallada de peticion */}
-            <Route exact path="/peticionDetalle/:id" component={PeticionDetalle}>
-              {/* <PeticionDetalle  /> */}
+            <Route exact path="/peticionDetalle/:id">
+              <PeticionDetalle />
             </Route>
             {/* Foro */}
             <Route exact path="/foro">

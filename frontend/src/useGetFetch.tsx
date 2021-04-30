@@ -4,7 +4,7 @@ import { JSXElementConstructor, useState, useEffect } from "react";
 
 
 
-const GetFetch = (url: any) => {
+const useGetFetch = (url: any) => {
   const [data, setData] = useState([]);
   const [isPending, setIsPending] = useState(true);
   const [error, setError] = useState(null);
@@ -46,4 +46,4 @@ const GetFetch = (url: any) => {
 
 }
 
-export default GetFetch;
+export default useGetFetch;
