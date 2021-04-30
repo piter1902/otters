@@ -660,7 +660,10 @@ components:
         status:
           type: string
           description: Status of the petition. It could be 'created', 'cancelled' or 'assigned'
-
+        expTime:
+          type: string
+          description: Hour of the day when petition expires.
+          example: "10:15"
     # Post Schema
     posts:
       type: object

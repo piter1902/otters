@@ -16,9 +16,9 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
     const userId = (petition as any).userId;
     const title = (petition as any).title;
     const place = (petition as any).place;
-    const targetDate = (petition as any).targetDate;
+    const targetDate = new Date((petition as any).targetDate);
     const isUrgent = (petition as any).isUrgent;
-
+    const expTime = (petition as any).expTime;
     return (
         <div className="row card mt-md-4 mt-3">
             <div style={{ textAlign: "center", verticalAlign: "middle" }}>
@@ -38,8 +38,11 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
                     <p >{(petition as any).body}</p>
 
                     <p className="lead ">Lugar: {place}</p>
-                    <p className="lead ">Fecha: {targetDate}</p>
-                    <p className="lead ">Hora: La petition no tiene hora de momento...</p>
+                    <p className="lead ">Fecha: {targetDate.toLocaleDateString('en-ES')}</p>
+                    {expTime != ""
+                        ? <p className="lead ">Hora de expiración: {expTime}</p>
+                        : <p className="lead ">Hora de expiración: --:--</p>
+                    }
                     {isUrgent &&
                         <p className="lead ">Urgente: Sí</p>
                     }
