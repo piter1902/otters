@@ -2,6 +2,7 @@ import React, { JSXElementConstructor } from 'react'
 import { ClipLoader } from 'react-spinners';
 import useGetFetch from '../useGetFetch';
 import AdminPageFetchData from './AdminPageFetchData';
+import AdminPageUser from './AdminPageUser';
 
 interface AdminPageProps {
 
@@ -72,44 +73,7 @@ const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
                     </div>
                 </div>
                 {/* Usuarios */}
-                <div className="row card mt-md-3 mt-4">
-                    <div className="card-header">
-                        <p className="display-5">
-                            Usuarios
-                        </p>
-                    </div>
-                    <div className="card-body">
-                        <div className="row">
-                            <ul className="list-group">
-                                <li className="list-group-item">
-                                    <span className="fw-bold">Usuarios registrados: </span>
-                                    {stats.usuarios.registrados}
-                                </li>
-                                <li className="list-group-item">
-                                    <span className="fw-bold">Usuarios verificados: </span>
-                                    {stats.usuarios.verificados}
-                                </li>
-                            </ul>
-                        </div>
-                        {/* Búsqueda de usuario para banear */}
-                        <div className="row mt-3">
-                            <ul className="list-group">
-                                <li className="list-group-item">
-                                    <div className="input-group">
-                                        <input type="text" placeholder="username" id="usernamesearch" className="form-control"
-                                            aria-label="Recipient's username" aria-describedby="usernamesearch-button" />
-                                        <button className="btn btn-outline-primary" id="usernamesearch-button">
-                                            <i className="fa fa-search" aria-hidden="true"></i>
-                                        </button>
-                                    </div>
-                                </li>
-                                <li className="list-group-item">
-                                    Resultados de la búsqueda en una lista
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <AdminPageUser registrados={stats.usuarios.registrados} verificados={stats.usuarios.verificados} />
                 {/* Fuenta de datos */}
                 <AdminPageFetchData />
             </div>}
