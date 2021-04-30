@@ -1,4 +1,5 @@
-import React, { JSXElementConstructor, useEffect, useState } from 'react'
+import React, { JSXElementConstructor, useEffect, useState } from 'react';
+import AdminPageUserTile from './AdminPageUserTile';
 
 interface AdminPageUserProps {
     registrados: number;
@@ -18,12 +19,6 @@ const AdminPageUser: JSXElementConstructor<AdminPageUserProps> = ({ registrados,
         const usersResponse = await fetch(`${process.env.REACT_APP_BASEURL}/user`);
         const users = await usersResponse.json();
         setListUsers((users as any[]).filter((user) => user.name.match(searchUsername)));
-    }
-
-    // Ban user
-    const banUser = async (userId: string) => {
-        console.log("Banning user with id = " + userId);
-
     }
 
     return (
@@ -64,14 +59,7 @@ const AdminPageUser: JSXElementConstructor<AdminPageUserProps> = ({ registrados,
                                 {
                                     listUsers.length != 0 &&
                                     listUsers.map((user) => (
-                                        <li className="list-group-item d-flex justify-content-between" key={user._id}>
-                                            <div className="fw-bold">{user.name}</div>
-                                            <div className="d-flex justify-content-end">
-                                                <button className="btn btn-danger" onClick={() => banUser(user._id)}>
-                                                    Banear
-                                                </button>
-                                            </div>
-                                        </li>
+                                        <AdminPageUserTile user={user} key={user._id} />
                                     ))
                                 }
                             </ul>

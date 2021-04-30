@@ -1,6 +1,6 @@
 import React, { JSXElementConstructor } from 'react'
 import { ClipLoader } from 'react-spinners';
-import useGetFetch from '../useGetFetch';
+import useGetFetch from '../../useGetFetch';
 import AdminPageFetchData from './AdminPageFetchData';
 import AdminPageUser from './AdminPageUser';
 
