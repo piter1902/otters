@@ -48,6 +48,7 @@ const getEstadisticas = async (req: Express.Request, res: Express.Response) => {
     const estadisticas: Estadisticas = {
         peticiones: {
             realizadas: (peticiones as any[]).length,
+            // TODO: Esto queda pendiente de cuando se haga el flujo de peticiones
             atendidas: (peticiones as any[]).filter((p) => p.status.toUpperCase() === "COMPLETED").length,
             canceladas: (peticiones as any[]).filter((p) => p.status.toUpperCase() === "CANCELED").length,
         },

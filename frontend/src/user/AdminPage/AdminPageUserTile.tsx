@@ -19,6 +19,7 @@ const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user
     const banUser = async () => {
         console.log("Banning user with id = " + user._id);
         if (!isBanned) {
+            // TODO: Esta URI puede cambiar ya que no tiene tampoco mucho sentido
             await fetch(`${process.env.REACT_APP_BASEURL}/user/${user._id}`,
                 {
                     method: "POST",
