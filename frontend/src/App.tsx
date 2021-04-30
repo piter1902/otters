@@ -53,7 +53,7 @@ const App = () => {
               <PostDetalle />
             </Route>
             {/* Vista detallada de peticion */}
-            <Route exact path="/peticionDetalle">
+            <Route exact path="/peticionDetalle/:id">
               <PeticionDetalle />
             </Route>
             {/* Foro */}
