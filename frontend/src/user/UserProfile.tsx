@@ -1,6 +1,7 @@
 import React, { JSXElementConstructor } from 'react'
 import PetitionListComponent from '../petitions/PetitionListComponent';
 import PostListComponent from '../posts/PostListComponent';
+import useGetFetch from '../useGetFetch';
 import ChangeUserData from './ChangeUserData';
 
 interface UserProfileProps {
@@ -14,12 +15,9 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
     const email = "elpepe@unizar.es";
     const zonaSanitaria = "El Arrabal";
 
-    const petitions = [
-        { title: 'Titulo de peticion', task: 'Comprar cerveza', address: 'Calle Alfonso Artero', author: 'ElJosé', id: 1, done: false },
-        { title: 'Titulo de peticion', task: 'Comprar cerveza', address: 'Calle Alfonso Artero', author: 'ElJosé', id: 2, done: true },
-        { title: 'Titulo de peticion', task: 'Comprar cerveza', address: 'Calle Alfonso Artero', author: 'ElJosé', id: 3, done: false }
-    ];
-
+    // TODO: el id de usuario debe ser en función del user loggeado
+    const { data: petitions, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/user/608973ba40f1db3b48fc1044/petitions`);
+    
     const posts = [
         { title: 'Titulo del post', body: 'lorem ipsum...', author: 'ElJosé', id: 1, likes: 17 },
         { title: 'Titulo del post', body: 'lorem ipsum...', author: 'ElJosé', id: 2, likes: 17 },
@@ -69,7 +67,7 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                 {/* Lista de Peticiones de ayuda */}
                 <div className="container-fluid mt-md-4 mt-3">
                     <p className="display-6">Peticiones de ayuda:</p>
-                    <PetitionListComponent petitions={petitions} />
+                    <PetitionListComponent petitionsInfo={petitions} />
                 </div>
             </div>
         </div>

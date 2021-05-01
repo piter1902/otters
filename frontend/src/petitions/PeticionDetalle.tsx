@@ -10,15 +10,18 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
     const { id } = useParams<{ id: string }>();
 
     // Obtenemos la información de la peticion
-    const { data: petition, error, isPending } = useGetFetch(`${process.env.REACT_APP_BASEURL}/petitions/` + id);
+    const { data, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/petitions/` + id);
 
+    console.log("Pet detalle " + (data as any).userName);
     // Variables a mostrar
-    const userId = (petition as any).userId;
+    const petition = (data as any).petition;
+    const userName = (data as any).userName;
     const title = (petition as any).title;
     const place = (petition as any).place;
     const targetDate = new Date((petition as any).targetDate);
     const isUrgent = (petition as any).isUrgent;
     const expTime = (petition as any).expTime;
+
     return (
         <div className="row card mt-md-4 mt-3">
             <div style={{ textAlign: "center", verticalAlign: "middle" }}>
@@ -33,7 +36,7 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
                 < div className="card-body px-3 py-3">
                     <p className="h2 fw-bold">{title}</p>
                     {/* TODO: Deberiamos mostrar el Id del usuario */}
-                    <p className="lead ">Creado por {userId}</p>
+                    <p className="lead ">Creado por {userName}</p>
 
                     <p >{(petition as any).body}</p>
 
