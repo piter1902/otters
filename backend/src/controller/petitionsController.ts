@@ -280,7 +280,7 @@ const _doAddPetition = async function (req: Express.Request, res: Express.Respon
       place: req.body.place,
       targetDate: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
       isUrgent: req.body.isUrgent,
-      status: 'Created',
+      status: 'OPEN',
       expTime: req.body.expTime
     });
     user.petitions.push(

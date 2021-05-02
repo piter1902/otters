@@ -320,7 +320,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/petitions"
+                  $ref: "#/components/schemas/petitionsWithUsername"
         "400":
           description: Bad request
           content:
@@ -342,19 +342,13 @@ paths:
           required: true
           schema:
             type: string
-        - in: query
-          name: uid
-          description: UID of the user
-          required: true
-          schema:
-            type: string
       responses:
         "200":
           description: Petition exists
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/petitions"
+                $ref: "#/components/schemas/petitionsWithUsername"
         "404":
           description: User or petition does not exist
           content:
@@ -664,6 +658,23 @@ components:
           type: string
           description: Hour of the day when petition expires.
           example: "10:15"
+
+    # Petitions with Username      
+    petitionsWithUsername:
+      title: petitionsWithUsername
+      type: object
+      description: Object that contains the petition info and the owner's username
+      required:
+        - "petition"
+        - "userName"
+      properties:
+        petition:
+          $ref: "#/components/schemas/petitions"
+          description: The petition info
+        userName:
+          type: string
+          description: Name of the petition's owner
+
     # Post Schema
     posts:
       type: object
