@@ -84,6 +84,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/error"
+    post:
+      tags:
+        - "User"
+      description: Update info of user with uid
+      summary: Update info of user with uid
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: "#/components/schemas/user"
+      responses:
+        "200":
+          description: User exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        "404":
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
 
     # Deletes specific user
     delete:
@@ -108,6 +133,33 @@ paths:
                 example: ok
         "404":
           description: User doesn't exit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  /user/{uid}/ban:
+    post:
+      tags:
+        - "User"
+      description: Update ban info of user with uid
+      summary: Update ban info of user with uid
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: "#/components/schemas/bannedSchema"
+      responses:
+        "200":
+          description: User exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/bannedSchema"
+        "404":
+          description: User does not exist
           content:
             application/json:
               schema:
@@ -518,6 +570,7 @@ components:
       type: object
       required:
         - "name"
+        - "image"
         - "email"
         - "sanitaryZone"
         - "password"
@@ -530,6 +583,9 @@ components:
         name:
           type: string
           description: Name of the user
+        image:
+          type: string
+          description: Image of the user in base64
         email:
           type: string
           description: Email of the user
