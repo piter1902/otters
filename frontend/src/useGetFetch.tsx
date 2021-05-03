@@ -5,7 +5,7 @@ import { JSXElementConstructor, useState, useEffect } from "react";
 
 
 const useGetFetch = (url: any) => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<any>([]);
   const [isPending, setIsPending] = useState(true);
   const [error, setError] = useState(null);
 
