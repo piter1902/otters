@@ -32,10 +32,10 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
                             </div>
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    <p className="ms-3">Creado por {post.author}</p>
+                                    <p className="ms-3">Creado por {post.publisher}</p>
                                 </div>
                                 <div className="col-1 sm-12">
-                                    <p> {post.likes}</p>
+                                    <p> {post.possitive_valorations.length - post.negative_valorations.length}</p>
                                 </div>
                             </div>
                             <div className="row row justify-content-between">

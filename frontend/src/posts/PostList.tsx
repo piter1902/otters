@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import '../Navbar.css'
 import { Link } from 'react-router-dom';
 import './Post.css'
@@ -10,11 +10,21 @@ export interface PostListProps {
 
 const PostList: React.JSXElementConstructor<PostListProps> = () => {
 
-    const [posts, setPosts] = useState([
-        { title: 'Titulo del post', body: 'lorem ipsum...', author: 'ElJosé', id: 1, likes: 17 },
-        { title: 'Titulo del post', body: 'lorem ipsum...', author: 'ElJosé', id: 2, likes: 17 },
-        { title: 'Titulo del post', body: 'lorem ipsum...', author: 'ElJosé', id: 3, likes: 17 }
-    ])
+    const [posts, setPosts] = useState([])
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            const response = await fetch(`${process.env.REACT_APP_BASEURL!}/post`, { method: "GET" });
+            if (response.status == 200) {
+                // Respuesta correcta, cargamos los datos
+                const jsonData = await response.json();
+                setPosts(jsonData);
+                console.log("se cogen los post fde la base de datos")
+            }
+        }
+        fetchPosts();
+        return () => { }
+    }, []);
 
     return (
         <div >
