@@ -653,7 +653,7 @@ components:
           description: Date when the petition expires
         status:
           type: string
-          description: Status of the petition. It could be 'created', 'cancelled' or 'assigned'
+          description: Status of the petition. It could be 'COMPLETED', 'CANCELLED', 'ASSIGNED' or 'OPEN'
         expTime:
           type: string
           description: Hour of the day when petition expires.
@@ -663,17 +663,46 @@ components:
     petitionsWithUsername:
       title: petitionsWithUsername
       type: object
-      description: Object that contains the petition info and the owner's username
+      description: Object similar as Petition but instead of userId field, contains the userId and the userName
       required:
-        - "petition"
-        - "userName"
+        - "_id"
+        - "title"
+        - "body"
+        - "userInfo"
+        - "targetDate"
+        - "place"
+        - "isUrgent"
+        - "status"
+        - "expTime"
       properties:
-        petition:
-          $ref: "#/components/schemas/petitions"
-          description: The petition info
-        userName:
+        _id:
           type: string
-          description: Name of the petition's owner
+        title:
+          type: string 
+        body:
+          type: string
+        userInfo:
+          type: object
+          properties:
+            userId:
+              type: string
+              description: Petition's owner ID
+            userName:
+              type: string
+              description: Petition's owner name
+        targetDate:
+          type: string
+          format: date
+          pattern: /([0-9]{4})-(?:[0-9]{2})-([0-9]{2})/
+          example: "2019-05-17"
+        place:
+          type: string
+        isUrgent:
+          type: boolean
+        status:
+          type: string
+        expTime:
+          type: string
 
     # Post Schema
     posts:

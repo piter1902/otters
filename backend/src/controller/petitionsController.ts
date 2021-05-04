@@ -7,9 +7,21 @@ import mongoose, { mongo } from 'mongoose';
 // Evitamos mensaje de warning de deprecated
 mongoose.set('useFindAndModify', false);
 
+interface UserInfo {
+  userId: string;
+  userName: string;
+}
+
 interface PetitionsWithUsername {
-  petition: any;
-  userName: any;
+  _id: string;
+  title: string;
+  body: string;
+  userInfo: UserInfo;
+  targetDate: Date;
+  place: string;
+  isUrgent: Boolean;
+  status: string;
+  expTime: string;
 }
 
 const petitionsCreate = (req: Express.Request, res: Express.Response) => {
@@ -76,9 +88,20 @@ const getUserPetitions = (req: Express.Request, res: Express.Response) => {
           // sea una sola consulta como en el resto de pantallas
           const data: PetitionsWithUsername[] = [];
           (userPetitions as any[]).forEach(async (petition: any) => {
-            data.push({
-              petition: petition,
+            const userInfo: UserInfo = {
+              userId: petition.userId,
               userName: user.name
+            }
+            data.push({
+              _id: petition._id,
+              title: petition.title,
+              body: petition.body,
+              userInfo: userInfo,
+              place: petition.place,
+              isUrgent: petition.isUrgent,
+              status: petition.status,
+              targetDate: petition.targetDate,
+              expTime: petition.expTime
             });// Debemos hacer esto ya que sino se devuelve el array antes de cargar la info
             if (data.length == (userPetitions as any[]).length) {
               res.status(200).json(data);
@@ -112,11 +135,22 @@ const getPetitions = async (req: Express.Request, res: Express.Response) => {
     const data: PetitionsWithUsername[] = [];
     if (petitions) {
       (petitions as any[]).forEach(async (petition: any) => {
-        const userInfo = await User.findById(petition.userId).exec();
-        if (userInfo) {
+        const user = await User.findById(petition.userId).exec();
+        if (user) {
+          const userInfo: UserInfo = {
+            userId: user._id,
+            userName: user.name
+          }
           data.push({
-            petition: petition,
-            userName: (userInfo as any).name
+            _id: petition._id,
+            title: petition.title,
+            body: petition.body,
+            userInfo: userInfo,
+            place: petition.place,
+            isUrgent: petition.isUrgent,
+            status: petition.status,
+            targetDate: petition.targetDate,
+            expTime: petition.expTime
           });
         }
         // Debemos hacer esto ya que sino se devuelve el array antes de cargar la info
@@ -142,11 +176,22 @@ const readOnePetition = async (req: Express.Request, res: Express.Response) => {
       const petition = await Petition.findById(petId).exec();
 
       if (petition != null) {
-        const userInfo = await User.findById(petition.userId).exec();
-        if (userInfo) {
+        const user = await User.findById(petition.userId).exec();
+        if (user) {
+          const userInfo: UserInfo = {
+            userId: user._id,
+            userName: user.name
+          }
           const result: PetitionsWithUsername = {
-            petition: petition,
-            userName: userInfo.name
+            _id: petition._id,
+            title: petition.title,
+            body: petition.body,
+            userInfo: userInfo,
+            place: petition.place,
+            isUrgent: petition.isUrgent,
+            status: petition.status,
+            targetDate: petition.targetDate,
+            expTime: petition.expTime
           }
           res
             .status(200)

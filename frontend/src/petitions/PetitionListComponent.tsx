@@ -10,22 +10,22 @@ const PetitionListComponent: JSXElementConstructor<PetitionListComponentProps> =
         <div>
             {
                 petitionsInfo.map((petitionInfo: any) => (
-                    <Link to={"/peticionDetalle/" + petitionInfo.petition._id} className="custom-card" key={petitionInfo.petition._id}>
+                    <Link to={"/peticionDetalle/" + petitionInfo._id} className="custom-card" key={petitionInfo._id}>
 
-                        <div className="container-fluid d-flex justify-content-center card mb-4" key={petitionInfo.petition._id} >
+                        <div className="container-fluid d-flex justify-content-center card mb-4" key={petitionInfo._id} >
 
-                            <h2 className="ms-3 mt-3"><b>{petitionInfo.petition.title}</b></h2>
+                            <h2 className="ms-3 mt-3"><b>{petitionInfo.title}</b></h2>
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    <p className="ms-3">Creado por {petitionInfo.userName}</p>
+                                    <p className="ms-3">Creado por {petitionInfo.userInfo.userName}</p>
                                 </div>
                                 <div className="col-1 sm-12">
-                                    {petitionInfo.petition.status == "COMPLETED"
+                                    {petitionInfo.status == "COMPLETED"
                                         ? <i className="fas fa-check"></i>
                                         : "COMPLETED" && <i className="fas fa-times"></i>}
                                 </div>
                             </div>
-                            <p className="ms-3 mt-3"> {petitionInfo.petition.body} -- {petitionInfo.petition.place} </p>
+                            <p className="ms-3 mt-3"> {petitionInfo.body} -- {petitionInfo.place} </p>
                         </div>
                     </Link>
                 ))

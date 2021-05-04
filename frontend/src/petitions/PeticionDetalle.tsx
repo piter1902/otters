@@ -10,12 +10,12 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
     const { id } = useParams<{ id: string }>();
 
     // Obtenemos la información de la peticion
-    const { data, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/petitions/` + id);
+    const { data: petitions, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/petitions/` + id);
 
-    console.log("Pet detalle " + (data as any).userName);
+    console.log("Pet detalle " + (petitions as any).userName);
     // Variables a mostrar
-    const petition = (data as any).petition;
-    const userName = (data as any).userName;
+    const petition = (petitions as any).petition;
+    const userName = (petitions as any).userName;
     const title = (petition as any).title;
     const place = (petition as any).place;
     const targetDate = new Date((petition as any).targetDate);
