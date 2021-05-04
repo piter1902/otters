@@ -10,17 +10,16 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
     const { id } = useParams<{ id: string }>();
 
     // Obtenemos la información de la peticion
-    const { data: petitions, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/petitions/` + id);
+    const { data: petition, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/petitions/` + id);
 
-    console.log("Pet detalle " + (petitions as any).userName);
+    // console.log("Pet detalle " + (petitions as any).userInfo.userName);
     // Variables a mostrar
-    const petition = (petitions as any).petition;
-    const userName = (petitions as any).userName;
-    const title = (petition as any).title;
-    const place = (petition as any).place;
-    const targetDate = new Date((petition as any).targetDate);
-    const isUrgent = (petition as any).isUrgent;
-    const expTime = (petition as any).expTime;
+    // const userName = petition.userInfo.username;
+    // const title = (petition as any).title;
+    // const place = (petition as any).place;
+    // const targetDate = new Date((petition as any).targetDate);
+    // const isUrgent = (petition as any).isUrgent;
+    // const expTime = (petition as any).expTime;
 
     return (
         <div className="row card mt-md-4 mt-3">
@@ -32,27 +31,26 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
             {isPending && <div style={{ textAlign: "center", verticalAlign: "middle" }}>Loading ...</div>}
             {/* Show error if exists */}
             { error && <div style={{ textAlign: "center", verticalAlign: "middle" }}>{error}</div>}
-            {petition.length != 0 && (
+            {!isPending && (
                 < div className="card-body px-3 py-3">
-                    <p className="h2 fw-bold">{title}</p>
+                    <p className="h2 fw-bold">{petition.title}</p>
                     {/* TODO: Deberiamos mostrar el Id del usuario */}
-                    <p className="lead ">Creado por {userName}</p>
+                    <p className="lead ">Creado por {petition.userInfo.userName}</p>
 
                     <p >{(petition as any).body}</p>
 
-                    <p className="lead ">Lugar: {place}</p>
-                    <p className="lead ">Fecha: {targetDate.toLocaleDateString('en-ES')}</p>
-                    {expTime != ""
-                        ? <p className="lead ">Hora de expiración: {expTime}</p>
+                    <p className="lead ">Lugar: {petition.place}</p>
+                    <p className="lead ">Fecha: {new Date(petition.targetDate).toLocaleDateString("en-ES")}</p>
+                    {petition.expTime != ""
+                        ? <p className="lead ">Hora de expiración: {petition.expTime}</p>
                         : <p className="lead ">Hora de expiración: --:--</p>
                     }
-                    {isUrgent &&
+                    {petition.isUrgent &&
                         <p className="lead ">Urgente: Sí</p>
                     }
-                    {!isUrgent &&
+                    {!petition.isUrgent &&
                         <p className="lead ">Urgente: No</p>
                     }
-                    <p className="lead ">Correo electrónico: La petition no tiene correo directamente...</p>
                 </div>)
             }
 
