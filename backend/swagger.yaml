@@ -334,7 +334,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/petitions"
+                  $ref: "#/components/schemas/petitionsWithUsername"
         "400":
           description: Bad request
           content:
@@ -356,19 +356,13 @@ paths:
           required: true
           schema:
             type: string
-        - in: query
-          name: uid
-          description: UID of the user
-          required: true
-          schema:
-            type: string
       responses:
         "200":
           description: Petition exists
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/petitions"
+                $ref: "#/components/schemas/petitionsWithUsername"
         "404":
           description: User or petition does not exist
           content:
@@ -717,7 +711,56 @@ components:
           description: Date when the petition expires
         status:
           type: string
-          description: Status of the petition. It could be 'created', 'cancelled' or 'assigned'
+          description: Status of the petition. It could be 'COMPLETED', 'CANCELLED', 'ASSIGNED' or 'OPEN'
+        expTime:
+          type: string
+          description: Hour of the day when petition expires.
+          example: "10:15"
+
+    # Petitions with Username      
+    petitionsWithUsername:
+      title: petitionsWithUsername
+      type: object
+      description: Object similar as Petition but instead of userId field, contains the userId and the userName
+      required:
+        - "_id"
+        - "title"
+        - "body"
+        - "userInfo"
+        - "targetDate"
+        - "place"
+        - "isUrgent"
+        - "status"
+        - "expTime"
+      properties:
+        _id:
+          type: string
+        title:
+          type: string 
+        body:
+          type: string
+        userInfo:
+          type: object
+          properties:
+            userId:
+              type: string
+              description: Petition's owner ID
+            userName:
+              type: string
+              description: Petition's owner name
+        targetDate:
+          type: string
+          format: date
+          pattern: /([0-9]{4})-(?:[0-9]{2})-([0-9]{2})/
+          example: "2019-05-17"
+        place:
+          type: string
+        isUrgent:
+          type: boolean
+        status:
+          type: string
+        expTime:
+          type: string
 
     # Post Schema
     posts:
