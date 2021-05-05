@@ -11,6 +11,9 @@ userRoute.route("/")
 userRoute.route("/:uid")
     .get(userController.getUserByUID)
     .delete(userController.deleteUserByUID)
+    .post(userController.updateUser);
+
+userRoute.route("/:uid/ban")
     .post(userController.banUser);
 
 // Petitions
