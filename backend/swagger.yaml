@@ -95,7 +95,14 @@ paths:
           description: UID of the user
           required: true
           schema:
-            type: "#/components/schemas/user"
+            type: string
+      requestBody:
+        description: Data to update user with id = uid
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/user"
       responses:
         "200":
           description: User exists
@@ -150,7 +157,14 @@ paths:
           description: UID of the user
           required: true
           schema:
-            type: "#/components/schemas/bannedSchema"
+            type: string
+      requestBody:
+        description: Body with data about ban and its duration
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/bannedSchema"
       responses:
         "200":
           description: User exists
@@ -593,7 +607,7 @@ components:
           type: string
           description: SanitaryZone of the user
         bannedObject:
-          type: type: object
+          type: object
           $ref: "#/components/schemas/bannedSchema"
           description: Info about ban of the user
         strikes:
@@ -618,9 +632,6 @@ components:
         - "banned"
         - "bannedUntil"
       properties:
-        _id:
-          type: integer
-          description: Object identifier
         banned:
           type: boolean
           description: True if the user is banned, false if not

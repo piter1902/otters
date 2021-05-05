@@ -1,5 +1,4 @@
-import React, { useRef, useState } from 'react'
-import base64 from 'react-native-base64';
+import React, { useState } from 'react'
 import useGetFetch from '../useGetFetch';
 import useZBS from '../estadisticas/useZBS';
 
@@ -49,7 +48,7 @@ const ChangeUserData = () => {
         data = data.split("data:image/png;base64,").pop();
         console.log("picData " + picData);
         console.log("data " + data);
-        if (passwordActual == passwordAct) {
+        if (passwordActual === passwordAct) {
             console.log("Las contraseñas coinciden");
             const result = await fetch(`${process.env.REACT_APP_BASEURL}/user/` + id,
                 {

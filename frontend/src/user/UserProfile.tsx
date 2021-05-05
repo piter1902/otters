@@ -1,11 +1,8 @@
-import React, { JSXElementConstructor, useEffect, useState } from 'react'
-import { useParams } from "react-router";
+import React, { JSXElementConstructor } from 'react'
 import PetitionListComponent from '../petitions/PetitionListComponent';
 import PostListComponent from '../posts/PostListComponent';
 import ChangeUserData from './ChangeUserData';
 import useGetFetch from '../useGetFetch';
-import base64 from 'react-native-base64'
-
 
 
 interface UserProfileProps {
