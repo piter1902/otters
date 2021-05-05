@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 import UserProfile from './user/UserProfile';
 import AdminPage from './user/AdminPage';
 import EstadisticasCovid from './estadisticas/EstadisticasCovid';
-import Login from './login/Login';
-import Register from './login/Register';
+import Login from './auth/Login';
+import Register from './auth/Register';
 import PostList from './posts/PostList';
 import PetitionList from './petitions/PetitionList';
 import CreatePost from './posts/CreatePost';
