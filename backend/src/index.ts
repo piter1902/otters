@@ -59,9 +59,7 @@ if (process.env.PRODUCTION === "true") {
     logger.info(`DB URI: ${corsURI}`);
 }
 
-app.use(cors({
-    credentials: true
-}));
+app.use(cors());
 
 /* -----------------Passport configuration ----------------- */
 app.use(expressSession({
