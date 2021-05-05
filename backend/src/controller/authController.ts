@@ -30,7 +30,7 @@ const loginUser = async (req: Express.Request, res: Express.Response, next: Next
       const token = jwt.sign(JSON.stringify(payload), process.env.JWT_SECRET!);
       res
         .status(200)
-        .json({ data: { token: token } });
+        .json({ data: { token: token, userId: user._id } });
       /*En caso de usar sessions deberiamos llamar al logIn */
       // req.logIn(user, (err) => {
       //   if (err) {
