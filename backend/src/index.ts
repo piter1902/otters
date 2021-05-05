@@ -56,10 +56,14 @@ app.use(bodyParser.json());
 let corsURI: string = 'http://localhost:3000'; // React app location
 if (process.env.PRODUCTION === "true") {
     corsURI = process.env.CORS_URI!.toString();
-    logger.info(`DB URI: ${corsURI}`);
+    logger.info(`CORS URI: ${corsURI}`);
 }
 
-app.use(cors());
+// Configuracion del CORS
+app.use(cors({
+    origin: corsURI,
+    credentials: true
+}));
 
 /* -----------------Passport configuration ----------------- */
 app.use(expressSession({
