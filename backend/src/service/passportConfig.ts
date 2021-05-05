@@ -3,23 +3,39 @@ import bcrypt from 'bcrypt';
 import passportLocal from 'passport-local';
 import logger from '@poppinss/fancy-logs';
 import passport from 'passport';
+import passportJwt, {ExtractJwt} from 'passport-jwt';
 
 const LocalStrategy = passportLocal.Strategy;
+const JwtStrategy = passportJwt.Strategy;
 
-passport.serializeUser((user: any, done: any) => {
-  logger.info("User en serialze: " + user);
-  done(null, user.id);
-});
+// passport.serializeUser((user: any, done: any) => {
+//   logger.info("User en serialze: " + user);
+//   done(null, user.id);
+// });
 
-passport.deserializeUser((id, done) => {
-  User.findById(id, (err: any, user: any) => done(err, user));
-});
+// passport.deserializeUser((id, done) => {
+//   User.findById(id, (err: any, user: any) => done(err, user));
+// });
+
+/**
+ * Estrategia JWT
+ * Source: https://davidinformatico.com/jwt-express-js-passport/
+ */
+let opts:any = {}
+opts.jwtFromRequest = passportJwt.ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = process.env.JWT_SECRET;
+opts.algorithms = [process.env.JWT_ALGORITHM];
+passport.use(new JwtStrategy(opts, (jwt_payload, done)=>{
+    //callback de verificación
+}));
 
 /**
  * Sign in using Email and Password.
  */
-
-passport.use(new LocalStrategy({ usernameField: "email" }, async (email, password, done) => {
+passport.use(new LocalStrategy({
+  usernameField: "email",
+  session: false
+}, async (email, password, done) => {
   try {
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
