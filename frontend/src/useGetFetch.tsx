@@ -17,7 +17,7 @@ const useGetFetch = (url: any) => {
     const getData = async () => {
       console.log("Fetching to: " + url);
       try {
-        const response = await fetch(url, { signal: abortCont.signal });
+        const response = await fetch(url, { method: "GET", signal: abortCont.signal });
         if (response.ok) {
           // console.log(await response.json());
           setData(await response.json());
