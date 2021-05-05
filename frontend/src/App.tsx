@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Navbar from './Navbar';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import UserProfile from './user/UserProfile';
-import AdminPage from './user/AdminPage';
+import AdminPage from './user/AdminPage/AdminPage';
 import EstadisticasCovid from './estadisticas/EstadisticasCovid';
 import Login from './auth/Login';
 import Register from './auth/Register';
@@ -53,7 +53,7 @@ const App = () => {
               <PostDetalle />
             </Route>
             {/* Vista detallada de peticion */}
-            <Route exact path="/peticionDetalle">
+            <Route exact path="/peticionDetalle/:id">
               <PeticionDetalle />
             </Route>
             {/* Foro */}

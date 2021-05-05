@@ -11,6 +11,9 @@ userRoute.route("/")
 userRoute.route("/:uid")
     .get(userController.getUserByUID)
     .delete(userController.deleteUserByUID)
+    .post(userController.updateUser);
+
+userRoute.route("/:uid/ban")
     .post(userController.banUser);
 
 // Petitions
@@ -26,13 +29,5 @@ userRoute.route("/:uid/posts")
 userRoute.route("/:uid/posts/:postId")
     .get(postsController.readOnePost)
     .delete(postsController.deleteOnePost);
-
-// TODO: Valoraciones de un post
-// userRoute.route("/:uid/posts/:postId/valoration")
-//     .get(postsController.readValoration)
-//     .post(postsController.addValoration)
-
-// userRoute.route("/:uid/posts/:postId/valoration/:valorationId")
-//     .delete(postsController.deleteOneValoration);
 
 export default userRoute;

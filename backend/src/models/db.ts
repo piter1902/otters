@@ -11,6 +11,8 @@ if (process.env.PRODUCTION === "true") {
     logger.info(`DB URI: ${dbURI}`);
 }
 
+
+
 if (process.env.POPULATEDB === "true") {
     logger.start("Populate DB");
     poblacionBD.populateDB();

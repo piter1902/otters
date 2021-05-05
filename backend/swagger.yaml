@@ -17,8 +17,22 @@ tags:
     description: "Everithing about the users"
   - name: "Sanitary Zone"
     description: "Sanitary Zones"
+  - name: "Statistics"
+    description: "Statistics about system"
 
 paths:
+  /stats:
+    get:
+      tags:
+        - "Statistics"
+      description: Get stats for system
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/stats"
   /user:
     # Get users
     get:
@@ -84,6 +98,38 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/error"
+    post:
+      tags:
+        - "User"
+      description: Update info of user with uid
+      summary: Update info of user with uid
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Data to update user with id = uid
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/user"
+      responses:
+        "200":
+          description: User exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        "404":
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
 
     # Deletes specific user
     delete:
@@ -108,6 +154,40 @@ paths:
                 example: ok
         "404":
           description: User doesn't exit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  /user/{uid}/ban:
+    post:
+      tags:
+        - "User"
+      description: Update ban info of user with uid
+      summary: Update ban info of user with uid
+      parameters:
+        - in: path
+          name: uid
+          description: UID of the user
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Body with data about ban and its duration
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/bannedSchema"
+      responses:
+        "200":
+          description: User exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/bannedSchema"
+        "404":
+          description: User does not exist
           content:
             application/json:
               schema:
@@ -320,7 +400,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/petitions"
+                  $ref: "#/components/schemas/petitionsWithUsername"
         "400":
           description: Bad request
           content:
@@ -342,19 +422,13 @@ paths:
           required: true
           schema:
             type: string
-        - in: query
-          name: uid
-          description: UID of the user
-          required: true
-          schema:
-            type: string
       responses:
         "200":
           description: Petition exists
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/petitions"
+                $ref: "#/components/schemas/petitionsWithUsername"
         "404":
           description: User or petition does not exist
           content:
@@ -513,11 +587,54 @@ paths:
 
 components:
   schemas:
+    # Stats scheme
+    stats:
+      type: object
+      required:
+        - "peticiones"
+        - "foro"
+        - "usuarios"
+      properties:
+        peticiones:
+          type: object
+          required:
+            - "realizadas"
+            - "atendidas"
+            - "canceladas"
+          properties:
+            realizadas:
+              type: number
+            atendidas:
+              type: number
+            canceladas:
+              type: number
+        foro:
+          type: object
+          required:
+            - "escritos"
+            - "diaConMasPublicaciones"
+          properties:
+            escritos:
+              type: number
+            diaConMasPublicaciones:
+              type: string
+              format: date
+        usuarios:
+          type: object
+          required:
+            - "registrados"
+            - "verificados"
+          properties:
+            registrados:
+              type: number
+            verificados:
+              type: number
     # User Schema
     user:
       type: object
       required:
         - "name"
+        - "image"
         - "email"
         - "sanitaryZone"
         - "password"
@@ -530,21 +647,25 @@ components:
         name:
           type: string
           description: Name of the user
+        image:
+          type: string
+          description: Image of the user in base64
         email:
           type: string
           description: Email of the user
         sanitaryZone:
           type: string
-          password: SanitaryZone of the user
+          description: SanitaryZone of the user
         bannedObject:
-          type: bannedSchema
+          type: object
+          $ref: "#/components/schemas/bannedSchema"
           description: Info about ban of the user
         strikes:
           type: number
-          password: Number of strikes of the user
+          description: Number of strikes of the user
         isAdmin:
           type: boolean
-          password: True if the user is admin, false if not
+          description: True if the user is admin, false if not
         petitions:
           type: array
           description: IDs of the user's petitions
@@ -561,14 +682,12 @@ components:
         - "banned"
         - "bannedUntil"
       properties:
-        _id:
-          type: integer
-          description: Object identifier
         banned:
           type: boolean
           description: True if the user is banned, false if not
         bannedUntil:
-          type: date
+          type: string
+          format: date
           description: Date until the user is banned
     # Sanitary Zone Schema
     sanitaryZoneWithoutData:
@@ -659,7 +778,56 @@ components:
           description: Date when the petition expires
         status:
           type: string
-          description: Status of the petition. It could be 'created', 'cancelled' or 'assigned'
+          description: Status of the petition. It could be 'COMPLETED', 'CANCELLED', 'ASSIGNED' or 'OPEN'
+        expTime:
+          type: string
+          description: Hour of the day when petition expires.
+          example: "10:15"
+
+    # Petitions with Username      
+    petitionsWithUsername:
+      title: petitionsWithUsername
+      type: object
+      description: Object similar as Petition but instead of userId field, contains the userId and the userName
+      required:
+        - "_id"
+        - "title"
+        - "body"
+        - "userInfo"
+        - "targetDate"
+        - "place"
+        - "isUrgent"
+        - "status"
+        - "expTime"
+      properties:
+        _id:
+          type: string
+        title:
+          type: string 
+        body:
+          type: string
+        userInfo:
+          type: object
+          properties:
+            userId:
+              type: string
+              description: Petition's owner ID
+            userName:
+              type: string
+              description: Petition's owner name
+        targetDate:
+          type: string
+          format: date
+          pattern: /([0-9]{4})-(?:[0-9]{2})-([0-9]{2})/
+          example: "2019-05-17"
+        place:
+          type: string
+        isUrgent:
+          type: boolean
+        status:
+          type: string
+        expTime:
+          type: string
 
     # Post Schema
     posts:

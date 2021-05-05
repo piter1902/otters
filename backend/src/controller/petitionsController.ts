@@ -7,6 +7,23 @@ import mongoose, { mongo } from 'mongoose';
 // Evitamos mensaje de warning de deprecated
 mongoose.set('useFindAndModify', false);
 
+interface UserInfo {
+  userId: string;
+  userName: string;
+}
+
+interface PetitionsWithUsername {
+  _id: string;
+  title: string;
+  body: string;
+  userInfo: UserInfo;
+  targetDate: Date;
+  place: string;
+  isUrgent: Boolean;
+  status: string;
+  expTime: string;
+}
+
 const petitionsCreate = (req: Express.Request, res: Express.Response) => {
   // Get query params
   const userId = req.body.userId;
@@ -67,10 +84,30 @@ const getUserPetitions = (req: Express.Request, res: Express.Response) => {
               $in: petitionsId
             }
           });
+          // TODO: No tiene sentido porque siempre va a ser el mismo user. De momento lo dejo así para que en el front 
+          // sea una sola consulta como en el resto de pantallas
+          const data: PetitionsWithUsername[] = [];
+          (userPetitions as any[]).forEach(async (petition: any) => {
+            const userInfo: UserInfo = {
+              userId: petition.userId,
+              userName: user.name
+            }
+            data.push({
+              _id: petition._id,
+              title: petition.title,
+              body: petition.body,
+              userInfo: userInfo,
+              place: petition.place,
+              isUrgent: petition.isUrgent,
+              status: petition.status,
+              targetDate: petition.targetDate,
+              expTime: petition.expTime
+            });// Debemos hacer esto ya que sino se devuelve el array antes de cargar la info
+            if (data.length == (userPetitions as any[]).length) {
+              res.status(200).json(data);
+            }
+          });
 
-          res
-            .status(200)
-            .json(userPetitions);
 
         } else {
           res
@@ -90,19 +127,43 @@ const getUserPetitions = (req: Express.Request, res: Express.Response) => {
   }
 }
 
-// Obtiene todas las peticiones
+// Obtiene todas las peticiones acompañadas del username de su propietario
 const getPetitions = async (req: Express.Request, res: Express.Response) => {
-  await Petition.find().exec((err: Express.ErrorRequestHandler, petitions: any) => {
-    if (err) {
-      res
-        .status(400)
-        .json(err);
-    } else {
-      res
-        .status(200)
-        .json(petitions);
+
+  try {
+    const petitions = await Petition.find().exec();
+    const data: PetitionsWithUsername[] = [];
+    if (petitions) {
+      (petitions as any[]).forEach(async (petition: any) => {
+        const user = await User.findById(petition.userId).exec();
+        if (user) {
+          const userInfo: UserInfo = {
+            userId: user._id,
+            userName: user.name
+          }
+          data.push({
+            _id: petition._id,
+            title: petition.title,
+            body: petition.body,
+            userInfo: userInfo,
+            place: petition.place,
+            isUrgent: petition.isUrgent,
+            status: petition.status,
+            targetDate: petition.targetDate,
+            expTime: petition.expTime
+          });
+        }
+        // Debemos hacer esto ya que sino se devuelve el array antes de cargar la info
+        if (data.length == (petitions as any[]).length) {
+          res.status(200).json(data);
+        }
+      });
     }
-  });
+  } catch (err) {
+    res
+      .status(400)
+      .json(err);
+  }
 
 }
 
@@ -115,9 +176,31 @@ const readOnePetition = async (req: Express.Request, res: Express.Response) => {
       const petition = await Petition.findById(petId).exec();
 
       if (petition != null) {
-        res
-          .status(200)
-          .json(petition);
+        const user = await User.findById(petition.userId).exec();
+        if (user) {
+          const userInfo: UserInfo = {
+            userId: user._id,
+            userName: user.name
+          }
+          const result: PetitionsWithUsername = {
+            _id: petition._id,
+            title: petition.title,
+            body: petition.body,
+            userInfo: userInfo,
+            place: petition.place,
+            isUrgent: petition.isUrgent,
+            status: petition.status,
+            targetDate: petition.targetDate,
+            expTime: petition.expTime
+          }
+          res
+            .status(200)
+            .json(result);
+        } else {
+          res
+            .status(404)
+            .json({ "message": "user's petition not found" })
+        }
       } else {
         // Petition not found
         res
@@ -242,7 +325,8 @@ const _doAddPetition = async function (req: Express.Request, res: Express.Respon
       place: req.body.place,
       targetDate: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
       isUrgent: req.body.isUrgent,
-      status: 'Created'
+      status: 'OPEN',
+      expTime: req.body.expTime
     });
     user.petitions.push(
       petition._id
