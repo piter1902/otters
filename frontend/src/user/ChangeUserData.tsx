@@ -41,6 +41,8 @@ const ChangeUserData = () => {
         console.log("zona "+zone);
         let data = picData && picData || "";
         data = data.split("data:image/jpeg;base64,").pop();
+        data = data.split("data:image/jpg;base64,").pop();
+        data = data.split("data:image/png;base64,").pop();
         console.log("picData "+picData);
         console.log("data "+data);
         if (passwordActual == passwordAct){

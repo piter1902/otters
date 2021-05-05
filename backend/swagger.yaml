@@ -591,16 +591,17 @@ components:
           description: Email of the user
         sanitaryZone:
           type: string
-          password: SanitaryZone of the user
+          description: SanitaryZone of the user
         bannedObject:
-          type: bannedSchema
+          type: type: object
+          $ref: "#/components/schemas/bannedSchema"
           description: Info about ban of the user
         strikes:
           type: number
-          password: Number of strikes of the user
+          description: Number of strikes of the user
         isAdmin:
           type: boolean
-          password: True if the user is admin, false if not
+          description: True if the user is admin, false if not
         petitions:
           type: array
           description: IDs of the user's petitions
@@ -624,7 +625,8 @@ components:
           type: boolean
           description: True if the user is banned, false if not
         bannedUntil:
-          type: date
+          type: string
+          format: date
           description: Date until the user is banned
     # Sanitary Zone Schema
     sanitaryZoneWithoutData:
