@@ -1,33 +1,23 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router';
+import useZBS from '../estadisticas/useZBS';
 import './Login.css';
+import useToken from './Token/useToken';
 
 export interface RegisterProps {
 
 }
 
-// Realiza el registro del usuario
-async function register(credentials: any) {
-    await fetch(`http://localhost:8080/auth/register`,
-        {
-            method: "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify({
-                name: credentials.userName,
-                password: credentials.userPassword,
-                email: credentials.userMail,
-                sanitaryZone: credentials.zonaSalud
-            })
-        }).then(async (res) => console.log(await res));
-};
-
 const Register: React.JSXElementConstructor<RegisterProps> = () => {
+
+    // Navegacion
+    const history = useHistory();
 
     // Zona de salud elegida
     const [zonaSalud, setZonaSalud] = useState<string>("0");
+
+    // Zonas de salud
+    const zbs = useZBS(process.env.REACT_APP_BASEURL!);
 
     // Información introducida del usuario
     const [userName, setUsername] = useState("");
@@ -40,6 +30,35 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
     const zonaSaludChanged = (event: { target: { value: string; }; }) => {
         setZonaSalud(event.target.value);
     }
+
+
+    // Realiza el registro del usuario
+    const register = async (credentials: any) => {
+        // TODO: más comprobaciones de los campos y la seguridad de las contraseñas aqui
+        const response = await fetch(`${process.env.REACT_APP_BASEURL}/auth/register`,
+            {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    name: credentials.userName,
+                    password: credentials.userPassword,
+                    email: credentials.userMail,
+                    sanitaryZone: credentials.zonaSalud
+                })
+            });
+        if (response.status === 201) {
+            // Ha ido bien
+            const json = await response.json();
+            // Recargamos la página y navegamos al login
+            history.push("/login");
+            window.location.reload();
+        }
+    };
+
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
@@ -74,10 +93,11 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
                             </label>
                             <select id="zonasaludselect" className="form-select" value={zonaSalud} onChange={zonaSaludChanged} required>
                                 <option value="0" disabled>Elige una zona sanitaria</option>
-                                <option value="1">zona 1</option>
-                                <option value="2">zona 2</option>
-                                <option value="3">zona 3</option>
-                                <option value="4">zona 4</option>
+                                {
+                                    zbs.map(z => (
+                                        <option value={z._id} key={z._id}>{z.name}</option>
+                                    ))
+                                }
                             </select>
                         </div>
                         <div className="input-group">
@@ -95,7 +115,6 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
                 </div>
             </form>
             <div className="col px-md-3 mt-2">
-
             </div>
         </div>);
 }

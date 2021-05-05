@@ -11,27 +11,27 @@ const useZBS = (baseURL: string) => {
 
     useEffect(() => {
         const fetchZones = async () => {
-            const response = await fetch(`${baseURL}/zone`, {method: "GET"});
+            const response = await fetch(`${baseURL}/zone`, { method: "GET" });
             if (response.status === 200) {
                 // Nos devuelve las zonas sanitarias
                 let jsonBody = await response.json();
-                
+
                 // Busqueda de nombres duplicados
                 const zbsArray: any[] = [];
                 jsonBody.forEach((element: { name: string; }) => {
                     const matched = zbsArray.find((value) => value.name === element.name);
-                    if(matched === undefined) {
+                    if (matched === undefined) {
                         // El elemento no existe, lo añadimos
                         zbsArray.push(element);
                     }
                 });
 
-                setZones(zbsArray);
+                setZones(zbsArray.sort((zbs1, zbs2) => zbs1.name < zbs2.name ? -1 : 1));
             }
         };
 
         fetchZones();
-        return () => {}
+        return () => { }
     }, [baseURL]);
 
     return zones;

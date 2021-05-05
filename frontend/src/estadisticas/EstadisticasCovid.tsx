@@ -49,7 +49,7 @@ const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = (
                             <option value="3">zona 3</option>
                             <option value="4">zona 4</option> */}
                             {
-                                zonasSalud.sort((zbs1, zbs2) => zbs1.name < zbs2.name ? -1 : 1).map((zbs) => (
+                                zonasSalud.map((zbs) => (
                                     <option value={zbs._id} key={zbs._id}>{zbs.name}</option>
                                 ))
                             }
