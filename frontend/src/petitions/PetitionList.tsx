@@ -13,7 +13,7 @@ export interface PetitionListProps {
 const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
 
     const { data, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/petitions`);
-    console.log(data);
+
     return (
         <div>
             <div className="container-fluid mb-4 mt-4">
@@ -39,7 +39,7 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
             </div>
             <div className="container">
                 {isPending ? <div style={{ textAlign: "center", verticalAlign: "middle" }}>Loading ...</div>
-                    : <PetitionListComponent petitions={data} />}
+                    : <PetitionListComponent petitionsInfo={data} />}
             </div>
         </div>
     );
