@@ -42,7 +42,7 @@ const useGetFetch = (url: any) => {
 
     return () => { }
 
-  }, []);
+  }, [url]);
   return { data, isPending, error };
 
 }

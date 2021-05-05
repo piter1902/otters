@@ -11,7 +11,7 @@ interface AdminPageProps {
 const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
 
     // Datos de ayuda
-    const { data: stats, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/stats`)
+    const { data: stats, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL!}/stats`)
 
     return (
         <div className="container-fluid d-flex justify-content-center card">
