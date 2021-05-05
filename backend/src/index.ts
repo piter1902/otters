@@ -60,7 +60,6 @@ if (process.env.PRODUCTION === "true") {
 }
 
 app.use(cors({
-    origin: corsURI, // React app location
     credentials: true
 }));
 
