@@ -18,25 +18,26 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
     
     //Cambiar por id de usuario
     const id = "608ee32beb584f654c7dea6d";
-    const { data: user, error, isPending } = useGetFetch(`${process.env.REACT_APP_BASEURL}/user/` + id);
+    const { data: user} = useGetFetch(`${process.env.REACT_APP_BASEURL}/user/` + id);
 
     const username = (user as any).name;
     console.log('username'+username);
     const email = (user as any).email;
-    const zonaSanitariaID = (user as any).zonaSanitaria;
+    const zonaSanitariaID = (user as any).sanitaryZone;
+    console.log("ZS1 "+zonaSanitariaID);
     const picture =(user as any).picture;
 
     
-    const picture2 = "data:image/jpeg;base64,"+picture;
+    const picture2 = `data:image/jpeg;base64,${picture}`;
     
 
     //const { data: zona, error:error2, isPending:isPending2 } = useGetFetch(`${process.env.REACT_APP_BASEURL}/zone/` + zonaSanitariaID);
-    var { data: dataPosts, error:error2, isPending:isPending2 } = useGetFetch(`${process.env.REACT_APP_BASEURL}/user/` + id + `/posts`);
+    var { data: dataPosts} = useGetFetch(`${process.env.REACT_APP_BASEURL}/user/` + id + `/posts`);
 
     console.log(dataPosts);
     
 
-    const { data: dataPetitions, error:error3, isPending:isPending3 } = useGetFetch(`${process.env.REACT_APP_BASEURL}/user/` + id + `/petitions`);
+    const { data: dataPetitions} = useGetFetch(`${process.env.REACT_APP_BASEURL}/user/` + id + `/petitions`);
 
     //const zonaSanitaria = (zona as any).name;
     
@@ -81,7 +82,7 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                     </button>
                    
                     {/* Modal de cambio */}
-                    <ChangeUserData />
+                    <ChangeUserData/>
                 </div>
                 {/* Lista de Posts */}
                 <div className="container-fluid mt-md-4 mt-3">

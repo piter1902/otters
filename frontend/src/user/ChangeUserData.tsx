@@ -1,19 +1,28 @@
 import React, { useRef, useState } from 'react'
 import base64 from 'react-native-base64';
 import useGetFetch from '../useGetFetch';
+import useZBS from '../estadisticas/useZBS';
 
-const ChangeUserData = () => {
+
+
+const ChangeUserData= () => {
 
     const [passwordAct, setPasswordAct] = useState("");
     const [passwordNue, setPasswordNue] = useState("");
     const [zone, setZone] = useState("");
     //Cambiar por id de usuario
     const id = "608ee32beb584f654c7dea6d";
-    const { data: user, error, isPending } = useGetFetch(`${process.env.REACT_APP_BASEURL}/user/` + id);
+    const { data: user} = useGetFetch(`${process.env.REACT_APP_BASEURL}/user/` + id);
     const passwordActual = (user as any).password;
+    
+    
     let picData:any;
 
-    var { data: dataZones, error:error2, isPending:isPending2 } = useGetFetch(`${process.env.REACT_APP_BASEURL}/zone`);
+    var { data: dataZones } = useGetFetch(`${process.env.REACT_APP_BASEURL}/zone`);
+
+
+
+    const zonasSalud = useZBS(process.env.REACT_APP_BASEURL!);
     
     function getBase64(file: any) {
         //console.log("pic "+file);
@@ -115,13 +124,11 @@ const ChangeUserData = () => {
                                                     <option value="id4">Huesca Rural</option>
                                                 </select>*/}
                                                 <select id="zonasanitariaselect" className="form-control" onChange={e => setZone(e.target.value)}>
-                                                {dataZones.map((zone: any) => (
-                                                        
-                                                    
-                                                        <option key={zone._id} value={zone._id}>{zone.name}</option>
-                                                    
-                                                        
-                                                ))}
+                                                {
+                                                    zonasSalud.sort((zbs1, zbs2) => zbs1.name < zbs2.name ? -1 : 1).map((zbs) => (
+                                                        <option value={zbs._id} key={zbs._id}>{zbs.name}</option>
+                                                    ))
+                                                }
                                                 </select>
                                     
                                 </div>
