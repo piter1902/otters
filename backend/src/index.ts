@@ -28,6 +28,7 @@ const swaggerDocument = YAML.load("swagger.yaml");
 // Configuración de las variables de entorno
 import dotenv from 'dotenv';
 import Utils from './Utils';
+import estadisticasRoute from './route/estadisticasRoute';
 
 const result = dotenv.config();
 
@@ -56,11 +57,12 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 5
 let corsURI: string = 'http://localhost:3000'; // React app location
 if (process.env.PRODUCTION === "true") {
     corsURI = process.env.CORS_URI!.toString();
-    logger.info(`DB URI: ${corsURI}`);
+    logger.info(`CORS URI: ${corsURI}`);
 }
 
+// Configuracion del CORS
 app.use(cors({
-    origin: corsURI, // React app location
+    origin: corsURI,
     credentials: true
 }));
 
@@ -95,5 +97,8 @@ app.use("/petitions", petitionsRoute);
 
 // Controlador para autenticacion
 app.use("/auth", authRoute);
+
+// Controlador para las estadisticas
+app.use("/stats", estadisticasRoute);
 
 app.listen(port, () => console.log(`Listening at ${port} 🛠`))

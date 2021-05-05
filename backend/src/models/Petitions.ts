@@ -32,6 +32,10 @@ const PetitionsSchema = new Schema({
     status: {
         type: String,
         required: true
+    },
+    // TODO: En principio no debería ser obliagtorio
+    expTime: {
+        type: String
     }
 });
 

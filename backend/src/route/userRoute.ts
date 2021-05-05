@@ -30,12 +30,4 @@ userRoute.route("/:uid/posts/:postId")
     .get(postsController.readOnePost)
     .delete(postsController.deleteOnePost);
 
-// TODO: Valoraciones de un post
-// userRoute.route("/:uid/posts/:postId/valoration")
-//     .get(postsController.readValoration)
-//     .post(postsController.addValoration)
-
-// userRoute.route("/:uid/posts/:postId/valoration/:valorationId")
-//     .delete(postsController.deleteOneValoration);
-
 export default userRoute;

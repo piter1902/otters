@@ -9,11 +9,12 @@ const ChangeUserData = () => {
     const [passwordAct, setPasswordAct] = useState("");
     const [passwordNue, setPasswordNue] = useState("");
     const [zone, setZone] = useState("");
-    //Cambiar por id de usuario
-    const id = "608ee32beb584f654c7dea6d";
-    const { data: user } = useGetFetch(`${process.env.REACT_APP_BASEURL}/user/` + id);
-    const passwordActual = (user as any).password;
 
+    // TODO: Cambiar por id de usuario
+    const id = "6092b83ce4ac3e3f9662343b";
+    const { data: user, isPending } = useGetFetch(`${process.env.REACT_APP_BASEURL}/user/` + id);
+
+    // Datos sobre la foto
     let picData: any;
 
     const zonasSalud = useZBS(process.env.REACT_APP_BASEURL!);
@@ -48,7 +49,7 @@ const ChangeUserData = () => {
         data = data.split("data:image/png;base64,").pop();
         console.log("picData " + picData);
         console.log("data " + data);
-        if (passwordActual === passwordAct) {
+        if (user.password === passwordAct) {
             console.log("Las contraseñas coinciden");
             const result = await fetch(`${process.env.REACT_APP_BASEURL}/user/` + id,
                 {
@@ -71,7 +72,8 @@ const ChangeUserData = () => {
 
     return (
         <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div className="modal-dialog">
+            {isPending && <div> </div>}
+            {!isPending && <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title" id="staticBackdropLabel">Cambiar datos</h5>
@@ -145,7 +147,7 @@ const ChangeUserData = () => {
                         <button type="button" className="btn btn-success" onClick={changeDataButtonClicked} data-bs-dismiss="modal" >Guardar</button>
                     </div>
                 </div>
-            </div>
+            </div>}
 
 
 

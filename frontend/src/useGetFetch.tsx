@@ -5,9 +5,10 @@ import { JSXElementConstructor, useState, useEffect } from "react";
 
 
 const useGetFetch = (url: any) => {
-  const [data, setData] = useState([]);
-  const [isPending, setIsPending] = useState(true);
-  const [error, setError] = useState(null);
+
+  const [data, setData] = useState<any>(null);
+  const [isPending, setIsPending] = useState<boolean>(true);
+  const [error, setError] = useState<any>(null);
 
   useEffect(() => {
 
@@ -16,7 +17,7 @@ const useGetFetch = (url: any) => {
     const getData = async () => {
       console.log("Fetching to: " + url);
       try {
-        const response = await fetch(url, { signal: abortCont.signal });
+        const response = await fetch(url, { method: "GET", signal: abortCont.signal });
         if (response.ok) {
           // console.log(await response.json());
           setData(await response.json());
@@ -41,7 +42,7 @@ const useGetFetch = (url: any) => {
 
     return () => { }
 
-  }, []);
+  }, [url]);
   return { data, isPending, error };
 
 }

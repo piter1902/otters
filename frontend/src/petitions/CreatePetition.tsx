@@ -1,5 +1,4 @@
-import { FormEvent, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import '../Navbar.css'
 
 export interface createPetitionProps {
@@ -15,8 +14,7 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
     const [title, setTitle] = useState("");
     const [date, setDate] = useState("");
     const [place, setPlace] = useState("");
-    const [hour, setHour] = useState("");
-    const [mail, setMail] = useState("");
+    const [expTime, setExpTime] = useState("");
     const [isUrgent, setIsUrgent] = useState(false);
     const [description, setDescription] = useState("");
     const [isPending, setIsPending] = useState(false);
@@ -28,7 +26,6 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
         e.preventDefault();
 
         setIsPending(true);
-
         const result = await fetch(`${process.env.REACT_APP_BASEURL}/petitions`,
             {
                 method: "POST",
@@ -42,7 +39,8 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
                     body: description,
                     place: place,
                     targetDate: new Date(date),
-                    isUrgent: isUrgent
+                    isUrgent: isUrgent,
+                    expTime: expTime
                 })
             });
 
@@ -52,7 +50,6 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
         console.log("Result: " + await result.text());
 
     }
-
     return (
         <div className="container-fluid">
             <form onSubmit={handleSubmit}>
@@ -67,31 +64,31 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
                     </div>
                     <div className="col-6">
                         <input type="text" id="disabledTextInput" className="form-control" placeholder="Lugar"
-                        onChange={e => setPlace(e.target.value)} required></input>
+                            onChange={e => setPlace(e.target.value)} required></input>
                     </div>
                 </div>
-                <div className=" row mt-4">
+                <div className="row mt-4 justify-content-center">
                     <div className="col-6">
-                        <input type="time" id="disabledTextInput" className="form-control" placeholder="Hora" 
-                        onChange={e => setHour(e.target.value)} required></input>
+                        <input type="time" id="disabledTextInput" className="form-control" placeholder="Hora"
+                            onChange={e => setExpTime(e.target.value)}></input>
                     </div>
-                    <div className="col-6">
-                        <input type="email" id="disabledTextInput" className="form-control" placeholder="Correo electrónico" 
-                        onChange={e => setMail(e.target.value)} required></input>
-                    </div>
+                    {/* <div className="col-6">
+                        <input type="email" id="disabledTextInput" className="form-control" placeholder="Correo electrónico"
+                            onChange={e => setMail(e.target.value)} required></input>
+                    </div> */}
                 </div>
                 <div className=" row mt-4">
                     <div className="col">
-                        <input type="checkbox" id="disabledTextInput" className="form-check-input" placeholder="Urgente" 
-                        onChange={e => setIsUrgent(e.target.checked)} required></input>
+                        <input type="checkbox" id="disabledTextInput" className="form-check-input" placeholder="Urgente"
+                            onChange={e => setIsUrgent(e.target.checked)}></input>
                         <label className="form-check-label ms-3">
                             Urgente
                         </label>
                     </div>
                 </div>
                 <div className="mt-4">
-                    <textarea id="TextArea" className="form-control" placeholder="Añadir descripción" 
-                    onChange={e => setDescription(e.target.value)} required></textarea>
+                    <textarea id="TextArea" className="form-control" placeholder="Añadir descripción"
+                        onChange={e => setDescription(e.target.value)} required></textarea>
                 </div>
                 <div className="row justify-content-center">
                     <div className="col d-grid gap-2 d-md-flex justify-content-md-center">
