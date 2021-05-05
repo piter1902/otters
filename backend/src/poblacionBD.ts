@@ -3,6 +3,7 @@ import logger from '@poppinss/fancy-logs';
 import Petition from './models/Petitions';
 import Post from './models/Posts';
 import Comments from './models/Comments';
+import userPicture from './UserPicture';
 
 
 const userArrayName:string[] = ["Santiago","Ramon","Cajal"];
@@ -17,6 +18,7 @@ const populateDB = async () => {
         mail = userArrayName[i].substring(0,1)+userArraySurname[i].substring(0,1)+"@gmail.com";
         const user = new User({
             name: userArrayName[i]+" "+userArraySurname[j],
+            picture: userPicture,
             email: mail,//userArray[i].email,
             sanitaryZone: 1,
             password: "xxxxxxx",

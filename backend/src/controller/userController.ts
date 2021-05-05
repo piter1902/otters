@@ -2,12 +2,15 @@ import logger from '@poppinss/fancy-logs';
 import Express from 'express';
 import User, { bannedSchema } from '../models/User';
 import bcrypt from 'bcrypt';
+import userPicture from '../UserPicture';
 
 const createNewUser = async (req: Express.Request, res: Express.Response) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+  
   const user = new User({
     name: req.body.name,
+    picture: userPicture,
     email: req.body.email,
     sanitaryZone: req.body.sanitaryZone,
     password: hashedPassword,
@@ -102,29 +105,32 @@ const _doAddBannedObj = (req: Express.Request, res: Express.Response, user: any)
         //let thisPetition = user.petitions[user.petitions.length - 1];
         res
           .status(201)
-          .json(0);
+          .json(user);
       }
     });
   }
 };
 
 const updateUser = async (req: Express.Request, res: Express.Response) => {
-  const userId = req.params.userId;
-
+  const userId = req.params.uid;
+  const pass = req.body.password;
+  const pic = req.body.picture;
+  const zone = req.body.sanitaryZone;
+  logger.info(`Actualizando informacion para user = ${userId}`);
+  logger.info(`New pass = ${pass}`);
+  logger.info(`New pic = ${pic}`);
+  logger.info(`New zone = ${zone}`);
   if (req.params && userId) {
     const user = await User.findById(userId).exec();
 
-    // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
-    // se almacena en numeros del 0-11 por defecto
-    var tempDate = req.body.targetDate && new Date(req.body.targetDate);
-
     // Shorted if-else
-    user.name = req.body.name && req.body.name || user.name;
-    user.email = req.body.email && req.body.email || user.email;
-    user.sanitaryZone = req.body.sanitaryZone && req.body.sanitaryZone || user.sanitaryZone;
     user.password = req.body.password && req.body.password || user.password;
-    user.strikes = req.body.strikes && req.body.strikes || user.strikes;
-    user.isAdmin = req.body.isAdmin && req.body.isAdmin || user.isAdmin;
+    user.picture = req.body.picture && req.body.picture || user.picture;
+    user.sanitaryZone = req.body.sanitaryZone && req.body.sanitaryZone || user.sanitaryZone;
+    
+    //user.password = (req.body.password) ? req.body.password : user.password;
+    //user.picture = req.body.picture && req.body.picture || user.picture;
+    //user.sanitaryZone = req.body.sanitaryZone && req.body.sanitaryZone || user.sanitaryZone;
     user.save((err: any, user: typeof User) => {
       if (err) {
         res
@@ -151,5 +157,6 @@ export default {
   createNewUser,
   getUserByUID,
   deleteUserByUID,
+  updateUser,
   banUser
 }
