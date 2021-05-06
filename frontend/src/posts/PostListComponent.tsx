@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor } from 'react'
+import React, { JSXElementConstructor, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 interface PostListComponentProps {
@@ -8,12 +8,28 @@ interface PostListComponentProps {
 
 const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ posts }) => {
 
-    const handleDislike = (post: any) => {
-        console.log("Dislike");
+    const [user, setAuthor] = useState('60747f8611ac7b1cc4e45528');
+
+    const handleLike = (id:any) => {
+        const valoration = { user };
+        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/posititivevaloration", { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(valoration)
+        }).then(() => {
+            console.log("nueva valoración añadida creado")
+          })   
     }
 
-    const handleLike = () => {
-        console.log("Like");
+    const handleDislike = (id:any) => {
+        const valoration = { user };
+        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/negativevaloration", { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(valoration)
+        }).then(() => {
+            console.log("nueva valoración añadida creado")
+          })   
     }
 
     return (
@@ -26,7 +42,7 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
                                 <h2 className="ms-3 mt-3"><b>{post.title}</b></h2>
                             </div>
                             <div className="col-1 sm-12 align-self-center">
-                                <i className="fas fa-chevron-up" onClick={() => handleLike()}></i>
+                                <i className="fas fa-chevron-up" onClick={() => handleLike(post._id)}></i>
                             </div>
                         </div>
                         <div className="row row justify-content-between">
@@ -42,7 +58,7 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
                                 <p className="ms-3 mt-3"> {post.body} </p>
                             </div>
                             <div className="col-1 sm-12 align-self-start">
-                                <i className="fas fa-chevron-down" onClick={() => handleDislike(post)}></i>
+                                <i className="fas fa-chevron-down" onClick={() => handleDislike(post._id)}></i>
                             </div>
                         </div>
                     </div>

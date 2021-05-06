@@ -11,17 +11,32 @@ interface PostDetalleProps {
 
 const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
     const { id } = useParams<{ id: string }>();
-    // const [mainPost, setPosts] = useState([
-    //     { title: 'Titulo del post', body: 'jvbc asijvb ajsdnv kasdkvns aaaa aaa aaaaaa.', author: 'ElJosé', id: 1, likes: 17 },
-    // ])
-
-    // const [comentarios, setComents] = useState([
-    //     { body: 'lorem ipsum...', author: 'ElJosé', id: 1 },
-    //     { body: 'lorem ipsum...', author: 'ElJosé', id: 2 },
-    //     { body: 'lorem ipsum...', author: 'ElJosé', id: 3 }
-    // ])
 
     const { data: mainPost, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/post/` + id);
+
+    const [user, setAuthor] = useState('60747f8611ac7b1cc4e45528');
+    
+    const handleLike = () => {
+        const valoration = { user };
+        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/posititivevaloration", { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(valoration)
+        }).then(() => {
+            console.log("nueva valoración añadida creado")
+          })   
+    }
+
+    const handleDislike = () => {
+        const valoration = { user };
+        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/negativevaloration", { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(valoration)
+        }).then(() => {
+            console.log("nueva valoración añadida creado")
+          })   
+    }
 
     return (
         <div className="row card ">
@@ -44,7 +59,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
                                     <h2 className="ms-3 mt-3 texto fw-bold">{mainPost.title}</h2>
                                 </div>
                                 <div className="col-lg-1 col-md-2 col-3 sm-12 align-self-center">
-                                    <i className="fas fa-chevron-up" ></i>
+                                    <i className="fas fa-chevron-up" onClick={handleLike}></i>
                                 </div>
                             </div>
 
@@ -62,7 +77,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
                                     <p className="ms-3 mt-3 texto">{mainPost.body}</p>
                                 </div>
                                 <div className="col-lg-1 col-md-2 col-3 sm-12 align-self-center">
-                                    <i className="fas fa-chevron-down" ></i>
+                                    <i className="fas fa-chevron-down" onClick={handleDislike}></i>
                                 </div>
                             </div>
                             
@@ -71,9 +86,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
                     <p className="lead texto">Comentarios</p>
                     
                 </div>
-                <Comentario />
-                <Comentario />
-                <Comentario />
+                <Comentario mainPost={mainPost}/>
             </div>
         
         )}
