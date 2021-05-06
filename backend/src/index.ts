@@ -48,19 +48,21 @@ const app = Express();
 
 const port = process.env.PORT || 8080;
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+
+app.use(bodyParser.json( {limit: "50mb"}));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }))
 
 // CORS
 // La URI admitida varia en funcion de si estamos en produccion
 let corsURI: string = 'http://localhost:3000'; // React app location
 if (process.env.PRODUCTION === "true") {
     corsURI = process.env.CORS_URI!.toString();
-    logger.info(`DB URI: ${corsURI}`);
+    logger.info(`CORS URI: ${corsURI}`);
 }
 
+// Configuracion del CORS
 app.use(cors({
-    origin: corsURI, // React app location
+    origin: corsURI,
     credentials: true
 }));
 

@@ -49,7 +49,7 @@ const App = () => {
               <EstadisticasCovid />
             </Route>
             {/* Vista detallada de post */}
-            <Route exact path="/postDetalle">
+            <Route exact path="/postDetalle/:id">
               <PostDetalle />
             </Route>
             {/* Vista detallada de peticion */}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { ClipLoader } from 'react-spinners';
 import useGetFetch from '../useGetFetch';
 import Comentario from './Comentario';
 import './Post.css'
@@ -24,11 +25,19 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
 
     return (
         <div className="row card ">
-        
+        <div style={{ textAlign: "center", verticalAlign: "middle" }}>
+            <ClipLoader color="#172c48" loading={isPending} size={50} />
+        </div>
+
+        {/* Loading text */}
+        {isPending && <div style={{ textAlign: "center", verticalAlign: "middle" }}>Loading ...</div>}
+        {/* Show error if exists */}
+        { error && <div style={{ textAlign: "center", verticalAlign: "middle" }}>{error}</div>}
+        {!isPending && (
         
             <div className="card-body px-3 py-3">
                 <div className="row">
-                        <div className="container-fluid d-flex justify-content-center card border-white mb-4" key={mainPost.id} >
+                        <div className="container-fluid d-flex justify-content-center card border-white mb-4" >
 
                             <div className="row row justify-content-between">
                                 <div className="col">
@@ -41,10 +50,10 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
 
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    <p className="lead ms-3 texto">{mainPost.author}</p>
+                                    <p className="lead ms-3 texto">{mainPost.publisher}</p>
                                 </div>
                                 <div className="col-lg-1 col-md-2 col-3 sm-12">
-                                    <p className=" lead texto">17</p>
+                                    <p className=" lead texto">{mainPost.possitive_valorations.length - mainPost.negative_valorations.length}</p>
                                 </div>
                             </div>
 
@@ -67,7 +76,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
                 <Comentario />
             </div>
         
-        
+        )}
     </div>
     )
 }

@@ -18,37 +18,36 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
 
     return (
         <div>
-            {
-                posts.map((posts: any) => (
-                    <Link to={"/postDetalle/" + posts.id} className="custom-card" key={posts.id}>
-                        <div className="container-fluid d-flex justify-content-center card mb-4" key={posts.id} >
-                            <div className="row row justify-content-between">
-                                <div className="col">
-                                    <h2 className="ms-3 mt-3"><b>{posts.title}</b></h2>
-                                </div>
-                                <div className="col-1 sm-12 align-self-center">
-                                    <i className="fas fa-chevron-up" onClick={() => handleLike()}></i>
-                                </div>
+            { posts && posts.map((post: any) => (
+                <Link to={"/postDetalle/" + post._id} className="custom-card" key={post._id}>
+                    <div className="container-fluid d-flex justify-content-center card mb-4" key={post._id} >
+                        <div className="row row justify-content-between">
+                            <div className="col">
+                                <h2 className="ms-3 mt-3"><b>{post.title}</b></h2>
                             </div>
-                            <div className="row row justify-content-between">
-                                <div className="col">
-                                    <p className="ms-3">Creado por {posts.publisher}</p>
-                                </div>
-                                <div className="col-1 sm-12">
-                                    <p> {posts.possitive_valorations.length - posts.negative_valorations.length}</p>
-                                </div>
-                            </div>
-                            <div className="row row justify-content-between">
-                                <div className="col">
-                                    <p className="ms-3 mt-3"> {posts.body} </p>
-                                </div>
-                                <div className="col-1 sm-12 align-self-start">
-                                    <i className="fas fa-chevron-down" onClick={() => handleDislike(posts)}></i>
-                                </div>
+                            <div className="col-1 sm-12 align-self-center">
+                                <i className="fas fa-chevron-up" onClick={() => handleLike()}></i>
                             </div>
                         </div>
-                    </Link>
-                ))
+                        <div className="row row justify-content-between">
+                            <div className="col">
+                                <p className="ms-3">Creado por {post.publisher}</p>
+                            </div>
+                            <div className="col-1 sm-12">
+                                <p> {post.possitive_valorations.length - post.negative_valorations.length}</p>
+                            </div>
+                        </div>
+                        <div className="row row justify-content-between">
+                            <div className="col">
+                                <p className="ms-3 mt-3"> {post.body} </p>
+                            </div>
+                            <div className="col-1 sm-12 align-self-start">
+                                <i className="fas fa-chevron-down" onClick={() => handleDislike(post)}></i>
+                            </div>
+                        </div>
+                    </div>
+                </Link>
+            ))
             }
         </div>
     )

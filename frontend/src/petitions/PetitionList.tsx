@@ -12,7 +12,7 @@ export interface PetitionListProps {
 
 const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
 
-    const { data, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/petitions`);
+    const { data, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL!}/petitions`);
 
     return (
         <div>
