@@ -19,12 +19,12 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
     return (
         <div>
             {
-                posts.map((post: any) => (
-                    <Link to="/postDetalle" className="custom-card" key={post.id}>
-                        <div className="container-fluid d-flex justify-content-center card mb-4" key={post.id} >
+                posts.map((posts: any) => (
+                    <Link to={"/postDetalle/" + posts.id} className="custom-card" key={posts.id}>
+                        <div className="container-fluid d-flex justify-content-center card mb-4" key={posts.id} >
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    <h2 className="ms-3 mt-3"><b>{post.title}</b></h2>
+                                    <h2 className="ms-3 mt-3"><b>{posts.title}</b></h2>
                                 </div>
                                 <div className="col-1 sm-12 align-self-center">
                                     <i className="fas fa-chevron-up" onClick={() => handleLike()}></i>
@@ -32,18 +32,18 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
                             </div>
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    <p className="ms-3">Creado por {post.publisher}</p>
+                                    <p className="ms-3">Creado por {posts.publisher}</p>
                                 </div>
                                 <div className="col-1 sm-12">
-                                    <p> {post.possitive_valorations.length - post.negative_valorations.length}</p>
+                                    <p> {posts.possitive_valorations.length - posts.negative_valorations.length}</p>
                                 </div>
                             </div>
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    <p className="ms-3 mt-3"> {post.body} </p>
+                                    <p className="ms-3 mt-3"> {posts.body} </p>
                                 </div>
                                 <div className="col-1 sm-12 align-self-start">
-                                    <i className="fas fa-chevron-down" onClick={() => handleDislike(post)}></i>
+                                    <i className="fas fa-chevron-down" onClick={() => handleDislike(posts)}></i>
                                 </div>
                             </div>
                         </div>
