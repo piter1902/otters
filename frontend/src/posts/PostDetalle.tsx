@@ -16,6 +16,12 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
 
     const [user, setAuthor] = useState('60747f8611ac7b1cc4e45528');
     
+    const [publisherId, setPublisher] = useState('60747f8611ac7b1cc4e45528');
+
+    const [body, setBody] = useState('');
+
+    const [date, setDate] = useState(new Date());
+
     const handleLike = () => {
         const valoration = { user };
         fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/posititivevaloration", { 
@@ -35,6 +41,17 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
             body: JSON.stringify(valoration)
         }).then(() => {
             console.log("nueva valoración añadida creado")
+          })   
+    }
+
+    const handleComment = () => {
+        const comment_complete = { publisherId, body, date };
+        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/comment", { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(comment_complete)
+        }).then(() => {
+            console.log("nuevo comentario añadida creado")
           })   
     }
 
@@ -83,9 +100,20 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
                             
                               
                         </div>
-                    <p className="lead texto">Comentarios</p>
-                    
                 </div>
+                <form onSubmit={handleComment}>
+                    <div className="mt-4">
+                        <textarea id="TextArea" className="form-control" placeholder="Escriba el comentario..." required value={body} onChange={(e) => setBody(e.target.value)}></textarea>
+                    </div>
+                    <div className="row justify-content-center">
+                        <div className="col d-grid gap-2 d-md-flex justify-content-md-center">
+                            <button type="submit" className="btn navbar-azul text-light text-decoration-none mt-4">
+                                Añadir comentario<i className="fas fa-plus ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                 <p className="lead texto">Comentarios</p>
                 <Comentario mainPost={mainPost}/>
             </div>
         
