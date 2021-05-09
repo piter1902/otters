@@ -20,16 +20,15 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
     const [isUrgent, setIsUrgent] = useState(false);
     const [description, setDescription] = useState("");
     const [isPending, setIsPending] = useState(false);
-    // TODO: Esta variable debe obtener el id del usuario logeado
-    //const [userId, setUserId] = useState("");
-    const userId = "608973ba40f1db3b48fc1044";
-    //Token
+    
+    // Token
     const { token } = useToken();
+    
+    // Navegacion
     const history = useHistory();
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-
         setIsPending(true);
         const result = await fetch(`${process.env.REACT_APP_BASEURL}/petitions`,
             {
@@ -37,11 +36,11 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token?.token
+                    'Authorization': `${token?.type} ${token?.token}`
                 },
                 body: JSON.stringify({
                     title: title,
-                    userId: userId,
+                    userId: token?.userId,
                     body: description,
                     place: place,
                     targetDate: new Date(date),
@@ -49,15 +48,13 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
                     expTime: expTime
                 })
             });
-
         if (result) {
             setIsPending(false);
             history.push('/peticionesayuda');
         }
-
         console.log("Result: " + await result.text());
-
     }
+
     return (
         <div className="container-fluid">
             <form onSubmit={handleSubmit}>

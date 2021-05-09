@@ -1,18 +1,19 @@
-import React, { useState } from 'react'
+import React, { JSXElementConstructor, useState } from 'react'
 import useGetFetch from '../useGetFetch';
 import useZBS from '../estadisticas/useZBS';
+import Token from '../auth/Token/Token';
+
+interface ChangeUserDataProps {
+    token?: Token,
+    user: any
+}
 
 
-
-const ChangeUserData = () => {
+const ChangeUserData: JSXElementConstructor<ChangeUserDataProps> = ({ user, token }) => {
 
     const [passwordAct, setPasswordAct] = useState("");
     const [passwordNue, setPasswordNue] = useState("");
     const [zone, setZone] = useState("");
-
-    // TODO: Cambiar por id de usuario
-    const id = "6092b83ce4ac3e3f9662343b";
-    const { data: user, isPending } = useGetFetch(`${process.env.REACT_APP_BASEURL}/user/` + id);
 
     // Datos sobre la foto
     let picData: any;
@@ -51,12 +52,13 @@ const ChangeUserData = () => {
         console.log("data " + data);
         if (user.password === passwordAct) {
             console.log("Las contraseñas coinciden");
-            const result = await fetch(`${process.env.REACT_APP_BASEURL}/user/` + id,
+            const result = await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`,
                 {
                     method: "POST",
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `${token?.type} ${token?.token}`
                     },
                     body: JSON.stringify({
                         password: passwordNue,
@@ -72,8 +74,7 @@ const ChangeUserData = () => {
 
     return (
         <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            {isPending && <div> </div>}
-            {!isPending && <div className="modal-dialog">
+            <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title" id="staticBackdropLabel">Cambiar datos</h5>
@@ -147,15 +148,8 @@ const ChangeUserData = () => {
                         <button type="button" className="btn btn-success" onClick={changeDataButtonClicked} data-bs-dismiss="modal" >Guardar</button>
                     </div>
                 </div>
-            </div>}
-
-
-
-
+            </div>
         </div>
-
-
-
     )
 }
 
