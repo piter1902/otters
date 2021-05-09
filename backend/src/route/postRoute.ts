@@ -20,11 +20,11 @@ postRoute.route("/:id/comment/:cid")
     .delete(postsController.deleteCommentById)
 
     //Valoraciones positivas
-postRoute.route("/:id/postitivevaloration")
+postRoute.route("/:id/posititivevaloration")
     .get(postsController.getPositiveValoration)
     .post(postsController.addPositiveValoration)
 
-postRoute.route("/:id/postitivevaloration/:pvid")
+postRoute.route("/:id/posititivevaloration/:pvid")
     .delete(postsController.deletePositiveValoration)
 
         //Valoraciones negativas
