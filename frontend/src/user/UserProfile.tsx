@@ -141,7 +141,10 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                         <button className="btn btn-danger mx-2" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                             Cambiar datos
                         </button>
-                        <button className="btn btn-danger mx-2" onClick={logOut}>Cerrar sesión</button>
+                        <button className="btn btn-danger mx-2" onClick={logOut}>
+                            <i className="fa fa-sign-out mx-1" aria-hidden="true"></i>
+                            Cerrar sesión
+                        </button>
                         {/* Modal de cambio */}
                         <ChangeUserData user={user} token={token ?? undefined} />
                     </div>
