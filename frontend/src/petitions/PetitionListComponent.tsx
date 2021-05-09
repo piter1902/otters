@@ -8,7 +8,7 @@ interface PetitionListComponentProps {
 const PetitionListComponent: JSXElementConstructor<PetitionListComponentProps> = ({ petitionsInfo }) => {
     return (
         <div>
-            { petitionsInfo && petitionsInfo.map((petitionInfo: any) => (
+            { petitionsInfo.length > 0 ? petitionsInfo.map((petitionInfo: any) => (
                 <Link to={"/peticionDetalle/" + petitionInfo._id} className="custom-card" key={petitionInfo._id}>
 
                     <div className="container-fluid d-flex justify-content-center card mb-4" key={petitionInfo._id} >
@@ -28,6 +28,7 @@ const PetitionListComponent: JSXElementConstructor<PetitionListComponentProps> =
                     </div>
                 </Link>
             ))
+                : <div style={{ textAlign: "center", verticalAlign: "middle" }}>No se ha encontrado ninguna petición ...</div>
             }
         </div>
     )
