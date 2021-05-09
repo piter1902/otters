@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import useToken from '../auth/Token/useToken';
 import CasosPorFecha from './CasosPorFecha';
 import GraficaCasos from './GraficaCasos';
 import useZBS from './useZBS';
@@ -14,6 +15,25 @@ interface EstadisticasCovidProps {
 }
 
 const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = () => {
+
+    // Token
+    const { token } = useToken();
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const response = await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`, {
+                method: "GET"
+            });
+            if (response.status == 200) {
+                // Set zone to zonaSalud by default
+                setZonaSaludSelected((await response.json()).sanitaryZone);
+            }
+        }
+        if (token != null) {
+            fetchUser();
+        }
+        return () => { }
+    }, [token]);
 
     // Zona de salud elegida (identificador)
     const [zonaSaludSelected, setZonaSaludSelected] = useState<string>("0");
@@ -59,7 +79,7 @@ const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = (
                     <CasosPorFecha idZona={zonaSaludSelected} setDataFunction={setDatos} />
                 </div>
                 {/* Gráficas */}
-                <GraficaCasos data={datos}/>
+                <GraficaCasos data={datos} />
             </div>
             {/* Columna de Aragón */}
             <div className="col-md px-md-3 mt-md-2 mt-5">
@@ -72,10 +92,10 @@ const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = (
                         <input type="text" id="aragontext" className="form-control" value="Aragón" disabled />
                     </div>
                     {/* Selector de casos por día y visualizar */}
-                    <CasosPorFecha idZona="aragon" setDataFunction={setDatosAragon}/>
+                    <CasosPorFecha idZona="aragon" setDataFunction={setDatosAragon} />
                 </div>
                 {/* Gráficas */}
-                <GraficaCasos data={datosAragon}/>
+                <GraficaCasos data={datosAragon} />
             </div>
         </div>
     )
