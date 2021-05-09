@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import useToken from '../auth/Token/useToken';
 import '../Navbar.css'
 
@@ -24,7 +25,8 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
     const userId = "608973ba40f1db3b48fc1044";
     //Token
     const { token } = useToken();
-    console.log("Token en create: " + token?.token);
+    const history = useHistory();
+
     const handleSubmit = async (e: any) => {
         e.preventDefault();
 
@@ -50,7 +52,9 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
 
         if (result) {
             setIsPending(false);
+            history.push('/peticionesayuda');
         }
+
         console.log("Result: " + await result.text());
 
     }
