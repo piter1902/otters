@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import passportLocal from 'passport-local';
 import logger from '@poppinss/fancy-logs';
 import passport from 'passport';
-import passportJwt, {ExtractJwt} from 'passport-jwt';
+import passportJwt, { ExtractJwt } from 'passport-jwt';
 
 const LocalStrategy = passportLocal.Strategy;
 const JwtStrategy = passportJwt.Strategy;
@@ -21,13 +21,31 @@ const JwtStrategy = passportJwt.Strategy;
  * Estrategia JWT
  * Source: https://davidinformatico.com/jwt-express-js-passport/
  */
-let opts:any = {}
-opts.jwtFromRequest = passportJwt.ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = process.env.JWT_SECRET;
+let opts: any = {}
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = process.env.JWT_SECRET!;
 opts.algorithms = [process.env.JWT_ALGORITHM];
-passport.use(new JwtStrategy(opts, (jwt_payload, done)=>{
-    //callback de verificación
-}));
+
+passport.use(new JwtStrategy({
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET!
+},
+  async (jwt_payload, done) => {
+    logger.info("Ejecutando estrategia JWT");
+    try {
+      const user = await User.findOne({ _id: jwt_payload.id });
+      if (!user) {
+        logger.info("No se ha encontrado user - JWTStrategy");
+        return done(null, false);
+      } else {
+        logger.info("User admitido - JWTStrategy")
+        return done(undefined, user);
+      }
+    } catch (err) {
+      logger.error(err);
+      return done(err, null);
+    }
+  }));
 
 /**
  * Sign in using Email and Password.
@@ -39,7 +57,7 @@ passport.use(new LocalStrategy({
   try {
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      logger.info("No se ha encontrado user");
+      logger.info("No se ha encontrado user - LocalStrategy");
       return done(null, false, { message: `Email ${email} not found.` });
     }
 
@@ -54,7 +72,7 @@ passport.use(new LocalStrategy({
     }
   } catch (err) {
     logger.error(err);
-    return done(err);
+    return done(err, null);
   }
 }));
 

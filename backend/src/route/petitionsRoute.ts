@@ -1,6 +1,6 @@
 import Express from 'express';
+import passport from 'passport';
 import petitionsController from '../controller/petitionsController';
-import Petitions from '../models/Petitions';
 
 // Create route
 const petitionsRoute = Express.Router();
@@ -8,9 +8,9 @@ const petitionsRoute = Express.Router();
 // All petitions
 petitionsRoute.route("/")
     .get(petitionsController.getPetitions)
-    .post(petitionsController.petitionsCreate);
-    
-// Especific petition
+    .post(passport.authenticate('jwt', {session: false}), petitionsController.petitionsCreate);
+
+// Especific petitionx
 petitionsRoute.route("/:petitionId")
     .get(petitionsController.readOnePetition)
     .put(petitionsController.updateOnePetition)

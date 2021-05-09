@@ -12,9 +12,7 @@ import cors from 'cors';
 
 // Necesario para passport
 import passport from 'passport';
-import cookieParser from 'cookie-parser';
-import expressSession from 'express-session';
-import * as passportConfig from './service/passportConfig';
+import './service/passportConfig';
 
 // Conexión a la bd
 import "./models/db";

@@ -37,7 +37,6 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                credentials: 'include',
                 body: JSON.stringify({
                     password: credentials.userPassword,
                     email: credentials.userMail,
