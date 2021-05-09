@@ -28,13 +28,13 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
     const history = useHistory();
 
     // Comprobacion de rutas privadas
-    useEffect(() => {
-        if (token == null) {
-            console.log("No hay token");
-            history.push("/");
-        }
-        return () => { }
-    }, [token]);
+    // useEffect(() => {
+    //     if (token == null) {
+    //         console.log("No hay token");
+    //         history.push("/");
+    //     }
+    //     return () => { }
+    // }, [token]);
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();

@@ -108,18 +108,20 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
                             </div>
                         </div>
                     </div>
-                    <form onSubmit={handleComment}>
-                        <div className="mt-4">
-                            <textarea id="TextArea" className="form-control" placeholder="Escriba el comentario..." required value={body} onChange={(e) => setBody(e.target.value)}></textarea>
-                        </div>
-                        <div className="row justify-content-center">
-                            <div className="col d-grid gap-2 d-md-flex justify-content-md-center">
-                                <button type="submit" className="btn navbar-azul text-light text-decoration-none mt-4">
-                                    Añadir comentario<i className="fas fa-plus ms-2"></i>
-                                </button>
+                    {token != null &&
+                        <form onSubmit={handleComment}>
+                            <div className="mt-4">
+                                <textarea id="TextArea" className="form-control" placeholder="Escriba el comentario..." required value={body} onChange={(e) => setBody(e.target.value)}></textarea>
                             </div>
-                        </div>
-                    </form>
+                            <div className="row justify-content-center">
+                                <div className="col d-grid gap-2 d-md-flex justify-content-md-center">
+                                    <button type="submit" className="btn navbar-azul text-light text-decoration-none mt-4">
+                                        Añadir comentario<i className="fas fa-plus ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    }
                     <p className="lead texto">Comentarios</p>
                     <Comentario mainPost={mainPost} />
                 </div>
