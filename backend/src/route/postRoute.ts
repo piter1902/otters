@@ -21,11 +21,11 @@ postRoute.route("/:id/comment/:cid")
     .delete(passport.authenticate('jwt', { session: false }), postsController.deleteCommentById)
 
 //Valoraciones positivas
-postRoute.route("/:id/postitivevaloration")
+postRoute.route("/:id/positivevaloration")
     .get(postsController.getPositiveValoration)
     .post(passport.authenticate('jwt', { session: false }), postsController.addPositiveValoration)
 
-postRoute.route("/:id/postitivevaloration/:pvid")
+postRoute.route("/:id/positivevaloration/:pvid")
     .delete(passport.authenticate('jwt', { session: false }), postsController.deletePositiveValoration)
 
 //Valoraciones negativas

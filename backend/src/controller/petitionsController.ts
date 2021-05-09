@@ -133,7 +133,7 @@ const getPetitions = async (req: Express.Request, res: Express.Response) => {
   try {
     const petitions = await Petition.find().exec();
     const data: PetitionsWithUsername[] = [];
-    if (petitions) {
+    if (petitions.length > 0) {
       (petitions as any[]).forEach(async (petition: any) => {
         const user = await User.findById(petition.userId).exec();
         if (user) {
@@ -158,6 +158,10 @@ const getPetitions = async (req: Express.Request, res: Express.Response) => {
           res.status(200).json(data);
         }
       });
+    } else {
+      // Un poco redundante ya que petitions no tiene elementos. 
+      // En caso de no hacerlo, no se devolveria nada en la petición en caso de no existir elementos
+      res.status(200).json(petitions);
     }
   } catch (err) {
     res
