@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Navbar.css'
 import logo from './otter2.png';
 import { Link } from 'react-router-dom';
 import useToken from './auth/Token/useToken';
+import useGetFetch from './useGetFetch';
 
 export interface NavbarProps {
 
@@ -15,8 +16,12 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
 
     // Token para mantener el estado del usuario
     const { token, saveToken } = useToken();
-    // Admin property
-    const isAdmin = true;
+
+    // Admin property (fetch backend)
+    const [isAdmin, setIdAdmin] = useState<boolean>(false);
+
+    // Obtención de la info del usuario
+    const {data: userInfo} = useGetFetch(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}`);
 
     return (
         <div className="mb-3">
@@ -64,7 +69,8 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
                             <li className="nav-item text-light mx-2">
                                 <Link to="/peticionesayuda" className="text-light text-decoration-none">Ayuda</Link>
                             </li>
-                            {isAdmin &&
+                            {/* Solo se muestra si el usuario actual existe y es administrador */}
+                            {userInfo && userInfo.isAdmin &&
                                 <li className="nav-item text-light mx-2">
                                     <Link to="/admin" className="text-light text-decoration-none">Admin</Link>
                                 </li>

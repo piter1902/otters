@@ -48,6 +48,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
         if (result.ok) {
             // Todo correcto
             const token: Token = {
+                userId: tokenJson.data.userId,
                 token: tokenJson.data.token,
                 type: "Bearer"
             }
