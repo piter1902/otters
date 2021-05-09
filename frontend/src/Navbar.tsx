@@ -17,11 +17,22 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
     // Token para mantener el estado del usuario
     const { token, saveToken } = useToken();
 
-    // Admin property (fetch backend)
-    const [isAdmin, setIdAdmin] = useState<boolean>(false);
+    // Obtención de la info del usuario (se hace para cada actualización del token)
 
-    // Obtención de la info del usuario
-    const {data: userInfo} = useGetFetch(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}`);
+    const [userInfo, setUserInfo] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            if (token != null && token.userId) {
+                const response = await fetch(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}`, {method: "GET"});
+                if (response.status == 200) {
+                    setUserInfo(await response.json());
+                }
+            }
+        }
+        fetchUserInfo();
+        return () => {}
+    }, [token]);
 
     return (
         <div className="mb-3">
