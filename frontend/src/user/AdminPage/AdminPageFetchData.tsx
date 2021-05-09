@@ -26,6 +26,9 @@ const AdminPageFetchData = () => {
                             <i className="fa fa-refresh ms-3" aria-hidden="true"></i>
                         </p>
                     </button>
+                    {isFetching && (
+                        <p className="text-light">Se ha enviado la petición de actualización de datos</p>
+                    )}
                 </div>
             </div>
         </div>

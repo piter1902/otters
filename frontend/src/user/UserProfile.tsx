@@ -1,4 +1,5 @@
 import React, { JSXElementConstructor, useEffect, useMemo, useState } from 'react'
+import { useHistory } from 'react-router';
 import { ClipLoader } from 'react-spinners';
 import useToken from '../auth/Token/useToken';
 import PetitionListComponent from '../petitions/PetitionListComponent';
@@ -14,7 +15,10 @@ interface UserProfileProps {
 const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
 
     // Token
-    const { token } = useToken();
+    const { token, saveToken } = useToken();
+
+    // Navegacion
+    const history = useHistory();
 
     const [user, setUser] = useState<any>(null);
     const [isPending, setIsPending] = useState<boolean>(true);
@@ -87,6 +91,14 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
         return () => { }
     }, [user]);
 
+    // Log out
+    const logOut = () => {
+        // Cerrar sesión y recargar
+        saveToken(null);
+        history.replace("/");
+        window.location.reload();
+    }
+
     return (
         <div className="container-fluid d-flex justify-content-center card">
             {isPending &&
@@ -121,15 +133,15 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                             <img src={picture} alt="user" className="rounded-circle w-50 border border-secondary border-2" />
                             {/*<img src={data}
                             alt="user" className="rounded-circle w-50 border border-secondary border-2" />*/}
-
                         </div>
                     </div>
 
-                    <div className="container-fluid px-md-5 px-3 mt-md-4 mt-3 d-flex justify-content-center">
+                    <div className="container-fluid px-md-5 px-3 mt-md-4 mt-3 d-flex justify-content-evenly">
                         {/* Boton de cambio de contraseña */}
-                        <button className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        <button className="btn btn-danger mx-2" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                             Cambiar datos
-                    </button>
+                        </button>
+                        <button className="btn btn-danger mx-2" onClick={logOut}>Cerrar sesión</button>
                         {/* Modal de cambio */}
                         <ChangeUserData user={user} token={token ?? undefined} />
                     </div>

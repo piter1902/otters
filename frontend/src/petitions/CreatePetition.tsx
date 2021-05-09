@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import useToken from '../auth/Token/useToken';
 import '../Navbar.css'
@@ -20,12 +20,21 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
     const [isUrgent, setIsUrgent] = useState(false);
     const [description, setDescription] = useState("");
     const [isPending, setIsPending] = useState(false);
-    
+
     // Token
     const { token } = useToken();
-    
+
     // Navegacion
     const history = useHistory();
+
+    // Comprobacion de rutas privadas
+    useEffect(() => {
+        if (token == null) {
+            console.log("No hay token");
+            history.push("/");
+        }
+        return () => { }
+    }, [token]);
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();

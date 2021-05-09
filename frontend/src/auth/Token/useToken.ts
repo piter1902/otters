@@ -8,7 +8,7 @@ const useToken = () => {
     const [token, setToken] = useState<Token | null>(null);
 
     // Save token to localstorage
-    const saveToken = (t: Token) => {
+    const saveToken = (t: Token | null) => {
         // Modificación del localstorage dependiendo del valor de token
         console.log("Almacenando token con valor = ")
         // console.log(t);
