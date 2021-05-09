@@ -82,7 +82,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
 
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    <p className="lead ms-3 texto">{mainPost.publisher}</p>
+                                    <p className="lead ms-3 texto">{mainPost.publisher.userName}</p>
                                 </div>
                                 <div className="col-lg-1 col-md-2 col-3 sm-12">
                                     <p className=" lead texto">{mainPost.possitive_valorations.length - mainPost.negative_valorations.length}</p>

@@ -18,7 +18,7 @@ const Comentario: React.JSXElementConstructor<ComentarioProps> = ({mainPost}) =>
             { comments && comments.map((comment: any) => (
             <div className="card-body px-3 py-3">
                 
-            <p className="lead texto">{comment.publisherId}</p>
+            <p className="lead texto">{comment.publisher.userName}</p>
             <p className="texto">{comment.body}</p>
                 
                     

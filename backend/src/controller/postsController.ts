@@ -5,6 +5,29 @@ import Comments from '../models/Comments';
 import User from '../models/User';
 import mongoose from 'mongoose';
 
+interface UserInfo {
+  userId: string;
+  userName: string;
+}
+
+interface PostsWithUsername {
+  _id: String;
+  title: String;
+  body: String;
+  date: Date;
+  publisher: UserInfo;
+  comments: Comment;
+  possitive_valorations: [String];
+  negative_valorations: [String];
+}
+
+interface CommentsWithUsername {
+  _id: String;
+  publisher: UserInfo;
+  date: Date;
+  body: String;
+}
+
 //Operaciones sobre los post de un usuario concreto /user/uid/posts
 
 const postsCreate = (req: Express.Request, res: Express.Response) => {
@@ -293,18 +316,95 @@ const _addPost = async function (req: Express.Request, res: Express.Response, us
 }
 
 const getAllPosts = async (req: Express.Request, res: Express.Response) => {
-  res.status(200).send(await Posts.find().exec());
+  try {
+    const posts = await Posts.find().exec();
+    const data: PostsWithUsername[] = [];
+    if (posts) {
+      (posts as any[]).forEach(async (post: any) => {
+        const user = await User.findById(post.publisher).exec();
+        if (user) {
+          const userInfo: UserInfo = {
+            userId: user._id,
+            userName: user.name
+          }
+          data.push({
+            _id: post._id,
+            title: post.title,
+            body: post.body,
+            date: post.date,
+            publisher: userInfo,
+            comments: post.comments,
+            possitive_valorations: post.possitive_valorations,
+            negative_valorations: post.negative_valorations,
+
+          });
+        }
+        // Debemos hacer esto ya que sino se devuelve el array antes de cargar la info
+        if (data.length == (posts as any[]).length) {
+          res.status(200).json(data);
+        }
+      });
+    }
+  } catch (err) {
+    res
+      .status(400)
+      .json(err);
+  }
 }
 
 const getPostByID = async (req: Express.Request, res: Express.Response) => {
   const id = req.params.id;
   logger.info(`Getting post with id = ${id}`);
   // Obtenemos al usuario de la bd
-  const post = await Posts.findById(id).exec();
-  if (post != null) {
-    res.status(200).json(post);
+  if (req.params && id) {
+    try {
+      const post = await Posts.findById(id).exec();
+
+      if (post != null) {
+        const user = await User.findById(post.publisher).exec();
+        if (user) {
+          const userInfo: UserInfo = {
+            userId: user._id,
+            userName: user.name
+          }
+          const result: PostsWithUsername = {
+            _id: post._id,
+            title: post.title,
+            body: post.body,
+            date: post.date,
+            publisher: userInfo,
+            comments: post.comments,
+            possitive_valorations: post.possitive_valorations,
+            negative_valorations: post.negative_valorations,
+          }
+          res
+            .status(200)
+            .json(result);
+        } else {
+          res
+            .status(404)
+            .json({ "message": "user's post not found" })
+        }
+      } else {
+        // Petition not found
+        res
+          .status(404)
+          .json({
+            error: `Post with id = ${id} doesn't exist`
+          });
+      }
+
+    } catch (err) {
+      res
+        .status(400)
+        .json(err);
+    }
   } else {
-    res.status(404).send();
+    res
+      .status(404)
+      .json({
+        "message": "Not found, id is required"
+      });
   }
 };
 
@@ -378,13 +478,37 @@ const doDeletePost = async function (req: Express.Request, res: Express.Response
 
 const getComments = async (req: Express.Request, res: Express.Response) => {
   const id = req.params.id;
-  const post = await Posts.findById(id).exec();
-  if (post != null) {
-      res.status(200).json(post.comments);
-  } else {
-      res.status(404).json({
-          error: `Post with id = ${id} doesn't exist`
-      })
+  if (req.params && id) {
+    try {
+      const post = await Posts.findById(id).exec();
+      const comments = post.comments;
+      const data: CommentsWithUsername[] = [];
+    if (comments) {
+      (comments as any[]).forEach(async (comment: any) => {
+        const user = await User.findById(comment.publisherId).exec();
+        if (user) {
+          const userInfo: UserInfo = {
+            userId: user._id,
+            userName: user.name
+          }
+          data.push({
+            _id: comment._id,
+            body: comment.body,
+            date: comment.date,
+            publisher: userInfo,
+          });
+        }
+        // Debemos hacer esto ya que sino se devuelve el array antes de cargar la info
+        if (data.length == (comments as any[]).length) {
+          res.status(200).json(data);
+        }
+      });
+    }
+  } catch (err) {
+    res
+      .status(400)
+      .json(err);
+  }
   }
 }
 
