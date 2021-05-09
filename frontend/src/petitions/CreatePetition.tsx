@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import useToken from '../auth/Token/useToken';
 import '../Navbar.css'
 
 export interface createPetitionProps {
@@ -21,7 +22,9 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
     // TODO: Esta variable debe obtener el id del usuario logeado
     //const [userId, setUserId] = useState("");
     const userId = "608973ba40f1db3b48fc1044";
-
+    //Token
+    const { token } = useToken();
+    console.log("Token en create: " + token?.token);
     const handleSubmit = async (e: any) => {
         e.preventDefault();
 
@@ -31,7 +34,8 @@ const CreatePetition: React.JSXElementConstructor<createPetitionProps> = () => {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token?.token
                 },
                 body: JSON.stringify({
                     title: title,
