@@ -1,5 +1,6 @@
-import { FormEvent, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import useToken from '../auth/Token/useToken';
 import '../Navbar.css'
 
 export interface createPostProps {
@@ -10,23 +11,32 @@ const CreatePost: React.JSXElementConstructor<createPostProps> = () => {
 
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
-    const [publisher, setAuthor] = useState('60747f8611ac7b1cc4e45528');
-    const [date, setDate] = useState(new Date());
+
+    const { token } = useToken();
+
+    const publisher = useMemo(() => {
+        if (token != null) {
+            return token.userId;
+        } else {
+            return null;
+        }
+    }, [token]);
+
     const history = useHistory();
 
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
         console.log("Submit");
-        const post = { title, body, publisher, date };
-        fetch(`${process.env.REACT_APP_BASEURL!}/post`, { 
-            method: "POST", 
-            headers: { "Content-Type": "application/json" },
+        const post = { title, body, publisher, date: new Date() };
+        fetch(`${process.env.REACT_APP_BASEURL!}/post`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `${token?.type} ${token?.token}` },
             body: JSON.stringify(post)
         }).then(() => {
             history.push('/foro');
             console.log("nuevo post creado")
-          })   
+        })
     }
 
     return (

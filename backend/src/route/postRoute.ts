@@ -1,38 +1,39 @@
 import Express from 'express';
+import passport from 'passport';
 import postsController from '../controller/postsController';
 const postRoute = Express.Router();
 
 postRoute.route("/")
-    .post(postsController.createNewPost)
-    .get(postsController.getAllPosts);
+    .get(postsController.getAllPosts)
+    .post(passport.authenticate('jwt', { session: false }), postsController.createNewPost);
 
 postRoute.route("/:id")
     .get(postsController.getPostByID)
-    .delete(postsController.deletePostByID)
+    .delete(passport.authenticate('jwt', { session: false }), postsController.deletePostByID)
 
-    //Comentarios
+//Comentarios
 postRoute.route("/:id/comment")
     .get(postsController.getComments)
-    .post(postsController.createComment)
-    
+    .post(passport.authenticate('jwt', { session: false }), postsController.createComment)
+
 postRoute.route("/:id/comment/:cid")
     .get(postsController.getCommentById)
-    .delete(postsController.deleteCommentById)
+    .delete(passport.authenticate('jwt', { session: false }), postsController.deleteCommentById)
 
-    //Valoraciones positivas
-postRoute.route("/:id/posititivevaloration")
+//Valoraciones positivas
+postRoute.route("/:id/positivevaloration")
     .get(postsController.getPositiveValoration)
-    .post(postsController.addPositiveValoration)
+    .post(passport.authenticate('jwt', { session: false }), postsController.addPositiveValoration)
 
-postRoute.route("/:id/posititivevaloration/:pvid")
-    .delete(postsController.deletePositiveValoration)
+postRoute.route("/:id/positivevaloration/:pvid")
+    .delete(passport.authenticate('jwt', { session: false }), postsController.deletePositiveValoration)
 
-        //Valoraciones negativas
+//Valoraciones negativas
 postRoute.route("/:id/negativevaloration")
     .get(postsController.getNegativeValoration)
-    .post(postsController.addNegativeValoration)
+    .post(passport.authenticate('jwt', { session: false }), postsController.addNegativeValoration)
 
 postRoute.route("/:id/negativevaloration/:nvid")
-    .delete(postsController.deleteNegativeValoration)
+    .delete(passport.authenticate('jwt', { session: false }), postsController.deleteNegativeValoration)
 
 export default postRoute;

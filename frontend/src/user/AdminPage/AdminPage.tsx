@@ -1,5 +1,7 @@
-import React, { JSXElementConstructor } from 'react'
+import React, { JSXElementConstructor, useEffect } from 'react'
+import { useHistory } from 'react-router';
 import { ClipLoader } from 'react-spinners';
+import useToken from '../../auth/Token/useToken';
 import useGetFetch from '../../useGetFetch';
 import AdminPageFetchData from './AdminPageFetchData';
 import AdminPageUser from './AdminPageUser';
@@ -11,7 +13,40 @@ interface AdminPageProps {
 const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
 
     // Datos de ayuda
-    const { data: stats, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL!}/stats`)
+    const { data: stats, isPending } = useGetFetch(`${process.env.REACT_APP_BASEURL!}/stats`)
+
+    // Token
+    const { token } = useToken();
+
+    // Navegacion
+    const history = useHistory();
+
+    // Comprobacion de rutas privadas
+    useEffect(() => {
+        const fetchUser = async () => {
+            const response = await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`, {
+                method: "GET"
+            });
+            if (response.status == 200) {
+                // Set zone to zonaSalud by default
+                const isAdmin = ((await response.json()).isAdmin);
+                if (!isAdmin) {
+                    console.log("El usuario no es admin");
+                    history.push("/");
+                }
+            } else {
+                console.log("Error en la peticion del usuario");
+                history.push("/");
+            }
+        }
+        if (token != null) {
+            fetchUser();
+        } else {
+            console.log("No hay token ??");
+            // history.push("/");
+        }
+        return () => { }
+    }, [token]);
 
     return (
         <div className="container-fluid d-flex justify-content-center card">

@@ -1,5 +1,6 @@
 import React, { JSXElementConstructor, useState } from 'react'
 import { Link } from 'react-router-dom'
+import useToken from '../auth/Token/useToken'
 
 interface PostListComponentProps {
     posts: any[];
@@ -8,33 +9,40 @@ interface PostListComponentProps {
 
 const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ posts }) => {
 
-    const [user, setAuthor] = useState('60747f8611ac7b1cc4e45528');
+    // Token
+    const { token } = useToken();
 
-    const handleLike = (id:any) => {
-        const valoration = { user };
-        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/posititivevaloration", { 
-            method: "POST", 
-            headers: { "Content-Type": "application/json" },
+    const handleLike = (id: any) => {
+        const valoration = { user: token?.userId };
+        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/positivevaloration", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `${token?.type} ${token?.token}`
+            },
             body: JSON.stringify(valoration)
         }).then(() => {
             console.log("nueva valoración añadida creado")
-          })   
+        })
     }
 
-    const handleDislike = (id:any) => {
-        const valoration = { user };
-        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/negativevaloration", { 
-            method: "POST", 
-            headers: { "Content-Type": "application/json" },
+    const handleDislike = (id: any) => {
+        const valoration = { user: token?.userId };
+        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/negativevaloration", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `${token?.type} ${token?.token}`
+            },
             body: JSON.stringify(valoration)
         }).then(() => {
             console.log("nueva valoración añadida creado")
-          })   
+        })
     }
 
     return (
         <div>
-            { posts && posts.map((post: any) => (
+            { posts.length > 0 ? posts.map((post: any) => (
                 <Link to={"/postDetalle/" + post._id} className="custom-card" key={post._id}>
                     <div className="container-fluid d-flex justify-content-center card mb-4" key={post._id} >
                         <div className="row row justify-content-between">
@@ -64,6 +72,8 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
                     </div>
                 </Link>
             ))
+                :
+                <div style={{ textAlign: "center", verticalAlign: "middle" }}>No se han encontrado posts...</div>
             }
         </div>
     )

@@ -1,13 +1,42 @@
 import User from "../models/User"
-import Express from 'express';
+import Express, { NextFunction } from 'express';
 import logger from "@poppinss/fancy-logs";
+import passport from 'passport';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
+
+const loginUser = async (req: Express.Request, res: Express.Response, next: NextFunction) => {
+  passport.authenticate("local", { session: false }, (err: any, user: any) => {
+    logger.info("Authenticate con estrategia local");
+    if (err) {
+      logger.error(err);
+      return next(err);
+    }
+    if (!user) {
+      res
+        .status(401)
+        .json({
+          error: `User does not exists`
+        });
+    } else {
+      logger.info("Comienza generacion del token")
+      const payload = {
+        id: user._id
+      }
+
+      const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1d' });
+
+      res
+        .status(200)
+        .json({ data: { token: token, userId: user._id } });
+    }
+  })(req, res);
+}
 
 const registerUser = async (req: Express.Request, res: Express.Response) => {
-
   try {
-    const user = await User.findOne({ name: req.body.name }).exec();
+    const user = await User.findOne({ email: req.body.email }).exec();
     if (user != null) {
       res
         .status(400)
@@ -42,5 +71,6 @@ const registerUser = async (req: Express.Request, res: Express.Response) => {
 
 
 export default {
-  registerUser
+  registerUser,
+  loginUser
 }

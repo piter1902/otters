@@ -12,9 +12,7 @@ import cors from 'cors';
 
 // Necesario para passport
 import passport from 'passport';
-import cookieParser from 'cookie-parser';
-import expressSession from 'express-session';
-import * as passportConfig from './service/passportConfig';
+import './service/passportConfig';
 
 // Conexión a la bd
 import "./models/db";
@@ -67,15 +65,15 @@ app.use(cors({
 }));
 
 /* -----------------Passport configuration ----------------- */
-app.use(expressSession({
-    secret: process.env.COOKIES_CODE!,
-    resave: true,
-    saveUninitialized: true
-}));
+// app.use(expressSession({
+//     secret: process.env.COOKIES_CODE!,
+//     resave: true,
+//     saveUninitialized: true
+// }));
 
-app.use(cookieParser(process.env.COOKIES_CODE))
+// app.use(cookieParser(process.env.COOKIES_CODE))
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 /* ----------------- END Passport configuration ----------------- */
 
 // Swagger JSON

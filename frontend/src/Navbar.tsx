@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Navbar.css'
 import logo from './otter2.png';
 import { Link } from 'react-router-dom';
+import useToken from './auth/Token/useToken';
+import useGetFetch from './useGetFetch';
 
 export interface NavbarProps {
 
@@ -12,8 +14,25 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
     // Title
     const title = "OTTERS";
 
-    // Admin property
-    const isAdmin = true;
+    // Token para mantener el estado del usuario
+    const { token } = useToken();
+
+    // Obtención de la info del usuario (se hace para cada actualización del token)
+
+    const [userInfo, setUserInfo] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            if (token != null && token.userId) {
+                const response = await fetch(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}`, { method: "GET" });
+                if (response.status == 200) {
+                    setUserInfo(await response.json());
+                }
+            }
+        }
+        fetchUserInfo();
+        return () => { }
+    }, [token]);
 
     return (
         <div className="mb-3">
@@ -24,19 +43,33 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
                             <img src={logo} className="logo" alt="Logo" />
                         </Link>
                     </h1>
-                    <button className="navbar-toggler me-2" type="button" data-toggle="collapse"
-                        data-target="#navbarTop" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse me-3" id="navbarTop">
-                        <ul className="navbar-nav ms-auto">
-                            <li className="nav-item mx-2">
-                                <Link to="/cuenta" className="text-muted text-decoration-none">
-                                    <i className="fas fa-user mx-1"></i>
-                                    Cuenta
-                                </Link>
-                            </li>
-                        </ul>
+                    <div>
+                        <button className="navbar-toggler me-2" type="button" data-toggle="collapse"
+                            data-target="#navbarTop" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+                        <div className="collapse navbar-collapse me-3" id="navbarTop">
+                            <ul className="navbar-nav ms-auto">
+                                {/* Para los detalles de la cuenta del usuario */}
+                                {token != null &&
+                                    <li className="nav-item mx-2">
+                                        <Link to="/cuenta" className="text-muted text-decoration-none">
+                                            <i className="fas fa-user mx-1"></i>
+                                            Cuenta
+                                        </Link>
+                                    </li>
+                                }
+                                {/* Para el inicio de sesión del usuario */}
+                                {token == null &&
+                                    <li className="nav-item mx-2">
+                                        <Link to="/login" className="text-muted text-decoration-none">
+                                            <i className="fa fa-sign-in mx-1"></i>
+                                            Inicia sesión
+                                        </Link>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -58,7 +91,8 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
                             <li className="nav-item text-light mx-2">
                                 <Link to="/peticionesayuda" className="text-light text-decoration-none">Ayuda</Link>
                             </li>
-                            {isAdmin &&
+                            {/* Solo se muestra si el usuario actual existe y es administrador */}
+                            {userInfo && userInfo.isAdmin &&
                                 <li className="nav-item text-light mx-2">
                                     <Link to="/admin" className="text-light text-decoration-none">Admin</Link>
                                 </li>
