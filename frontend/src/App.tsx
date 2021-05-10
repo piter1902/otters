@@ -12,6 +12,7 @@ import CreatePost from './posts/CreatePost';
 import CreatePetition from './petitions/CreatePetition';
 import PostDetalle from './posts/PostDetalle';
 import PeticionDetalle from './petitions/PeticionDetalle';
+import NotFoundComponent from './NotFoundComponent';
 
 
 const App = () => {
@@ -33,9 +34,6 @@ const App = () => {
         <div>
           <Navbar />
           <div className="container">
-            <Route exact path="/">
-              <p className="display-2">Hola mundo</p>
-            </Route>
             {/* Perfil del usuario propio */}
             <Route exact path="/cuenta">
               <UserProfile />
@@ -44,7 +42,10 @@ const App = () => {
             <Route exact path="/admin">
               <AdminPage />
             </Route>
-            {/* Estadisticas COVID */}
+            {/* Estadisticas COVID (página principal) */}
+            <Route exact path="/">
+              <EstadisticasCovid />
+            </Route>
             <Route exact path="/estadisticas">
               <EstadisticasCovid />
             </Route>
@@ -64,12 +65,19 @@ const App = () => {
             <Route exact path="/peticionesayuda">
               <PetitionList />
             </Route>
+            {/* Creación de posts */}
             <Route exact path="/createPost">
               <CreatePost />
             </Route>
+            {/* Creación de peticiones */}
             <Route exact path="/createPetition">
               <CreatePetition />
             </Route>
+            {/* Error */}
+            <Route exact path="/error">
+              <NotFoundComponent />
+            </Route>
+            <Redirect to="/error" />
           </div>
         </div>
       </Switch>

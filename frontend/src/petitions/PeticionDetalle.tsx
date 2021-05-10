@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import useGetFetch from '../useGetFetch';
 import ClipLoader from "react-spinners/ClipLoader";
 import StatusBadge from './StatusBadge';
@@ -13,14 +13,17 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
     // Obtenemos la información de la peticion
     const { data: petition, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/petitions/` + id);
 
-    // console.log("Pet detalle " + (petitions as any).userInfo.userName);
-    // Variables a mostrar
-    // const userName = petition.userInfo.username;
-    // const title = (petition as any).title;
-    // const place = (petition as any).place;
-    // const targetDate = new Date((petition as any).targetDate);
-    // const isUrgent = (petition as any).isUrgent;
-    // const expTime = (petition as any).expTime;
+    // Navegación
+    const history = useHistory();
+
+    // Redirección en caso de error en la carga
+    useEffect(() => {
+        if (error != null) {
+            // Hay error
+            history.replace("/error");
+        }
+        return () => { }
+    }, [error]);
 
     return (
         <div className="row card mt-md-4 mt-3">

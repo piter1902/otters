@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 import useToken from '../auth/Token/useToken';
 import useGetFetch from '../useGetFetch';
@@ -18,6 +18,19 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
     // Token
     const { token } = useToken();
 
+    // Navegación
+    const history = useHistory();
+
+    // Redirección en caso de error en la carga
+    useEffect(() => {
+        if (error != null) {
+            // Hay error
+            history.replace("/error");
+        }
+        return () => { }
+    }, [error]);
+
+    // Cuerpo del comentario
     const [body, setBody] = useState('');
 
     const handleLike = () => {
