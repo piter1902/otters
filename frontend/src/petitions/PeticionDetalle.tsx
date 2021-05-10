@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from "react-router";
 import useGetFetch from '../useGetFetch';
 import ClipLoader from "react-spinners/ClipLoader";
+import StatusBadge from './StatusBadge';
 
 interface PeticionDetalleProps {
 }
@@ -33,8 +34,11 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
             { error && <div style={{ textAlign: "center", verticalAlign: "middle" }}>{error}</div>}
             {!isPending && (
                 < div className="card-body px-3 py-3">
-                    <p className="h2 fw-bold">{petition.title}</p>
-                    {/* TODO: Deberiamos mostrar el Id del usuario */}
+                    <p className="h2 fw-bold d-flex justify-content-between">
+                        {petition.title}
+                        <StatusBadge status={petition.status} />
+                    </p>
+
                     <p className="lead ">Creado por {petition.userInfo.userName}</p>
 
                     <p >{(petition as any).body}</p>
