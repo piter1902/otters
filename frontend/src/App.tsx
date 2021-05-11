@@ -43,9 +43,8 @@ const App = () => {
               <AdminPage />
             </Route>
             {/* Estadisticas COVID (página principal) */}
-            <Route exact path="/">
-              <EstadisticasCovid />
-            </Route>
+            <Redirect from="/" to="/estadisticas" />
+            <Redirect from="" to="/estadisticas" />
             <Route exact path="/estadisticas">
               <EstadisticasCovid />
             </Route>
