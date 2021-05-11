@@ -624,12 +624,15 @@ paths:
               schema:
                 type: object
                 properties:
-                  token:
-                    type: string
-                    description: Generated JWT token related to the user. Expires in one day
-                  userId:
-                    type: integer
-                    description: Logged user Id
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        description: Generated JWT token related to the user. Expires in one day
+                      userId:
+                        type: integer
+                        description: Logged user Id
   # Register                    
   /auth/register:
     post:
