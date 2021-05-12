@@ -1,14 +1,16 @@
 import React, { JSXElementConstructor, useState } from 'react'
 import { Link } from 'react-router-dom';
+import './Petition'
+import Petition from './Petition';
 
 interface PetitionListComponentProps {
-    petitionsInfo: any[];
+    petitionsInfo: Petition[];
 }
 
 const PetitionListComponent: JSXElementConstructor<PetitionListComponentProps> = ({ petitionsInfo }) => {
     return (
         <div>
-            { petitionsInfo.length > 0 ? petitionsInfo.map((petitionInfo: any) => (
+            { petitionsInfo.length > 0 ? petitionsInfo.map((petitionInfo: Petition) => (
                 <Link to={"/peticionDetalle/" + petitionInfo._id} className="custom-card" key={petitionInfo._id}>
 
                     <div className="container-fluid d-flex justify-content-center card mb-4" key={petitionInfo._id} >
@@ -24,7 +26,7 @@ const PetitionListComponent: JSXElementConstructor<PetitionListComponentProps> =
                                     : "COMPLETED" && <i className="fas fa-times"></i>}
                             </div>
                         </div>
-                        <p className="ms-3 mt-3"> {petitionInfo.body} -- {petitionInfo.place} </p>
+                        <p className="ms-3 mt-3"> {petitionInfo.body} -- {petitionInfo.place} <i className="fas fa-map-marker-alt"></i></p>
                     </div>
                 </Link>
             ))
