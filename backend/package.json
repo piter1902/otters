@@ -49,6 +49,7 @@
     "react-router-dom": "^5.2.0",
     "rimraf": "^3.0.2",
     "swagger-ui-express": "^4.1.6",
+    "xlsx": "^0.16.9",
     "yamljs": "^0.3.0"
   }
 }
