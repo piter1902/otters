@@ -4,9 +4,9 @@
   "description": "",
   "scripts": {
     "start": "ts-node -r dotenv/config src/index.ts",
-    "dev": "npx rimraf *xlsx; nodemon -x ts-node -r dotenv/config src/index.ts",
-    "build": "npx rimraf *xlsx; tsc",
-    "clean": "npx rimraf *xlsx",
+    "dev": "npx rimraf *xlsx *csv; nodemon -x ts-node -r dotenv/config src/index.ts",
+    "build": "npx rimraf *xlsx *csv; tsc",
+    "clean": "npx rimraf *xlsx *csv",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Otters",
