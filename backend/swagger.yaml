@@ -603,13 +603,14 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - password
+                - email
               properties:
                 password: 
                   type: string
-                  required: true
                 email:
                   type: string
-                  required: true
       responses:
         "401":
           description: Unauthorized. No user found with those credentials
@@ -646,22 +647,23 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - name
+                - email
+                - password
+                - sanitaryZone
               properties:
                 name: 
                   type: string
-                  required: true
                   description: New user name
                 email:
                   type: string
-                  required: true
-                  description: New user emaill. Must be unique
+                  description: New user email. Must be unique
                 password:
                   type: string
-                  required: true
                 sanitaryZone:
                   type: string
                   description: SanitaryZone of the user
-                  required: true
       responses:
         "400":
           description: Bad request. User already exist with that email
