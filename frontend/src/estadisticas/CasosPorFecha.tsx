@@ -71,7 +71,7 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setD
                 setCasos(casos[0].possitives);
             } else {
                 // No hay coincidencias -> 0 casos
-                setCasos(0);
+                setCasos(-1);
             }
         }
     }
@@ -84,18 +84,23 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setD
                     <label htmlFor="fechacasos" className="input-group-text">
                         Casos a día
                     </label>
-                    <input type="date" id="fechacasos" className="form-control" onChange={dateChange} 
-                    disabled={datos == undefined}/>
+                    <input type="date" id="fechacasos" className="form-control" onChange={dateChange}
+                        disabled={datos == undefined} />
                 </div>
                 {/* Casos */}
                 <div className="container-fluid d-flex justify-content-center mt-3">
                     {/* Hay datos */}
-                    {hasStarted && (
+                    {hasStarted && casos != -1 && (
                         <p className="display-4 fw-bold">
                             {casos}
                         </p>
                     )
                     }
+                    {hasStarted && casos == -1 && (
+                        <p className="display-4 fw-bold">
+                            N/A
+                        </p>
+                    )}
                 </div>
             </div>
         </div>

@@ -22,6 +22,7 @@ const parseCSV = async (file: string, zones: ZoneData[]) => {
         RS: "\n",
         skipHidden: false,
         rawNumbers: true,
+        strip: false
     });
     const data = csv.split("\n");
     logger.info(`Fichero ${file} -- lineas: ${data.length}`);
@@ -56,18 +57,18 @@ const parseCSV = async (file: string, zones: ZoneData[]) => {
                             });
                         } else if (name != undefined && name.trim().toUpperCase().match("TOTAL")) {
                             // Es fila de total
-                            logger.watch("File: " + file + " Zona sanitaria aragon encontrada. Calculando NPos = " + possitives);
-                            zones.push({
-                                name: "Aragon",
-                                possitives
-                            });
+                            // logger.watch("File: " + file + " Zona sanitaria aragon encontrada. Calculando NPos = " + possitives);
+                            // zones.push({
+                            //     name: "Aragon",
+                            //     possitives
+                            // });
                             esTablaZBS = false;
                             // Salimos por ser la última fila
                             break;
                         } else {
                             // Error -> break
                             logger.error(`File: ${file} @ ${i} --> data: ${data[i]}`);
-                            fs.writeFileSync(file.replace("xlsx", "csv"), csv);
+                            // fs.writeFileSync(file.replace("xlsx", "csv"), csv);
                             break;
                         }
                     }
@@ -85,8 +86,8 @@ const parseCSV = async (file: string, zones: ZoneData[]) => {
         logger.fatal(error);
         logger.fatal("-".repeat(50));
     }
-    // Comprobación de si existe Aragón
-    if (zones.findIndex(z => z.name === "Aragon") == -1) {
+    // Comprobación de si hay zonas sanitarias y existe Aragón
+    if (zones.length !== 0 && zones.findIndex(z => z.name === "Aragon") == -1) {
         // No existe -> se crea
         let pos = 0;
         zones.forEach(z => pos += z.possitives);
@@ -168,73 +169,73 @@ const parseXLSX = async (filename: string, zones: ZoneData[]) => {
 }
 
 // Read file with another package
-const parseXLSX2 = async (filename: string, zones: ZoneData[]) => {
-    // const xlsxFile = await xlsx.readFile(file);
-    try {
-        const workbook = XLSX.readFile(filename);
-        const workSheet = workbook.Sheets[workbook.SheetNames[0]];
-        logger.info("Procesando File " + filename);
-        for (let i = 28; ; i++) {
-            // const data = workSheet.getRow(i);
-            const name = workSheet['B' + i] ? workSheet['B' + i].v : undefined;
-            if (filename == "20210418_casos_confirmados_zbs.xlsx") {
-                // Es uno de los días que no procesa bien
-                logger.warn("B" + i + "  " + name || "nombre??");
-            }
-            if (name != undefined && name && name.trim() != ""
-                && !name.trim().toUpperCase().match("ZBS")   // No es una fila de ZBS sin identificar...
-                && !name.trim().toUpperCase().match("Zona")  // No es una fila de ZBS sin identificar...
-                && !name.trim().toUpperCase().match("TOTAL") // No sea fila de total
-                && name.match("^[a-zA-Z].*$")) {             // Para evitar valores numéricos extraños se pide que el nombre empiece por una letra            
-                // Parsear cuando se sepa que tiene que tener un valor
-                const possitives = parseInt(workSheet['C' + i] ? workSheet['C' + i].v : "0");
-                if (filename == "20210418_casos_confirmados_zbs.xlsx") {
-                    // Es uno de los días que no procesa bien
-                    logger.warn("C" + i + "  " + possitives?.toString() || "positivos??");
-                }
-                if (possitives != undefined && !isNaN(possitives)) {
-                    // Es una zona de salud válida (número de positivos es válido)
-                    zones.push({
-                        name,
-                        possitives
-                    });
-                }
-            } else if (name != undefined && !name.match("^[a-zA-Z].*$")) {
-                // Valor numérico extraño
-                logger.fatal(`Valor numérico en fichero: ${filename}`);
-                break;
-            } else if (name != undefined && name.trim().toUpperCase().match("TOTAL")) {
-                // Fila final (total)
-                // Guardar los datos como si fuera aragon
-                const possitives = parseInt(workSheet['C' + i] ? workSheet['C' + i].v : "0");
-                if (possitives != undefined && !isNaN(possitives)) {
-                    logger.watch("File: " + filename + " Zona sanitaria aragon encontrada. NPos = " + possitives);
-                    zones.push({
-                        name: "Aragon",
-                        possitives
-                    });
-                }
-                break;
-            } else if (name == undefined) {
-                // Casilla vacía -> fin del bucle
-                break;
-            }
-        }
-        // Comprobación de si existe aragon
-        if (zones.findIndex(z => z.name === "Aragon") == -1) {
-            // No existe -> se crea
-            let pos = 0;
-            zones.forEach(z => pos += z.possitives);
-            logger.watch("File: " + filename + " Zona sanitaria aragon no encontrada. Calculando NPos = " + pos);
-            zones.push({
-                name: "Aragon",
-                possitives: pos
-            });
-        }
-    } catch (error) {
-        logger.error(`File: ${filename} -- Error: ${error}`);
-    }
-}
+// const parseXLSX2 = async (filename: string, zones: ZoneData[]) => {
+//     // const xlsxFile = await xlsx.readFile(file);
+//     try {
+//         const workbook = XLSX.readFile(filename);
+//         const workSheet = workbook.Sheets[workbook.SheetNames[0]];
+//         logger.info("Procesando File " + filename);
+//         for (let i = 28; ; i++) {
+//             // const data = workSheet.getRow(i);
+//             const name = workSheet['B' + i] ? workSheet['B' + i].v : undefined;
+//             if (filename == "20210418_casos_confirmados_zbs.xlsx") {
+//                 // Es uno de los días que no procesa bien
+//                 logger.warn("B" + i + "  " + name || "nombre??");
+//             }
+//             if (name != undefined && name && name.trim() != ""
+//                 && !name.trim().toUpperCase().match("ZBS")   // No es una fila de ZBS sin identificar...
+//                 && !name.trim().toUpperCase().match("Zona")  // No es una fila de ZBS sin identificar...
+//                 && !name.trim().toUpperCase().match("TOTAL") // No sea fila de total
+//                 && name.match("^[a-zA-Z].*$")) {             // Para evitar valores numéricos extraños se pide que el nombre empiece por una letra            
+//                 // Parsear cuando se sepa que tiene que tener un valor
+//                 const possitives = parseInt(workSheet['C' + i] ? workSheet['C' + i].v : "0");
+//                 if (filename == "20210418_casos_confirmados_zbs.xlsx") {
+//                     // Es uno de los días que no procesa bien
+//                     logger.warn("C" + i + "  " + possitives?.toString() || "positivos??");
+//                 }
+//                 if (possitives != undefined && !isNaN(possitives)) {
+//                     // Es una zona de salud válida (número de positivos es válido)
+//                     zones.push({
+//                         name,
+//                         possitives
+//                     });
+//                 }
+//             } else if (name != undefined && !name.match("^[a-zA-Z].*$")) {
+//                 // Valor numérico extraño
+//                 logger.fatal(`Valor numérico en fichero: ${filename}`);
+//                 break;
+//             } else if (name != undefined && name.trim().toUpperCase().match("TOTAL")) {
+//                 // Fila final (total)
+//                 // Guardar los datos como si fuera aragon
+//                 const possitives = parseInt(workSheet['C' + i] ? workSheet['C' + i].v : "0");
+//                 if (possitives != undefined && !isNaN(possitives)) {
+//                     logger.watch("File: " + filename + " Zona sanitaria aragon encontrada. NPos = " + possitives);
+//                     zones.push({
+//                         name: "Aragon",
+//                         possitives
+//                     });
+//                 }
+//                 break;
+//             } else if (name == undefined) {
+//                 // Casilla vacía -> fin del bucle
+//                 break;
+//             }
+//         }
+//         // Comprobación de si existe aragon
+//         if (zones.findIndex(z => z.name === "Aragon") == -1) {
+//             // No existe -> se crea
+//             let pos = 0;
+//             zones.forEach(z => pos += z.possitives);
+//             logger.watch("File: " + filename + " Zona sanitaria aragon no encontrada. Calculando NPos = " + pos);
+//             zones.push({
+//                 name: "Aragon",
+//                 possitives: pos
+//             });
+//         }
+//     } catch (error) {
+//         logger.error(`File: ${filename} -- Error: ${error}`);
+//     }
+// }
 
 // Parse file
 // Datos desde la línea 27 a la 85 (no incluidas)
