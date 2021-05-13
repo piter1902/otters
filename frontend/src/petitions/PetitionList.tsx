@@ -36,10 +36,14 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
             )
         } else if (filter === "Recent") {
             setFilteredPetitions(
-                data.sort((a: Petition,b: Petition) => (a.targetDate > b.targetDate) ? 1 : -1 )
-            )
+                // data.sort((a: Petition, b: Petition) => (a.targetDate > b.targetDate) ? 1 : -1)
+                data.sort((a: Petition, b: Petition) =>{
+                    return +new Date(b.targetDate) - +new Date(a.targetDate)
+                }
+                ))
         } else {
             setFilteredPetitions(data)
+            setFilter("0")
         }
     }, [filter, data])
 
@@ -54,12 +58,13 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
                             </button>
                         </Link>
                     </div>
-                    <div className="col-4 d-grid gap-2 d-md-flex justify-content-md-end dropdown">
-                        <select id="petitionFilter" className="navbar-azul text-light btn" value={filter} onChange={filterChanged}>
+                    <div className="col-4 d-grid gap-2 justify-content-md-end">
+                        <select id="petitionFilter" className="navbar-azul text-light btn form-select" value={filter} onChange={filterChanged}>
                             <option value="0" style={{ backgroundColor: "white" }} disabled>Filtrar</option>
                             <option value="Recent" className="text-dark" style={{ backgroundColor: "white" }}>Más reciente</option>
                             <option value="Open" className="text-dark" style={{ backgroundColor: "white" }}>Peticiones abiertas</option>
-
+                            <option style={{ backgroundColor: "white", textAlign: "center" }} disabled value="">_______________</option>
+                            <option value="Reset" className="text-dark" style={{ backgroundColor: "white" }}>Limpiar filtro</option>
                         </select>
                     </div>
                 </div>

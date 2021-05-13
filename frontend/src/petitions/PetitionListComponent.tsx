@@ -26,7 +26,14 @@ const PetitionListComponent: JSXElementConstructor<PetitionListComponentProps> =
                                     : "COMPLETED" && <i className="fas fa-times"></i>}
                             </div>
                         </div>
-                        <p className="ms-3 mt-3"> {petitionInfo.body} -- {petitionInfo.place} <i className="fas fa-map-marker-alt"></i></p>
+                        <div className="d-flex justify-content-between">
+                            <div className="p2">
+                                <p className="ms-3 mt-3"> {petitionInfo.body} -- {petitionInfo.place} <i className="fas fa-map-marker-alt"></i></p>
+                            </div>
+                            <div className="p2 ml-auto">
+                            <p className="ms-3 mt-3"> {new Date(petitionInfo.targetDate).toLocaleDateString("es-ES")} <i className="far fa-clock"></i></p>
+                            </div>
+                        </div>
                     </div>
                 </Link>
             ))
