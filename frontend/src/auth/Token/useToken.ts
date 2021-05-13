@@ -3,7 +3,7 @@ import Token from "./Token";
 
 const useToken = () => {
 
-    const [firstTime, setFirstTime] = useState<boolean>(true);
+    // const [firstTime, setFirstTime] = useState<boolean>(true);
 
     const [token, setToken] = useState<Token | null>(null);
 
@@ -16,7 +16,7 @@ const useToken = () => {
         if (t == null) {
             // Se borra todo el almacenamiento
             localStorage.clear();
-            setFirstTime(true);
+            // setFirstTime(true);
         } else {
             // Se guarda el token en el almacenamiento
             localStorage.setItem("token", JSON.stringify(t));
@@ -30,7 +30,7 @@ const useToken = () => {
         console.log(tokenString)
         if (tokenString !== null) {
             setToken(JSON.parse(tokenString) as Token);
-            setFirstTime(false);
+            // setFirstTime(false);
         }
 
         return () => { }

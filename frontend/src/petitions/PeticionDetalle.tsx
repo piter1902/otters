@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory, useParams } from "react-router";
 import useGetFetch from '../useGetFetch';
 import ClipLoader from "react-spinners/ClipLoader";
@@ -23,7 +23,7 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
             history.replace("/error");
         }
         return () => { }
-    }, [error]);
+    }, [error, history]);
 
     return (
         <div className="row card mt-md-4 mt-3">
@@ -48,7 +48,7 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
 
                     <p className="lead ">Lugar: {petition.place}</p>
                     <p className="lead ">Fecha: {new Date(petition.targetDate).toLocaleDateString("en-ES")}</p>
-                    {petition.expTime != ""
+                    {petition.expTime !== ""
                         ? <p className="lead ">Hora de expiración: {petition.expTime}</p>
                         : <p className="lead ">Hora de expiración: --:--</p>
                     }

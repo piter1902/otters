@@ -3,7 +3,6 @@ import './Navbar.css'
 import logo from './otter2.png';
 import { Link } from 'react-router-dom';
 import useToken from './auth/Token/useToken';
-import useGetFetch from './useGetFetch';
 
 export interface NavbarProps {
 
@@ -25,7 +24,7 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
         const fetchUserInfo = async () => {
             if (token != null && token.userId) {
                 const response = await fetch(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}`, { method: "GET" });
-                if (response.status == 200) {
+                if (response.status === 200) {
                     setUserInfo(await response.json());
                 }
             }

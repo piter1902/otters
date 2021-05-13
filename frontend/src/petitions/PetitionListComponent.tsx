@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, useState } from 'react'
+import React, { JSXElementConstructor } from 'react'
 import { Link } from 'react-router-dom';
 
 interface PetitionListComponentProps {
@@ -19,7 +19,7 @@ const PetitionListComponent: JSXElementConstructor<PetitionListComponentProps> =
                                 <p className="ms-3">Creado por {petitionInfo.userInfo.userName}</p>
                             </div>
                             <div className="col-1 sm-12">
-                                {petitionInfo.status == "COMPLETED"
+                                {petitionInfo.status === "COMPLETED"
                                     ? <i className="fas fa-check"></i>
                                     : "COMPLETED" && <i className="fas fa-times"></i>}
                             </div>

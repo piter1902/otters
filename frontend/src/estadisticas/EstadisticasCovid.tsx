@@ -24,7 +24,7 @@ const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = (
             const response = await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`, {
                 method: "GET"
             });
-            if (response.status == 200) {
+            if (response.status === 200) {
                 // Set zone to zonaSalud by default
                 setZonaSaludSelected((await response.json()).sanitaryZone);
             }

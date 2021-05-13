@@ -1,12 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import useToken from '../auth/Token/useToken';
 import '../Navbar.css'
 
 export interface createPetitionProps {
-
-}
-const createPetition = () => {
 
 }
 

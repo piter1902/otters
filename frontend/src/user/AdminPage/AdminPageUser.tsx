@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, useEffect, useState } from 'react';
+import React, { JSXElementConstructor, useState } from 'react';
 import AdminPageUserTile from './AdminPageUserTile';
 
 interface AdminPageUserProps {
@@ -57,7 +57,7 @@ const AdminPageUser: JSXElementConstructor<AdminPageUserProps> = ({ registrados,
                         <li className="list-group-item">
                             <ul className="list-group" style={{ overflowY: "scroll", height: "500px" }}>
                                 {
-                                    listUsers.length != 0 &&
+                                    listUsers.length !== 0 &&
                                     listUsers.map((user) => (
                                         <AdminPageUserTile user={user} key={user._id} />
                                     ))

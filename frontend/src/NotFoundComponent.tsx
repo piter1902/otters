@@ -8,7 +8,7 @@ const NotFoundComponent = () => {
                 <p style={{ justifyContent: "true" }}>
                     No se ha encontrado el recurso que buscabas
                 </p>
-                <img src={"./otter-background.png"} alt="Otter image" style={{width: "500px"}} />
+                <img src={"./otter-background.png"} alt="Otter" style={{width: "500px"}} />
             </div>
         </div>
     )
