@@ -27,7 +27,7 @@ const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
             const response = await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`, {
                 method: "GET"
             });
-            if (response.status == 200) {
+            if (response.status === 200) {
                 // Set zone to zonaSalud by default
                 const isAdmin = ((await response.json()).isAdmin);
                 if (!isAdmin) {
@@ -46,7 +46,7 @@ const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
             // history.push("/");
         }
         return () => { }
-    }, [token]);
+    }, [token, history]);
 
     return (
         <div className="container-fluid d-flex justify-content-center card">

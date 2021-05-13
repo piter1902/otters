@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import useZBS from '../estadisticas/useZBS';
 import './Login.css';
-import useToken from './Token/useToken';
 
 export interface RegisterProps {
 
@@ -52,7 +51,7 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
             });
         if (response.status === 201) {
             // Ha ido bien
-            const json = await response.json();
+            //const json = await response.json();
             // Recargamos la página y navegamos al login
             history.push("/login");
             window.location.reload();

@@ -15,7 +15,7 @@ const PostList: React.JSXElementConstructor<PostListProps> = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             const response = await fetch(`${process.env.REACT_APP_BASEURL!}/post`, { method: "GET" });
-            if (response.status == 200) {
+            if (response.status === 200) {
                 // Respuesta correcta, cargamos los datos
                 const jsonData = await response.json();
                 setPosts(jsonData);

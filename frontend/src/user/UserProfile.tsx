@@ -1,10 +1,9 @@
-import React, { JSXElementConstructor, useEffect, useMemo, useState } from 'react'
+import React, { JSXElementConstructor, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { ClipLoader } from 'react-spinners';
 import useToken from '../auth/Token/useToken';
 import PetitionListComponent from '../petitions/PetitionListComponent';
 import PostListComponent from '../posts/PostListComponent';
-import useGetFetch from '../useGetFetch';
 import ChangeUserData from './ChangeUserData';
 
 
@@ -34,7 +33,7 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                 if (token != null && token.userId) {
                     setIsPending(true);
                     const response = await fetch(url, { method: "GET" });
-                    if (response.status == 200) {
+                    if (response.status === 200) {
                         const dataJson = await response.json();
                         console.log("Para " + url + " el resultado es ");
                         console.log(dataJson);
@@ -57,7 +56,7 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                 if (token != null && token.userId) {
                     setIsPending(true);
                     const response = await fetch(url, { method: "GET" });
-                    if (response.status == 200) {
+                    if (response.status === 200) {
                         const dataJson = await response.json();
                         console.log("Para " + url + " el resultado es ");
                         console.log(dataJson);
@@ -67,11 +66,11 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
             }
             setIsPending(true);
             if (user !== null) {
-                if (user.posts != []) {
+                if (user.posts !== []) {
                     console.log("La lista de peticiones no es vacia")
                     await fetchInfo(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}/posts`, setDataPosts);
                 }
-                if (user.petitions != []) {
+                if (user.petitions !== []) {
                     console.log("La lista de posts no es vacia")
                     await fetchInfo(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}/petitions`, setDataPetitions);
                 }
@@ -80,7 +79,7 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
         }
         fetchUserPetitionsAndPosts();
         return () => { }
-    }, [user])
+    }, [user, token])
 
     // Imagen del usuario
     const [picture, setPicture] = useState<string>("");

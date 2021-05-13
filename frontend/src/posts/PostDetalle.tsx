@@ -28,7 +28,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
             history.replace("/error");
         }
         return () => { }
-    }, [error]);
+    }, [error, history]);
 
     // Cuerpo del comentario
     const [body, setBody] = useState('');
