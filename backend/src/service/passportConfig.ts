@@ -21,10 +21,6 @@ const JwtStrategy = passportJwt.Strategy;
  * Estrategia JWT
  * Source: https://davidinformatico.com/jwt-express-js-passport/
  */
-let opts: any = {}
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = process.env.JWT_SECRET!;
-opts.algorithms = [process.env.JWT_ALGORITHM];
 
 passport.use(new JwtStrategy({
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

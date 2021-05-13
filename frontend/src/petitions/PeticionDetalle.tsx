@@ -47,8 +47,8 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
                     <p >{(petition as any).body}</p>
 
                     <p className="lead ">Lugar: {petition.place}</p>
-                    <p className="lead ">Fecha: {new Date(petition.targetDate).toLocaleDateString("en-ES")}</p>
-                    {petition.expTime !== ""
+                    <p className="lead ">Fecha: {new Date(petition.targetDate).toLocaleDateString("es-ES")}</p>
+                    {petition.expTime != ""
                         ? <p className="lead ">Hora de expiración: {petition.expTime}</p>
                         : <p className="lead ">Hora de expiración: --:--</p>
                     }
