@@ -13,7 +13,7 @@ export interface PostListProps {
 
 const PostList: React.JSXElementConstructor<PostListProps> = () => {
 
-    const {data:posts, isPending, error} = useGetFetch(`${process.env.REACT_APP_BASEURL!}/post`);
+    const { data: posts, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL!}/post`);
 
     // Posts filtradas
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
@@ -27,24 +27,32 @@ const PostList: React.JSXElementConstructor<PostListProps> = () => {
 
 
     useEffect(() => {
+        console.log(filter);
         if (filter === "MostLiked") {
             setFilteredPosts(
-                posts.sort((a: Post, b: Post) =>{
-                    return +(b.possitive_valorations.length - b.negative_valorations.length)- +(a.possitive_valorations.length - a.negative_valorations.length)
-                }
+                [].concat(
+                    posts.sort((a: Post, b: Post) => {
+                        return +(b.possitive_valorations.length - b.negative_valorations.length) - +(a.possitive_valorations.length - a.negative_valorations.length)
+                    }
+                    )
                 ))
-        }else if (filter === "MostCommented") {
+        } else if (filter === "MostCommented") {
             setFilteredPosts(
-                posts.sort((a: Post, b: Post) =>{
-                    return +b.comments.length - +a.comments.length
-                }
+                [].concat(
+                    posts.sort((a: Post, b: Post) => {
+                        return +b.comments.length - +a.comments.length
+                    }
+                    )
                 ))
-        }  else if (filter === "Recent") {
+        } else if (filter === "Recent") {
             setFilteredPosts(
-                posts.sort((a: Post, b: Post) =>{
-                    return +new Date(b.date) - +new Date(a.date)
-                }
+                [].concat(
+                    posts.sort((a: Post, b: Post) => {
+                        return +new Date(b.date) - +new Date(a.date)
+                    })
                 ))
+        } else if (filter === "0") {
+            setFilteredPosts(posts)
         } else {
             setFilteredPosts(posts)
             setFilter("0")

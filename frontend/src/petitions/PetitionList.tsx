@@ -27,6 +27,7 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
     }
 
     useEffect(() => {
+        console.log(filter);
         if (filter === "Open") {
             console.log(filteredPetitions)
             setFilteredPetitions(
