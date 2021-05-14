@@ -40,8 +40,9 @@ const App = () => {
               <AdminPage />
             </Route>
             {/* Estadisticas COVID (página principal) */}
-            <Redirect from="/" to="/estadisticas" />
-            <Redirect from="" to="/estadisticas" />
+            <Route exact path="/">
+              <Redirect to="/estadisticas" />
+            </Route>
             <Route exact path="/estadisticas">
               <EstadisticasCovid />
             </Route>
@@ -73,7 +74,7 @@ const App = () => {
             <Route exact path="/error">
               <NotFoundComponent />
             </Route>
-            <Redirect to="/error" />
+            {/* <Redirect to="/error" /> */}
           </div>
         </div>
       </Switch>
