@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import GoogleButton from 'react-google-button';
 import { Link, useHistory } from 'react-router-dom';
 import './Login.css';
 import Token from './Token/Token';
@@ -97,10 +98,11 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                                 <button type="submit" className="btn btn-md-lg btn-light rounded-pill">Inicia Sesión</button>
                             </div>
                             <div className="text-center mb-3">
-                                <button type="button" className="btn btn-md-lg btn-light btn-labeled rounded-pill">
+                                {/* <button type="button" className="btn btn-md-lg btn-light btn-labeled rounded-pill">
                                     <span className="btn-label pe-1"><i className="fab fa-google"></i></span>
                                     Iniciar sesión con Google
-                                </button>
+                                </button> */}
+                                <GoogleButton onClick={() => console.log("Singing in with google")}/>
                             </div>
 
                             <div className="d-flex align-self-center mt-2 mt-xl-6">
