@@ -78,7 +78,7 @@ const _doAddPetition = async function (user: any) {
         place: petArrayPlace[numPlace],
         targetDate: new Date(tempDate.setMonth(tempDate.getMonth())),
         isUrgent: isUrgent,
-        status: 'Created'
+        status: 'OPEN'
     });
 
     user.petitions.push(

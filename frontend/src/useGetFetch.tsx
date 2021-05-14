@@ -1,4 +1,4 @@
-import { JSXElementConstructor, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 // Valido para realizar GET a Backend
 

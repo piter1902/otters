@@ -1,5 +1,4 @@
-import React, { JSXElementConstructor, useState } from 'react'
-import useGetFetch from '../useGetFetch';
+import React, { JSXElementConstructor, useState } from 'react';
 import useZBS from '../estadisticas/useZBS';
 import Token from '../auth/Token/Token';
 
@@ -52,7 +51,7 @@ const ChangeUserData: JSXElementConstructor<ChangeUserDataProps> = ({ user, toke
         console.log("data " + data);
         if (user.password === passwordAct) {
             console.log("Las contraseñas coinciden");
-            const result = await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`,
+            await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`,
                 {
                     method: "POST",
                     headers: {

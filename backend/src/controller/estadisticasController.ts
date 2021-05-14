@@ -50,7 +50,7 @@ const getEstadisticas = async (req: Express.Request, res: Express.Response) => {
             realizadas: (peticiones as any[]).length,
             // TODO: Esto queda pendiente de cuando se haga el flujo de peticiones
             atendidas: (peticiones as any[]).filter((p) => p.status.toUpperCase() === "COMPLETED").length,
-            canceladas: (peticiones as any[]).filter((p) => p.status.toUpperCase() === "CANCELED").length,
+            canceladas: (peticiones as any[]).filter((p) => p.status.toUpperCase() === "CANCELLED").length,
         },
         foro: {
             escritos: (foro as any[]).length,

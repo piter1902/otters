@@ -85,7 +85,7 @@ const GraficaCasos = ({ data }) => {
       })
     );
     return () => {};
-  }, [data]);
+  }, [data, myChart]);
 
   return (
     <div>

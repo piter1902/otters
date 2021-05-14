@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import useZBS from '../estadisticas/useZBS';
+import ReCAPTCHA from 'react-google-recaptcha';
 import './Login.css';
-import useToken from './Token/useToken';
 
 export interface RegisterProps {
 
@@ -26,9 +26,23 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
     const [userPassword, setUserPassword] = useState("");
     const [userConfirmPassword, setUserConfirmPassword] = useState("");
 
+    // Control del captcha
+    const [enableRegister, setEnableRegister] = useState<boolean>(false);
+
     // Cambio de la zona de salud a visualizar
     const zonaSaludChanged = (event: { target: { value: string; }; }) => {
         setZonaSalud(event.target.value);
+    }
+
+    // Handle captcha
+    const handleCaptcha = (token: string | null) => {
+        if (token != null) {
+            // El captcha es válido
+            setEnableRegister(true);
+        } else {
+            // El captcha es inválido (ha caducado)
+            setEnableRegister(false);
+        }
     }
 
 
@@ -52,7 +66,7 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
             });
         if (response.status === 201) {
             // Ha ido bien
-            const json = await response.json();
+            //const json = await response.json();
             // Recargamos la página y navegamos al login
             history.push("/login");
             window.location.reload();
@@ -62,12 +76,15 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
-        register({
-            userName,
-            userPassword,
-            userMail,
-            zonaSalud
-        });
+        if (enableRegister) {
+            // Si se ha verificado el captcha
+            register({
+                userName,
+                userPassword,
+                userMail,
+                zonaSalud
+            });
+        }
     }
 
     return (
@@ -109,8 +126,18 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
                                 placeholder="Confirmar contraseña" onChange={e => setUserConfirmPassword(e.target.value)} required></input>
                         </div>
                     </div>
+                    {/* Verificacion con captcha */}
+                    <div className="pt-md-3 pt-2 mb-2">
+                        <ReCAPTCHA
+                            sitekey={process.env.REACT_APP_RECAPTCHA_CLIENT_KEY!}
+                            onChange={handleCaptcha}
+                        />
+                    </div>
                     <div className="text-center pt-2 pt-md-3 mb-3">
-                        <button type="submit" className="btn rounded-pill registerButton">Crear cuenta</button>
+                        <button type="submit" className="btn rounded-pill registerButton"
+                            disabled={!enableRegister}>
+                            Crear cuenta
+                        </button>
                     </div>
                 </div>
             </form>

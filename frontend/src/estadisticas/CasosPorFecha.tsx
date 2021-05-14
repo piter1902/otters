@@ -38,7 +38,7 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setD
     useEffect(() => {
         const fetchDataForSelectedZBS = async () => {
             const response = await fetch(`${process.env.REACT_APP_BASEURL!}/zone/${idZona}`, { method: "GET" });
-            if (response.status == 200) {
+            if (response.status === 200) {
                 // Respuesta correcta, cargamos los datos
                 const jsonData = await response.json();
                 setDatos(jsonData);
@@ -46,14 +46,14 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setD
                 setDataFunction(jsonData.data);
             }
         }
-        if (idZona != "0") {
+        if (idZona !== "0") {
             // Se pone el componente en el estado inicial
             setHasStarted(false);
             // Si se ha escogido una zona -> en caso de no es 0
             fetchDataForSelectedZBS();
         }
         return () => { }
-    }, [idZona]);
+    }, [idZona, setDataFunction]);
 
     // Control del cambio de fecha
     const dateChange = (event: { target: { value: string; }; }) => {
@@ -61,7 +61,7 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setD
         console.log(selected.toString());
         if (datos !== undefined) {
             const casos = datos.data.filter((d) =>
-                (new Date(Date.parse(d.date.toString().substr(0, 10)))).getTime() == selected.getTime()
+                (new Date(Date.parse(d.date.toString().substr(0, 10)))).getTime() === selected.getTime()
             );
             setDate(selected);
             setHasStarted(true);

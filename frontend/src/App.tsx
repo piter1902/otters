@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Navbar from './Navbar';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import UserProfile from './user/UserProfile';
@@ -16,9 +16,6 @@ import NotFoundComponent from './NotFoundComponent';
 
 
 const App = () => {
-
-  // Token del usuario
-  const [token, setToken] = useState();
 
   return (
     <Router>
