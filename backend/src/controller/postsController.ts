@@ -227,7 +227,7 @@ const _doAddPost = async function (req: Express.Request, res: Express.Response, 
       title: req.body.title,
       body: req.body.body,
       //TODO: No tengo claro que lo acabe de hacer bien
-      date: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
+      date: new Date(tempDate.setMonth(tempDate.getMonth())),
       publisher: userId,
     });
     
@@ -268,7 +268,7 @@ const createNewPost = async (req: Express.Request, res: Express.Response) => {
       title: req.body.title,
       body: req.body.body,
       //TODO: No tengo claro que lo acabe de hacer bien
-      date: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
+      date: new Date(tempDate.setMonth(tempDate.getMonth())),
       publisher: req.body.publisher,
     });
 
@@ -550,7 +550,7 @@ const _doAddCommentObj = (req: Express.Request, res: Express.Response, post: any
     const comment = new Comments({
       body: req.body.body,
       //TODO: No tengo claro que lo acabe de hacer bien
-      date: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
+      date: new Date(tempDate.setMonth(tempDate.getMonth())),
       publisherId: req.body.publisherId,
     });
     
@@ -657,6 +657,11 @@ const addPositiveValoration = async (req: Express.Request, res: Express.Response
       post.possitive_valorations.push(
         req.body.userId
       );
+      if(post.negative_valorations.includes(req.body.userId)){
+        post.negative_valorations.pull(
+          req.body.userId
+        );
+      }
       post.save((err: Express.ErrorRequestHandler, user: any) => {
         if (err) {
           logger.error(err.toString());
@@ -738,6 +743,11 @@ const addNegativeValoration = async (req: Express.Request, res: Express.Response
       post.negative_valorations.push(
         req.body.userId
       );
+      if(post.possitive_valorations.includes(req.body.userId)){
+        post.possitive_valorations.pull(
+          req.body.userId
+        );
+      }
       post.save((err: Express.ErrorRequestHandler, user: any) => {
         if (err) {
           logger.error(err.toString());

@@ -1,9 +1,10 @@
 import React, { JSXElementConstructor } from 'react'
 import { Link } from 'react-router-dom'
 import useToken from '../auth/Token/useToken'
+import Post from './Post';
 
 interface PostListComponentProps {
-    posts: any[];
+    posts: Post[];
 }
 
 
@@ -14,7 +15,7 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
 
     const handleLike = (id: any) => {
         const valoration = { user: token?.userId };
-        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/positivevaloration", {
+        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/possitivevaloration", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -3,7 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 import useToken from '../auth/Token/useToken';
 import useGetFetch from '../useGetFetch';
-import Comentario from './Comentario';
+import ComentarioList from './Comentario';
 import './Post.css'
 
 interface PostDetalleProps {
@@ -14,6 +14,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
     const { id } = useParams<{ id: string }>();
 
     const { data: mainPost, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL}/post/` + id);
+
 
     // Token
     const { token } = useToken();
@@ -35,7 +36,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
 
     const handleLike = () => {
         const valoration = { user: token?.userId };
-        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/positivevaloration", {
+        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/possitivevaloration", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -79,6 +80,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
         })
     }
 
+
     return (
         <div className="row card ">
             <div style={{ textAlign: "center", verticalAlign: "middle" }}>
@@ -113,12 +115,13 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
 
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    <p className="ms-3 mt-3 texto">{mainPost.body}</p>
+                                    <p className="ms-3 mt-3 texto">{new Date(mainPost.date).toLocaleDateString("es-ES")}</p>
                                 </div>
                                 <div className="col-lg-1 col-md-2 col-3 sm-12 align-self-center">
                                     <i className="fas fa-chevron-down" onClick={handleDislike}></i>
                                 </div>
                             </div>
+                            <p className="ms-3 mt-3 texto">{mainPost.body}</p>
                         </div>
                     </div>
                     {token != null &&
@@ -136,7 +139,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
                         </form>
                     }
                     <p className="lead texto">Comentarios</p>
-                    <Comentario mainPost={mainPost} />
+                    <ComentarioList mainPost={mainPost} />
                 </div>
 
             )}

@@ -354,6 +354,302 @@ paths:
               schema:
                 $ref: "#/components/schemas/error"
 
+  # Posts Routes
+  # Posts
+  /post:
+    get:
+      tags:
+        - "Posts"
+      description: Get all the posts
+      summary: Get all posts 
+      responses:
+        "200":
+          description: Succesful request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/postsWithUsername"
+        "404":
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    # Add a post
+    post:
+      tags:
+        - "User"
+      description: Add new post 
+      summary: Add new post
+      requestBody:
+        description: Info about the post.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/posts"
+
+      responses:
+        "201":
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/posts"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "404":
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  # Operations over a specific post
+  /post/{postId}:
+    get:
+      tags:
+        - "Post"
+      description: Get a post with _id = postId 
+      summary: Get a specific post
+      parameters:
+        - in: path
+          name: postId
+          description: ID of the post
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/postsWithUsername"
+        "404":
+          description: Post does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    delete:
+      tags:
+        - "Post"
+      description: Delete the post with _id = postId 
+      summary: Delete a post 
+      parameters:
+        - in: path
+          name: postId
+          description: ID of the post
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Post deleted successfully
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "404":
+          description: User or post does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  # Operations over comments of a specific post
+  /post/{postId}/comment:
+    get:
+      tags:
+        - "Post"
+      description: Get all comment of post with _id = postId 
+      summary: Get all comments
+      parameters:
+        - in: path
+          name: postId
+          description: ID of the post
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/postsWithUsername"
+        "404":
+          description: Post does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    post:
+      tags:
+        - "Post"
+      description: Post a comment the post with _id = postId 
+      summary: Post a comment
+      parameters:
+        - in: path
+          name: postId
+          description: ID of the post
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Comment.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/comment"
+      responses:
+        "200":
+          description: Comment post successfully
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "404":
+          description: User or post does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  # Operations over possitive_valorations of a specific post
+  /post/{postId}/possitivevaloration:
+    get:
+      tags:
+        - "Post"
+      description: Get all possitive valorations of post with _id = postId 
+      summary: Get all possitive valorations
+      parameters:
+        - in: path
+          name: postId
+          description: ID of the post
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post exists
+          content:
+            application/json:
+              schema:
+                type: string
+        "404":
+          description: Post does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    post:
+      tags:
+        - "Post"
+      description: Post a possitive valoration the post with _id = postId 
+      summary: Post a possitive valoration
+      parameters:
+        - in: path
+          name: postId
+          description: ID of the post
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Id of user who give the valoration.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: Possitive valoration post successfully
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "404":
+          description: User or post does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  # Operations over negative_valorations of a specific post
+  /post/{postId}/negativevaloration:
+    get:
+      tags:
+        - "Post"
+      description: Get all negative valorations of post with _id = postId 
+      summary: Get all negative valorations
+      parameters:
+        - in: path
+          name: postId
+          description: ID of the post
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post exists
+          content:
+            application/json:
+              schema:
+                type: string
+        "404":
+          description: Post does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    post:
+      tags:
+        - "Post"
+      description: Post a negative valoration the post with _id = postId 
+      summary: Post a negative valoration 
+      parameters:
+        - in: path
+          name: postId
+          description: ID of the post
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Id of user who give the valoration.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: Negative valoration post successfully
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "404":
+          description: User or post does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+  ##########################################################              
   # Petitions Routes
   /petitions:
     # Add a petition
@@ -944,7 +1240,7 @@ components:
           maxLength: 150
         publisher:
           type: string
-          description: Petition's owner Id
+          description: Post's owner Id
         date:
           type: string
           format: date
@@ -965,6 +1261,56 @@ components:
           items:
             type: string
 
+
+    # PostsWithUsername Schema
+    postsWithUsername:
+      type: object
+      description: Object similar as Post but instead of userId field, contains the userId and the userName
+      required:
+        - "title"
+        - "body"
+        - "date"
+        - "publisher"
+      
+      properties:
+        _id:
+          type: integer
+          description: Object identifier
+        title:
+          type: string
+          description: Title of the post
+        body:
+          type: string
+          description: Content of the post
+          maxLength: 150
+        userInfo:
+          type: object
+          properties:
+            userId:
+              type: string
+              description: Post's owner ID
+            userName:
+              type: string
+              description: Post's owner name
+        date:
+          type: string
+          format: date
+          description: Date of the publication
+        comments:
+          type: array
+          description: Comments of the post
+          items:
+            $ref: "#/components/schemas/comments"
+        positive_valorations:
+          type: array
+          description: Ids of users who valorate positively the post
+          items:
+            type: string
+        negative_valorations:
+          type: array
+          description: Ids of users who valorate negatively the post
+          items:
+            type: string        
     # Comments of a post
     comments:
       type: object
