@@ -48,7 +48,7 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
 
     return (
         <div>
-            { posts.length > 0 ? posts.map((post: any) => (
+            { posts && posts.length > 0 ? posts.map((post: any) => (
                 <Link to={"/postDetalle/" + post._id} className="custom-card" key={post._id}>
                     <div className="container-fluid d-flex justify-content-center card mb-4" key={post._id} >
                         <div className="row row justify-content-between">

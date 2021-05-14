@@ -10,7 +10,7 @@ interface PetitionListComponentProps {
 const PetitionListComponent: JSXElementConstructor<PetitionListComponentProps> = ({ petitionsInfo }) => {
     return (
         <div>
-            { petitionsInfo.length > 0 ? petitionsInfo.map((petitionInfo: Petition) => (
+            { petitionsInfo && petitionsInfo.length > 0 ? petitionsInfo.map((petitionInfo: Petition) => (
                 <Link to={"/peticionDetalle/" + petitionInfo._id} className="custom-card" key={petitionInfo._id}>
 
                     <div className="container-fluid d-flex justify-content-center card mb-4" key={petitionInfo._id} >
