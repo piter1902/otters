@@ -37,13 +37,41 @@ const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user
         }
     }
 
+    // Unban user
+    const unBanUser = async () => {
+        console.log("Un banning user with id = " + user._id);
+        if (isBanned) {
+            // TODO: Esta URI puede cambiar ya que no tiene tampoco mucho sentido
+            await fetch(`${process.env.REACT_APP_BASEURL}/user/${user._id}/ban`,
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': "application/json"
+                    },
+                    body: JSON.stringify({
+                        banned: false,
+                        bannedUntil: new Date(Date.now())
+                    })
+                }
+            )
+            setIsBanned(false);
+        }
+    }
+
     return (
         <li className="list-group-item d-flex justify-content-between">
             <div className="fw-bold">{user.name}</div>
             <div className="d-flex justify-content-end">
-                <button className="btn btn-danger" onClick={() => banUser()} disabled={isBanned}>
-                    Banear
-                </button>
+                {!isBanned &&
+                    <button className="btn btn-danger" onClick={() => banUser()} disabled={isBanned}>
+                        Banear
+                    </button>
+                }
+                {isBanned &&
+                    <button className="btn btn-success" onClick={() => unBanUser()} disabled={!isBanned}>
+                        Perdonar Ban
+                    </button>
+                }
             </div>
         </li>
     )

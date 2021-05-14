@@ -21,15 +21,27 @@ const loginUser = async (req: Express.Request, res: Express.Response, next: Next
         });
     } else {
       logger.info("Comienza generacion del token")
-      const payload = {
-        id: user._id
+
+      // Usuario baneado ?
+      if (user.bannedObject.banned) {
+        // El usuario está baneado
+        res
+          .status(401)
+          .json({
+            error: `User is banned until ${new Date(user.bannedObject.bannedUntil).toLocaleDateString("es-ES")}`
+          })
+      } else {
+        // El usuario no está baneado
+        const payload = {
+          id: user._id
+        }
+
+        const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1d' });
+
+        res
+          .status(200)
+          .json({ data: { token: token, userId: user._id } });
       }
-
-      const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1d' });
-
-      res
-        .status(200)
-        .json({ data: { token: token, userId: user._id } });
     }
   })(req, res);
 }

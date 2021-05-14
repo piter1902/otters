@@ -43,14 +43,14 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                     email: credentials.userMail,
                 })
             });
-        const tokenJson = (await result.json())
-        console.log("Result: " + tokenJson);
+        const responseJson = (await result.json())
+        console.log("Result: " + responseJson);
         // TODO: Faltan las redirecciones
         if (result.ok) {
             // Todo correcto
             const token: Token = {
-                userId: tokenJson.data.userId,
-                token: tokenJson.data.token,
+                userId: responseJson.data.userId,
+                token: responseJson.data.token,
                 type: "Bearer"
             }
             saveToken(token);
@@ -62,10 +62,11 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
             history.push("/");
             window.location.reload();
         } else {
-            // Error -> Mostrar un alert
+            // Error -> Mostrar una alerta
+            const message = responseJson.error;
             setError({
                 error: true,
-                message: "Usuario o contraseña incorrecto(s)"
+                message: message ?? "Usuario o contraseña incorrecto(s)"
             });
         }
     };

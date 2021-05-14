@@ -613,7 +613,7 @@ paths:
                   type: string
       responses:
         "401":
-          description: Unauthorized. No user found with those credentials
+          description: Unauthorized. Error is explained in message
           content:
             application/json:
               schema:
