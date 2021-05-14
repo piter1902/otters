@@ -509,7 +509,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/comment"
+              $ref: "#/components/schemas/comments"
       responses:
         "200":
           description: Comment post successfully
