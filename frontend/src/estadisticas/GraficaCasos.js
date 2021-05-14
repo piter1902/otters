@@ -56,7 +56,7 @@ const GraficaCasos = ({ data }) => {
     // Ordenamiento de los datos
     ordenar();
     // Se omiten los que tienen valor 0 (no aparecen las fechas)
-    put0ToData();
+    // put0ToData();
     setMyChart(
       new Chart(ctx, {
         type: "line",
