@@ -9,7 +9,7 @@ postRoute.route("/")
 
 postRoute.route("/:id")
     .get(postsController.getPostByID)
-    .delete( postsController.deletePostByID)
+    .delete(passport.authenticate('jwt', { session: false }), postsController.deletePostByID)
 
 //Comentarios
 postRoute.route("/:id/comment")
