@@ -1,10 +1,10 @@
 import logger from '@poppinss/fancy-logs';
-import Mongoose, {Schema} from 'mongoose';
+import Mongoose, { Schema } from 'mongoose';
 
 const bannedSchema = new Schema({
     banned: {
-    	type: Boolean,
-    	default: false,
+        type: Boolean,
+        default: false,
         required: false
     },
     bannedUntil: {
@@ -47,16 +47,20 @@ const userSchema = new Schema({
         type: Boolean,
         required: true
     },
+    isVerified: {
+        type: Boolean,
+        required: true
+    },
     // En cuenta de almacenar toda la petition dentro de usuario, 
     // se almacena solo su Id
     petitions: [String],
     // En cuenta de almacenar todo el post dentro de usuario, 
     // se almacena solo su Id
     posts: [String]
-    
+
 })
 
-export{bannedSchema}
+export { bannedSchema }
 export default Mongoose.model("User", userSchema);
 
 logger.info("Modelo User creado");
