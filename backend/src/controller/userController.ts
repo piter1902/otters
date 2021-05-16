@@ -111,6 +111,63 @@ const _doAddBannedObj = (req: Express.Request, res: Express.Response, user: any)
   }
 };
 
+
+const strikeUser = async (req: Express.Request, res: Express.Response) => {
+  // Get query params
+  const userId = req.params.uid;
+  logger.info(`Metiendo strike para user = ${userId}`);
+  if (userId != null) {
+    const user = await User
+      .findById(userId)
+      .exec();
+    if (user == null) {
+      res.status(400).json({
+        error: "El usuario no existe"
+      });
+    } else {
+      _doAddStrikeObj(req, res, user);
+    }
+  } else {
+    res
+      .status(404)
+      .json({
+        message: 'uid query param is required'
+      });
+  }
+};
+
+// Private methods
+const _doAddStrikeObj = (req: Express.Request, res: Express.Response, user: any) => {
+  if (!user) {
+    res
+      .status(404)
+      .json({
+        message: "userId not found"
+      });
+  } else {
+    
+    const totalStrikes = user.strikes + 1;
+    if (totalStrikes == 5){
+      user.bannedObject.banned = true;
+      user.bannedObject.bannedUntil = new Date(Date.now() + (86400000 * 7));
+    }
+    user.strikes = totalStrikes;
+    user.save((err: Express.ErrorRequestHandler, user: any) => {
+      if (err) {
+        logger.error(err.toString());
+        res
+          .status(400)
+          .json(err);
+      } else {
+        //let thisPetition = user.petitions[user.petitions.length - 1];
+        res
+          .status(201)
+          .json(user);
+      }
+    });
+  }
+};
+
 const updateUser = async (req: Express.Request, res: Express.Response) => {
   const userId = req.params.uid;
   const pass = req.body.password;
@@ -158,5 +215,6 @@ export default {
   getUserByUID,
   deleteUserByUID,
   updateUser,
-  banUser
+  banUser,
+  strikeUser
 }

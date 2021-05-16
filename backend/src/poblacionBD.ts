@@ -12,7 +12,7 @@ const userArrayPass:string[] = [];
 
 const populateDB = async () => {
     var mail;
-    for (let i = 0; i < userArrayName.length; i++) {
+    /**for (let i = 0; i < userArrayName.length; i++) {
         for (let j = 0; j < userArraySurname.length; j++) {
         
         mail = userArrayName[i].substring(0,1)+userArraySurname[i].substring(0,1)+"@gmail.com";
@@ -32,7 +32,7 @@ const populateDB = async () => {
           await user.save();
           logger.info("Creating a new user");
         }
-    }
+    }**/
     const userArray:InstanceType<typeof User>[] = await await User.find().exec();
     var randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPetition(userArray[randomUser]);
@@ -42,14 +42,14 @@ const populateDB = async () => {
     _doAddPetition(userArray[randomUser]);
     randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPetition(userArray[randomUser]);
-    randomUser = Math.floor(Math.random() * (userArray.length ));
+    /**randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPost(userArray[randomUser]);
     randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPost(userArray[randomUser]);
     randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPost(userArray[randomUser]);
     randomUser = Math.floor(Math.random() * (userArray.length ));
-    _doAddPost(userArray[randomUser]);
+    _doAddPost(userArray[randomUser]);**/
     logger.info("DB populated");
     //petitionModel
     //petitionControler.petitionsCreate();
@@ -76,7 +76,7 @@ const _doAddPetition = async function (user: any) {
         userId: user.id,
         body: petBody,
         place: petArrayPlace[numPlace],
-        targetDate: new Date(tempDate.setMonth(tempDate.getMonth())),
+        targetDate: new Date(),//tempDate.setMonth(tempDate.getMonth())),
         isUrgent: isUrgent,
         status: 'OPEN'
     });
@@ -86,7 +86,7 @@ const _doAddPetition = async function (user: any) {
     );
 
     // Update user info
-    //await user.save();
+    await user.save();
 
     // Save petition to mongoDb
     petition.save(); 
@@ -117,7 +117,7 @@ const _doAddPetition = async function (user: any) {
     );
 
     // Update user info
-    //await user.save();
+    await user.save();
 
     // Save petition to mongoDb
     

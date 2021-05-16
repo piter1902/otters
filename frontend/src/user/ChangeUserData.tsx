@@ -49,9 +49,9 @@ const ChangeUserData: JSXElementConstructor<ChangeUserDataProps> = ({ user, toke
         data = data.split("data:image/png;base64,").pop();
         console.log("picData " + picData);
         console.log("data " + data);
-        if (user.password === passwordAct) {
-            console.log("Las contraseñas coinciden");
-            await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`,
+        if(passwordNue!=null){
+            console.log("Cambiando contraseña");
+            await fetch(`${process.env.REACT_APP_BASEURL}/auth/${token?.userId}`,
                 {
                     method: "POST",
                     headers: {
@@ -60,14 +60,29 @@ const ChangeUserData: JSXElementConstructor<ChangeUserDataProps> = ({ user, toke
                         'Authorization': `${token?.type} ${token?.token}`
                     },
                     body: JSON.stringify({
-                        password: passwordNue,
-                        picture: data,
-                        sanitaryZone: zone
+                        password: passwordAct,
+                        newPassword: passwordNue
                     })
                 })
-        } else {
-            console.log("Las contraseñas no coinciden");
         }
+        
+        console.log("Cambiando foto y/o zona");
+        await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`,
+            {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `${token?.type} ${token?.token}`
+                },
+                body: JSON.stringify({
+                    picture: data,
+                    sanitaryZone: zone
+                })
+            })
+
+        window.location.reload();
+        
 
     }
 

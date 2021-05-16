@@ -16,4 +16,11 @@ petitionsRoute.route("/:petitionId")
     .put(passport.authenticate('jwt', { session: false }), petitionsController.updateOnePetition)
     .delete(passport.authenticate('jwt', { session: false }), petitionsController.deleteOnePetition);
 
+petitionsRoute.route("/:petitionId/assign/:uid")
+    .put(passport.authenticate('jwt', { session: false }), petitionsController.assignUserPetition);
+
+petitionsRoute.route("/:petitionId/cancel/:uid")
+    .put(passport.authenticate('jwt', { session: false }), petitionsController.cancelAssignUserPetition);
+    
+
 export default petitionsRoute;

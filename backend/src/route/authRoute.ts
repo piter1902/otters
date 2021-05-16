@@ -10,4 +10,7 @@ authRoute.route("/login")
 authRoute.route("/register")
   .post(authController.registerUser);
 
+authRoute.route("/:uid")
+  .post(authController.checkPasswords);
+
 export default authRoute;

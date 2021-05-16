@@ -70,7 +70,61 @@ const registerUser = async (req: Express.Request, res: Express.Response) => {
 }
 
 
+const checkPasswords = async (req: Express.Request, res: Express.Response) => {
+  try {
+    const uid = req.params.uid;
+    logger.info(`Getting user with uid = ${uid}`);
+    // Obtenemos al usuario de la bd
+    const user = await User.findById(uid).exec();
+    if (user != null) {
+      logger.info("new pass: "+req.body.newPassword);
+      const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+      bcrypt.compare(req.body.password, user.password, function(err, result) {
+        if(result){
+          // coinciden
+          
+          user.password = hashedPassword;
+          // Save to mongoDb
+          user.save((err: any, user: typeof User) => {
+            if (err) {
+              res
+                .status(404)
+                .json(err);
+            } else {
+              res
+                .status(200)
+                .json(user);
+            }
+          });
+        logger.info("contraseñas actualizadas");
+        } else{
+          //no coinciden
+          res
+          .status(400)
+          .send("contraseñas no coinciden");
+        logger.info("contraseñas no coinciden");
+        }
+        
+      });
+    } else {
+      res.status(404).send("Usuario no encontrado");
+    } 
+      
+    
+  } catch (err) {
+    logger.error("ERROR!" + err);
+
+    res
+      .status(400)
+      .json(err);
+  }
+
+
+}
+
+
 export default {
   registerUser,
-  loginUser
+  loginUser,
+  checkPasswords
 }

@@ -6,6 +6,7 @@ import logger from '@poppinss/fancy-logs';
 import petitionsRoute from './route/petitionsRoute';
 import sanitaryZoneRoute from './route/sanitaryZoneRoute';
 import sanitaryZoneService from './service/sanitaryZoneService';
+import petitionsService from './service/petitionService';
 import authRoute from './route/authRoute';
 import cron from 'node-cron';
 import cors from 'cors';
@@ -33,12 +34,17 @@ const result = dotenv.config();
 // Creación cron
 // 6 veces al día (en le minuto 00) se ejecutará el fetch
 cron.schedule("0 */6 * * *", async () => {
-    logger.success("Cron ejecutandose");
+    logger.success("Cron zonas sanitarias ejecutandose");
     await sanitaryZoneService.queryDatabaseAndFetchLastData();
     // Sleep de 20 segundos para asegurarnos de que se ha hecho el proceso
     await Utils.delay(20000);
     // Busqueda de duplicados
     await sanitaryZoneService.findAndJoinDuplicates();
+});
+
+cron.schedule("0 0 * * *", async () => {
+    logger.success("Cron status peticiones ejecutandose");
+    await petitionsService.updateStatusPetitions();
 });
 
 // Express app

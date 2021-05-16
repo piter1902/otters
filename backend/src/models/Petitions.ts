@@ -33,6 +33,11 @@ const PetitionsSchema = new Schema({
         type: String,
         required: true
     },
+    userIdAsigned:{
+        type: String,
+        required: false
+    },
+    userQueueAsigned:[String],
     // TODO: En principio no debería ser obliagtorio
     expTime: {
         type: String
