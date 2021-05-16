@@ -51,16 +51,34 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
         console.log("delete petition:"+id)
 
         await fetch(`${process.env.REACT_APP_BASEURL}/petitions/${id}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `${token?.type} ${token?.token}`
-                    },
-                    body: JSON.stringify({
-                    })
+        {
+            method: "DELETE",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `${token?.type} ${token?.token}`
+            },
+            body: JSON.stringify({
+            })
+        }) 
+    }
+
+    const strikeUser = async () => {
+        // Cerrar sesión y recargar
+        console.log("strike user:"+id)
+
+        await fetch(`${process.env.REACT_APP_BASEURL}/user/${petition.userIdAsigned}/strike/${petition._id}`,
+        {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `${token?.type} ${token?.token}`
+            },
+            body: JSON.stringify({
+            })
                 }) 
+        window.location.reload();
     }
     
 
@@ -109,6 +127,12 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
                             Borrar peticion
                         </button>
                     </Link>    
+                    </p>}
+                    {(petition.userInfo.userId==token?.userId) && (petition.status=="COMPLETED")  &&
+                    <p className="h2 fw-bold d-flex justify-content-center">
+                    <button className="btn btn-danger mx-2"  onClick={strikeUser}>
+                        El usuario no ha realizado la petición
+                    </button>
                     </p>}
                 </div>)
             }

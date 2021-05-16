@@ -19,6 +19,9 @@ userRoute.route("/:uid/ban")
 userRoute.route("/:uid/strike")
     .post(userController.strikeUser);
 
+    userRoute.route("/:uid/strike/:petId")
+    .post(userController.strikeUserInPet);
+
 // Petitions
 userRoute.route("/:uid/petitions")
     .get(petitionsController.getUserPetitions);

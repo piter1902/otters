@@ -282,7 +282,7 @@ const assignUserPetition = async (req: Express.Request, res: Express.Response) =
   if (req.params && petId) {
     const petition = await Petition.findById(petId).exec();
 
-    if(req.params.uid != petition.userIdAsigned && !petition.userQueueAsigned.includes(req.params.uid) && req.params.uid != petition.userInfo.userId){
+    if(req.params.uid != petition.userIdAsigned && !petition.userQueueAsigned.includes(req.params.uid) && req.params.uid != petition.userIdAsigned){
       if(petition.userIdAsigned == null){
         petition.userIdAsigned = req.params.uid;
         petition.status = 'ASSIGNED';

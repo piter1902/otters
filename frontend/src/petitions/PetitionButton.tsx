@@ -66,6 +66,7 @@ const PetitionButton: JSXElementConstructor<PetitionButtonProps> = ({ userAsigne
                     body: JSON.stringify({
                     })
                 }) 
+        window.location.reload();
     }
 
 
