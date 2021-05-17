@@ -73,7 +73,7 @@ const PetitionButton: JSXElementConstructor<PetitionButtonProps> = ({ userAsigne
     return (
         <div>
             {/* Boton para asignarse */}
-            {userAssign && userCreator!=token?.userId && (userQueue.length<5) && status.toUpperCase() == "OPEN" &&
+            {userAssign && userCreator!=token?.userId && (userQueue.length<5) && (status.toUpperCase() == "OPEN" || status.toUpperCase() == "ASSIGNED") &&
                 <button className="btn btn-danger mx-2"  onClick={assign}>
                 Asignarme
             </button>}
