@@ -11,6 +11,8 @@ info:
 servers:
   - url: http://localhost:8080
     description: Localhost development server
+  - url: https://stw-otters-backend.herokuapp.com/
+    description: Heroku production server
 
 tags:
   - name: "User"
@@ -30,8 +32,10 @@ paths:
       tags:
         - "Statistics"
       description: Get stats for system
+      security:
+        - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
@@ -44,7 +48,8 @@ paths:
         - "User"
       description: Get all users
       summary: Get all users
-
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Successful response
@@ -66,7 +71,8 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/user"
-
+      security:
+        - bearerAuth: []
       responses:
         "201":
           description: User created successfully
@@ -89,6 +95,8 @@ paths:
           required: true
           schema:
             type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: User exists
@@ -121,6 +129,8 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/user"
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: User exists
@@ -148,6 +158,8 @@ paths:
           required: true
           schema:
             type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: User deleted successfully
@@ -183,6 +195,8 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/bannedSchema"
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: User exists
@@ -211,6 +225,8 @@ paths:
           required: true
           schema:
             type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: User exists
@@ -239,6 +255,8 @@ paths:
           required: true
           schema:
             type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: User exists
@@ -265,7 +283,8 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/posts"
-
+      security:
+        - bearerAuth: []
       responses:
         "201":
           description: Post created successfully
@@ -306,6 +325,8 @@ paths:
           required: true
           schema:
             type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Post exists
@@ -337,7 +358,8 @@ paths:
           required: true
           schema:
             type: string
-
+      security:
+        - bearerAuth: []
       responses:
         "204":
           description: Post deleted successfully
@@ -361,7 +383,9 @@ paths:
       tags:
         - "Posts"
       description: Get all the posts
-      summary: Get all posts 
+      summary: Get all posts
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Succesful request
@@ -379,7 +403,7 @@ paths:
     post:
       tags:
         - "User"
-      description: Add new post 
+      description: Add new post
       summary: Add new post
       requestBody:
         description: Info about the post.
@@ -388,7 +412,8 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/posts"
-
+      security:
+        - bearerAuth: []
       responses:
         "201":
           description: Post created successfully
@@ -414,8 +439,10 @@ paths:
     get:
       tags:
         - "Post"
-      description: Get a post with _id = postId 
+      description: Get a post with _id = postId
       summary: Get a specific post
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: postId
@@ -439,8 +466,10 @@ paths:
     delete:
       tags:
         - "Post"
-      description: Delete the post with _id = postId 
-      summary: Delete a post 
+      description: Delete the post with _id = postId
+      summary: Delete a post
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: postId
@@ -469,8 +498,10 @@ paths:
     get:
       tags:
         - "Post"
-      description: Get all comment of post with _id = postId 
+      description: Get all comment of post with _id = postId
       summary: Get all comments
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: postId
@@ -494,8 +525,10 @@ paths:
     post:
       tags:
         - "Post"
-      description: Post a comment the post with _id = postId 
+      description: Post a comment the post with _id = postId
       summary: Post a comment
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: postId
@@ -531,7 +564,7 @@ paths:
     get:
       tags:
         - "Post"
-      description: Get all possitive valorations of post with _id = postId 
+      description: Get all possitive valorations of post with _id = postId
       summary: Get all possitive valorations
       parameters:
         - in: path
@@ -540,6 +573,8 @@ paths:
           required: true
           schema:
             type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Post exists
@@ -556,7 +591,7 @@ paths:
     post:
       tags:
         - "Post"
-      description: Post a possitive valoration the post with _id = postId 
+      description: Post a possitive valoration the post with _id = postId
       summary: Post a possitive valoration
       parameters:
         - in: path
@@ -572,6 +607,8 @@ paths:
           application/json:
             schema:
               type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Possitive valoration post successfully
@@ -593,7 +630,7 @@ paths:
     get:
       tags:
         - "Post"
-      description: Get all negative valorations of post with _id = postId 
+      description: Get all negative valorations of post with _id = postId
       summary: Get all negative valorations
       parameters:
         - in: path
@@ -602,6 +639,8 @@ paths:
           required: true
           schema:
             type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Post exists
@@ -618,8 +657,8 @@ paths:
     post:
       tags:
         - "Post"
-      description: Post a negative valoration the post with _id = postId 
-      summary: Post a negative valoration 
+      description: Post a negative valoration the post with _id = postId
+      summary: Post a negative valoration
       parameters:
         - in: path
           name: postId
@@ -634,6 +673,8 @@ paths:
           application/json:
             schema:
               type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Negative valoration post successfully
@@ -649,7 +690,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/error"
-  ##########################################################              
+  ##########################################################
   # Petitions Routes
   /petitions:
     # Add a petition
@@ -665,7 +706,8 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/petitions"
-
+      security:
+        - bearerAuth: []
       responses:
         "201":
           description: Petition created successfully
@@ -691,7 +733,8 @@ paths:
         - "Petitions"
       description: Get all existing petitions
       summary: Get all petitions
-
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Successfull response
@@ -722,6 +765,8 @@ paths:
           required: true
           schema:
             type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Petition exists
@@ -755,7 +800,8 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/petitions"
-
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Petition updated successfully
@@ -787,7 +833,8 @@ paths:
           required: true
           schema:
             type: string
-
+      security:
+        - bearerAuth: []
       responses:
         "204":
           description: Petition deleted successfully
@@ -812,6 +859,8 @@ paths:
       summary: Get all sanitary zones
       tags:
         - "Sanitary Zone"
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Successfull response
@@ -836,6 +885,8 @@ paths:
           required: true
           schema:
             type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Successfull response
@@ -857,6 +908,8 @@ paths:
         - "Sanitary Zone"
       description: Start zone remote source fetch data
       summary: Start zone remote source fetch data
+      security:
+        - bearerAuth: []
       responses:
         "202":
           description: Successful response. Server is fetching source asynchronously.
@@ -875,6 +928,8 @@ paths:
           required: true
           schema:
             type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Successful response. Data returned
@@ -884,7 +939,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/sanitaryZoneData"
-  
+
   # Authentication routes
   # Log in
   /auth/login:
@@ -903,7 +958,7 @@ paths:
                 - password
                 - email
               properties:
-                password: 
+                password:
                   type: string
                 email:
                   type: string
@@ -930,7 +985,7 @@ paths:
                       userId:
                         type: integer
                         description: Logged user Id
-  # Register                    
+  # Register
   /auth/register:
     post:
       tags:
@@ -949,7 +1004,7 @@ paths:
                 - password
                 - sanitaryZone
               properties:
-                name: 
+                name:
                   type: string
                   description: New user name
                 email:
@@ -972,9 +1027,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/user"               
+                $ref: "#/components/schemas/user"
 
 components:
+  # Security by bearer tokens (all )
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     # Stats scheme
     stats:
@@ -1173,7 +1234,7 @@ components:
           description: Hour of the day when petition expires.
           example: "10:15"
 
-    # Petitions with Username      
+    # Petitions with Username
     petitionsWithUsername:
       title: petitionsWithUsername
       type: object
@@ -1192,7 +1253,7 @@ components:
         _id:
           type: string
         title:
-          type: string 
+          type: string
         body:
           type: string
         userInfo:
@@ -1261,7 +1322,6 @@ components:
           items:
             type: string
 
-
     # PostsWithUsername Schema
     postsWithUsername:
       type: object
@@ -1271,7 +1331,7 @@ components:
         - "body"
         - "date"
         - "publisher"
-      
+
       properties:
         _id:
           type: integer
@@ -1310,7 +1370,7 @@ components:
           type: array
           description: Ids of users who valorate negatively the post
           items:
-            type: string        
+            type: string
     # Comments of a post
     comments:
       type: object
