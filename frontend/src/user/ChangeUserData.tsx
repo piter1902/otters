@@ -49,7 +49,7 @@ const ChangeUserData: JSXElementConstructor<ChangeUserDataProps> = ({ user, toke
         data = data.split("data:image/png;base64,").pop();
         console.log("picData " + picData);
         console.log("data " + data);
-        if(passwordNue!=null){
+        if (passwordNue != null) {
             console.log("Cambiando contraseña");
             await fetch(`${process.env.REACT_APP_BASEURL}/auth/${token?.userId}`,
                 {
@@ -65,7 +65,7 @@ const ChangeUserData: JSXElementConstructor<ChangeUserDataProps> = ({ user, toke
                     })
                 })
         }
-        
+
         console.log("Cambiando foto y/o zona");
         await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`,
             {
@@ -82,7 +82,7 @@ const ChangeUserData: JSXElementConstructor<ChangeUserDataProps> = ({ user, toke
             })
 
         window.location.reload();
-        
+
 
     }
 
