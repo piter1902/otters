@@ -12,5 +12,8 @@ authRoute.route("/register")
 
 authRoute.route("/:uid")
   .post(authController.checkPasswords);
+  
+authRoute.route("/verifyUser")
+  .get(authController.verifyUser);
 
 export default authRoute;

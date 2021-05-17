@@ -58,8 +58,7 @@ const getEstadisticas = async (req: Express.Request, res: Express.Response) => {
         },
         usuarios: {
             registrados: (users as any[]).length,
-            // TODO: No hay usuarios verificados
-            verificados: 0
+            verificados: (users as any[]).filter((u) => u.isVerified).length
         }
     };
     res.status(200).json(estadisticas);

@@ -1,9 +1,10 @@
-import React, { JSXElementConstructor } from 'react'
+import React, { JSXElementConstructor, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import useToken from '../auth/Token/useToken'
+import Post from './Post';
 
 interface PostListComponentProps {
-    posts: any[];
+    posts: Post[];
 }
 
 
@@ -14,7 +15,7 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
 
     const handleLike = (id: any) => {
         const valoration = { user: token?.userId };
-        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/positivevaloration", {
+        fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/possitivevaloration", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -40,9 +41,14 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
         })
     }
 
+    useEffect(() => {
+        console.log("Mi estado cambia!")
+        return () => { }
+    }, [posts]);
+
     return (
         <div>
-            { posts.length > 0 ? posts.map((post: any) => (
+            { posts && posts.length > 0 ? posts.map((post: any) => (
                 <Link to={"/postDetalle/" + post._id} className="custom-card" key={post._id}>
                     <div className="container-fluid d-flex justify-content-center card mb-4" key={post._id} >
                         <div className="row row justify-content-between">

@@ -4,9 +4,9 @@
   "description": "",
   "scripts": {
     "start": "ts-node -r dotenv/config src/index.ts",
-    "dev": "npx rimraf *xlsx; nodemon -x ts-node -r dotenv/config src/index.ts",
-    "build": "npx rimraf *xlsx; tsc",
-    "clean": "npx rimraf *xlsx",
+    "dev": "npx rimraf *xlsx *csv; nodemon -x ts-node -r dotenv/config src/index.ts",
+    "build": "npx rimraf *xlsx *csv; tsc",
+    "clean": "npx rimraf *xlsx *csv",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Otters",
@@ -19,6 +19,7 @@
     "@types/express": "^4.17.11",
     "@types/express-session": "^1.17.3",
     "@types/node-cron": "^2.0.3",
+    "@types/nodemailer": "^6.4.1",
     "@types/passport": "^1.0.6",
     "@types/passport-jwt": "^3.0.5",
     "@types/passport-local": "^1.0.33",
@@ -43,12 +44,14 @@
     "mongodb": "^3.6.6",
     "mongoose": "^5.12.2",
     "node-cron": "^3.0.0",
+    "nodemailer": "^6.6.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "react-router-dom": "^5.2.0",
     "rimraf": "^3.0.2",
     "swagger-ui-express": "^4.1.6",
+    "xlsx": "^0.16.9",
     "yamljs": "^0.3.0"
   }
 }

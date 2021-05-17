@@ -8,7 +8,7 @@ import Petition from '../models/Petitions';
 const createNewUser = async (req: Express.Request, res: Express.Response) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-  
+
   const user = new User({
     name: req.body.name,
     picture: userPicture,
@@ -18,6 +18,7 @@ const createNewUser = async (req: Express.Request, res: Express.Response) => {
     bannedObject: { "banned": false },
     strikes: req.body.strikes,
     isAdmin: req.body.isAdmin,
+    isVerified: false,
     petitions: req.body.petitions,
     posts: req.body.posts
   });
@@ -289,7 +290,7 @@ const updateUser = async (req: Express.Request, res: Express.Response) => {
     user.password = req.body.password && req.body.password || user.password;
     user.picture = req.body.picture && req.body.picture || user.picture;
     user.sanitaryZone = req.body.sanitaryZone && req.body.sanitaryZone || user.sanitaryZone;
-    
+
     //user.password = (req.body.password) ? req.body.password : user.password;
     //user.picture = req.body.picture && req.body.picture || user.picture;
     //user.sanitaryZone = req.body.sanitaryZone && req.body.sanitaryZone || user.sanitaryZone;

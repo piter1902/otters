@@ -25,6 +25,7 @@ const populateDB = async () => {
             bannedObject: { "banned": false },
             strikes: 0,
             isAdmin: false,
+            isVerified: true,
             petitions: [],
             posts: []
           });

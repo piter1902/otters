@@ -4,6 +4,7 @@ import logger from "@poppinss/fancy-logs";
 import passport from 'passport';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import emailService from "../service/emailService";
 
 
 const loginUser = async (req: Express.Request, res: Express.Response, next: NextFunction) => {
@@ -21,15 +22,34 @@ const loginUser = async (req: Express.Request, res: Express.Response, next: Next
         });
     } else {
       logger.info("Comienza generacion del token")
-      const payload = {
-        id: user._id
+
+      // Usuario baneado o o verificado?
+      if (user.bannedObject.banned) {
+        // El usuario está baneado
+        res
+          .status(401)
+          .json({
+            error: `User is banned until ${new Date(user.bannedObject.bannedUntil).toLocaleDateString("es-ES")}`
+          })
+      } else if (!user.isVerified) {
+        // El usuario no está verificado
+        res
+          .status(401)
+          .json({
+            error: `User's email hasn't been verified`
+          });
+      } else {
+        // El usuario no está baneado
+        const payload = {
+          id: user._id
+        }
+
+        const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1d' });
+
+        res
+          .status(200)
+          .json({ data: { token: token, userId: user._id } });
       }
-
-      const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1d' });
-
-      res
-        .status(200)
-        .json({ data: { token: token, userId: user._id } });
     }
   })(req, res);
 }
@@ -49,10 +69,12 @@ const registerUser = async (req: Express.Request, res: Express.Response) => {
         sanitaryZone: req.body.sanitaryZone,
         password: hashedPassword,
         bannedObject: { "banned": false },
-        isAdmin: false
+        isAdmin: false,
+        isVerified: false
       });
       // Save to mongoDb
       await newUser.save();
+      await emailService.sendVerificationEmail(newUser);
       res
         .status(201)
         .send(newUser);
@@ -65,8 +87,20 @@ const registerUser = async (req: Express.Request, res: Express.Response) => {
       .status(400)
       .json(err);
   }
+}
 
 
+const verifyUser = async (req: Express.Request, res: Express.Response) => {
+  // Query param
+  const id = req.query.id;
+  // Comprobación de que existe el id
+  const user = await User.findById(id).exec();
+  if (user != null && !user.isVerified) {
+    // Existe, actualizamos el usuario con el verificado
+    user.isVerified = true;
+    await user.save();  
+  }
+  res.status(200).send("Usuario verificado. Puedes iniciar sesión.");
 }
 
 
@@ -126,5 +160,6 @@ const checkPasswords = async (req: Express.Request, res: Express.Response) => {
 export default {
   registerUser,
   loginUser,
-  checkPasswords
+  checkPasswords,
+  verifyUser
 }

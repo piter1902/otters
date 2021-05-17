@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import GoogleButton from 'react-google-button';
 import { Link, useHistory } from 'react-router-dom';
 import './Login.css';
 import Token from './Token/Token';
@@ -42,14 +43,14 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                     email: credentials.userMail,
                 })
             });
-        const tokenJson = (await result.json())
-        console.log("Result: " + tokenJson);
+        const responseJson = (await result.json())
+        console.log("Result: " + responseJson);
         // TODO: Faltan las redirecciones
         if (result.ok) {
             // Todo correcto
             const token: Token = {
-                userId: tokenJson.data.userId,
-                token: tokenJson.data.token,
+                userId: responseJson.data.userId,
+                token: responseJson.data.token,
                 type: "Bearer"
             }
             saveToken(token);
@@ -61,10 +62,11 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
             history.push("/");
             window.location.reload();
         } else {
-            // Error -> Mostrar un alert
+            // Error -> Mostrar una alerta
+            const message = responseJson.error;
             setError({
                 error: true,
-                message: "Usuario o contraseña incorrecto(s)"
+                message: message ?? "Usuario o contraseña incorrecto(s)"
             });
         }
     };
@@ -97,10 +99,11 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                                 <button type="submit" className="btn btn-md-lg btn-light rounded-pill">Inicia Sesión</button>
                             </div>
                             <div className="text-center mb-3">
-                                <button type="button" className="btn btn-md-lg btn-light btn-labeled rounded-pill">
+                                {/* <button type="button" className="btn btn-md-lg btn-light btn-labeled rounded-pill">
                                     <span className="btn-label pe-1"><i className="fab fa-google"></i></span>
                                     Iniciar sesión con Google
-                                </button>
+                                </button> */}
+                                <GoogleButton onClick={() => console.log("Singing in with google")}/>
                             </div>
 
                             <div className="d-flex align-self-center mt-2 mt-xl-6">
