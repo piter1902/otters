@@ -36,13 +36,13 @@ const populateDB = async () => {
     }**/
     const userArray:InstanceType<typeof User>[] = await await User.find().exec();
     var randomUser = Math.floor(Math.random() * (userArray.length ));
-    _doAddPetition(userArray[randomUser]);
+    /*_doAddPetition(userArray[randomUser]);
     randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPetition(userArray[randomUser]);
     randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPetition(userArray[randomUser]);
     randomUser = Math.floor(Math.random() * (userArray.length ));
-    _doAddPetition(userArray[randomUser]);
+    _doAddPetition(userArray[randomUser]);*/
     /**randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPost(userArray[randomUser]);
     randomUser = Math.floor(Math.random() * (userArray.length ));
@@ -60,7 +60,7 @@ const petArrayTitle:string[] = ["Aiuda","Jelp","Hadme la compra","Post numero 12
 const petArrayPlace:string[] = ["San Jose","Las Fuentes","Centro","Calle de la piruleta","San juan 23"];
 const petBody:string = "Eam ex integre quaeque bonorum, ea assum solet scriptorem pri. At eius choro sit, possit recusabo corrumpit vim ne.";
 
-const _doAddPetition = async function (user: any) {
+/*const _doAddPetition = async function (user: any) {
     var numTitle = Math.floor(Math.random() * (petArrayTitle.length ));
     var numPlace = Math.floor(Math.random() * (petArrayPlace.length ));
     var urgent = Math.floor(Math.random() * (1 + 1));
@@ -92,7 +92,7 @@ const _doAddPetition = async function (user: any) {
     // Save petition to mongoDb
     petition.save(); 
     
-  };
+  };*/
 
   const postArrayTitle:string[] = ["Post de prueba","Hoy comi macarrones","Covid T.T", "A tope de covid","Cuando acaba esta wea"];
   const _doAddPost = async function (user: any) {

@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from './Navbar';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import UserProfile from './user/UserProfile';
+import ExternalUserProfile from './user/ExternalUserProfile';
 import AdminPage from './user/AdminPage/AdminPage';
 import EstadisticasCovid from './estadisticas/EstadisticasCovid';
 import Login from './auth/Login';
@@ -34,6 +35,10 @@ const App = () => {
             {/* Perfil del usuario propio */}
             <Route exact path="/cuenta">
               <UserProfile />
+            </Route>
+            {/* Perfil de otro usuario */}
+            <Route exact path="/perfil/:id">
+              <ExternalUserProfile />
             </Route>
             {/* Página del administrador */}
             <Route exact path="/admin">
