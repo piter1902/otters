@@ -1,4 +1,6 @@
+import logger from '@poppinss/fancy-logs';
 import Express from 'express';
+import passport from 'passport';
 import authController from '../controller/authController';
 import '../service/passportConfig';
 
@@ -15,5 +17,11 @@ authRoute.route("/:uid")
   
 authRoute.route("/verifyUser")
   .get(authController.verifyUser);
+  
+authRoute.route("/google")
+  .post(passport.authenticate("google", { session: false, scope: ["profile", "email"] }, (req, res) => {logger.info("Hola")}));
+
+authRoute.route("/google/redirect")
+  .get(authController.loginGoogle);
 
 export default authRoute;

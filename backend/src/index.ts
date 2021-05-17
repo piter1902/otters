@@ -66,8 +66,9 @@ if (process.env.PRODUCTION === "true") {
 
 // Configuracion del CORS
 app.use(cors({
-    origin: corsURI,
-    credentials: true
+    origin: true,
+    credentials: true,
+    exposedHeaders: ['x-auth-token']
 }));
 
 /* -----------------Passport configuration ----------------- */

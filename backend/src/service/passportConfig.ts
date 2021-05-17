@@ -4,18 +4,12 @@ import passportLocal from 'passport-local';
 import logger from '@poppinss/fancy-logs';
 import passport from 'passport';
 import passportJwt, { ExtractJwt } from 'passport-jwt';
+import passportGoogleAuth from 'passport-google-oauth20';
+import userPicture from '../UserPicture';
 
 const LocalStrategy = passportLocal.Strategy;
 const JwtStrategy = passportJwt.Strategy;
-
-// passport.serializeUser((user: any, done: any) => {
-//   logger.info("User en serialze: " + user);
-//   done(null, user.id);
-// });
-
-// passport.deserializeUser((id, done) => {
-//   User.findById(id, (err: any, user: any) => done(err, user));
-// });
+const GoogleStrategy = passportGoogleAuth.Strategy;
 
 /**
  * Estrategia JWT
@@ -43,6 +37,49 @@ passport.use(new JwtStrategy({
     }
   }));
 
+/**
+ * Sign in using Google authentication 
+ */
+
+passport.use(new GoogleStrategy(
+  {
+    clientID: process.env.OAUTH_CLIENT_ID!,
+    clientSecret: process.env.OAUTH_CLIENT_SECRET!,
+    callbackURL: process.env.BACK_BASEURL! + "/auth/google/redirect"
+  },
+  async (accesToken, refreshToken, profile, done) => {
+    logger.info("Ejecutando estrategia Google Oauth");
+    try {
+      const user = await User.findOne({ email: profile.emails });
+      if (!user) {
+        logger.info("Creando nuevo user - GoogleAuth");
+        // TODO: Esta pass por defecto deberia estar en el env
+        const hashedPassword = await bcrypt.hash("1234", 10);
+
+        const newUser = new User({
+          name: profile.name,
+          picture: userPicture,
+          email: profile.emails,
+          sanitaryZone: 1, // TODO: No puede ser 1
+          password: hashedPassword,
+          bannedObject: { "banned": false },
+          isAdmin: false,
+          petitions: [],
+          posts: []
+        })
+
+        await newUser.save();
+        return done(null, newUser);
+      } else {
+        logger.info("User admitido - GoogleAuth")
+        return done(undefined, user);
+      }
+    } catch (err) {
+      logger.error(err);
+      return done(err, false);
+    }
+  }
+))
 /**
  * Sign in using Email and Password.
  */

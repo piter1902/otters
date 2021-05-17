@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import GoogleButton from 'react-google-button';
+import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { Link, useHistory } from 'react-router-dom';
 import './Login.css';
 import Token from './Token/Token';
@@ -71,6 +72,55 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
         }
     };
 
+    // Respuesta de google login
+    // Source: https://medium.com/@alexanderleon/implement-social-authentication-with-react-restful-api-9b44f4714fa
+    const googleResponse = async (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+        console.log("Google Reponse token: " + (response as GoogleLoginResponse).accessToken)
+        const tokenBlob = new Blob(
+            [JSON.stringify({
+                access_token: (response as GoogleLoginResponse).accessToken
+            }, null, 2)],
+            { type: 'application/json' });
+        const result = await fetch(`${process.env.REACT_APP_BASEURL}/auth/google`,
+            {
+                method: "POST",
+                body: tokenBlob,
+                mode: 'no-cors',
+                cache: 'default'
+            });
+        const tokenJson = (await result.json())
+        console.log("Result: " + tokenJson);
+        // TODO: Faltan las redirecciones
+        if (result.ok) {
+            // Todo correcto
+            const token: Token = {
+                userId: tokenJson.data.userId,
+                token: tokenJson.data.token,
+                type: "Bearer"
+            }
+            saveToken(token);
+            setError({
+                error: false,
+                message: ""
+            });
+            // Recargamos la página
+            history.push("/");
+            window.location.reload();
+        } else {
+            // Error -> Mostrar un alert
+            setError({
+                error: true,
+                message: "Usuario o contraseña incorrecto(s)"
+            });
+        }
+
+    }
+
+    // Accion en caso de fallo al loggearse
+    const onFailure = (err: any) => {
+        console.log("ERRROR")
+        alert(err)
+    }
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
@@ -103,7 +153,16 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                                     <span className="btn-label pe-1"><i className="fab fa-google"></i></span>
                                     Iniciar sesión con Google
                                 </button> */}
-                                <GoogleButton onClick={() => console.log("Singing in with google")}/>
+                                {/* <GoogleButton onClick={() => googleLogin()} /> */}
+                                <GoogleLogin
+                                    clientId="488176144101-nksd69ithfpreq0qqefa51btkkc9d9cb.apps.googleusercontent.com"
+                                    buttonText="Login"
+                                    onSuccess={googleResponse}
+                                    onFailure={onFailure}
+                                    render={renderProps => (<GoogleButton onClick={renderProps.onClick}></GoogleButton>)
+
+                                    }
+                                ></GoogleLogin>
                             </div>
 
                             <div className="d-flex align-self-center mt-2 mt-xl-6">
