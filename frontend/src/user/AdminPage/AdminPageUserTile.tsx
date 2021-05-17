@@ -1,4 +1,5 @@
 import React, { JSXElementConstructor, useState } from 'react'
+import useToken from '../../auth/Token/useToken';
 
 interface AdminPageUserTileProps {
     user: {
@@ -15,6 +16,9 @@ const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user
     // Estado del usuario
     const [isBanned, setIsBanned] = useState<boolean>(user.bannedObject.banned);
 
+    // Token
+    const { token } = useToken();
+    
     // Ban user
     const banUser = async () => {
         console.log("Banning user with id = " + user._id);
@@ -24,7 +28,8 @@ const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user
                 {
                     method: "POST",
                     headers: {
-                        'Content-Type': "application/json"
+                        'Content-Type': "application/json",
+                        'Authorization': `${token?.type} ${token?.token}`
                     },
                     body: JSON.stringify({
                         banned: true,
@@ -46,7 +51,8 @@ const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user
                 {
                     method: "POST",
                     headers: {
-                        'Content-Type': "application/json"
+                        'Content-Type': "application/json",
+                        'Authorization': `${token?.type} ${token?.token}`
                     },
                     body: JSON.stringify({
                         banned: false,

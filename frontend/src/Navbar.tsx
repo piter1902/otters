@@ -23,13 +23,22 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
     useEffect(() => {
         const fetchUserInfo = async () => {
             if (token != null && token.userId) {
-                const response = await fetch(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}`, { method: "GET" });
+                const response =
+                    await fetch(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}`,
+                        {
+                            method: "GET",
+                            headers: {
+                                'Authorization': `${token?.type} ${token?.token}`
+                            }
+                        });
                 if (response.status === 200) {
                     setUserInfo(await response.json());
                 }
             }
         }
-        fetchUserInfo();
+        if(token !== null && token !== undefined){
+            fetchUserInfo();
+        }
         return () => { }
     }, [token]);
 

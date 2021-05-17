@@ -5,7 +5,7 @@ const useToken = () => {
 
     // const [firstTime, setFirstTime] = useState<boolean>(true);
 
-    const [token, setToken] = useState<Token | null>(null);
+    const [token, setToken] = useState<Token | undefined | null>(undefined);
 
     // Save token to localstorage
     const saveToken = (t: Token | null) => {
@@ -31,6 +31,8 @@ const useToken = () => {
         if (tokenString !== null) {
             setToken(JSON.parse(tokenString) as Token);
             // setFirstTime(false);
+        }else{
+            setToken(null)
         }
 
         return () => { }

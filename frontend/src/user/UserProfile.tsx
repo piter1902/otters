@@ -32,7 +32,14 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
             const fetchInfo = async (url: string, setFunction: (p: any) => void) => {
                 if (token != null && token.userId) {
                     setIsPending(true);
-                    const response = await fetch(url, { method: "GET" });
+                    const response =
+                        await fetch(url,
+                            {
+                                method: "GET",
+                                headers: {
+                                    'Authorization': `${token?.type} ${token?.token}`
+                                }
+                            });
                     if (response.status === 200) {
                         const dataJson = await response.json();
                         console.log("Para " + url + " el resultado es ");
@@ -45,7 +52,9 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
             await fetchInfo(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}`, setUser);
             setIsPending(false);
         }
-        fetchRemote();
+        if (token !== null && token !== undefined) {
+            fetchRemote();
+        }
         return () => { }
     }, [token]);
 
@@ -55,7 +64,12 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
             const fetchInfo = async (url: string, setFunction: (p: any) => void) => {
                 if (token != null && token.userId) {
                     setIsPending(true);
-                    const response = await fetch(url, { method: "GET" });
+                    const response =
+                        await fetch(url,
+                            {
+                                method: "GET",
+                                headers: { 'Authorization': `${token?.type} ${token?.token}` }
+                            });
                     if (response.status === 200) {
                         const dataJson = await response.json();
                         console.log("Para " + url + " el resultado es ");
@@ -77,7 +91,9 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
             }
             setIsPending(false);
         }
-        fetchUserPetitionsAndPosts();
+        if (token !== null && token !== undefined) {
+            fetchUserPetitionsAndPosts();
+        }
         return () => { }
     }, [user, token])
 

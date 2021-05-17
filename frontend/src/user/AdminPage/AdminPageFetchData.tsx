@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
+import useToken from '../../auth/Token/useToken';
 
 const AdminPageFetchData = () => {
 
     const [isFetching, setisFetching] = useState<boolean>(false);
-
+    
+    // Token
+    const { token } = useToken();
+    
     const reloadDataSource = () => {
         console.log("Recargando la fuente de datos");
-        fetch(`${process.env.REACT_APP_BASEURL}/zone/fetchData`);
+        fetch(`${process.env.REACT_APP_BASEURL}/zone/fetchData`, { headers: { 'Authorization': `${token?.type} ${token?.token}` } });
         setisFetching(true);
     }
 
