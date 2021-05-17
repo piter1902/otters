@@ -548,9 +548,10 @@ const _doAddCommentObj = async (req: Express.Request, res: Express.Response, pos
         });
     } else {
       const user = await User.findById(post.publisher).exec();
+      const userWhoComment = await User.findById(req.body.publisherId).exec();
       console.log(post);
       if(user){
-        await emailService.sendSomeoneCommentedPost(user,post);
+        await emailService.sendSomeoneCommentedPost(user,post,userWhoComment);
       }
       var tempDate = new Date(req.body.date);
       const comment = new Comments({

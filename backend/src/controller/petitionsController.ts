@@ -290,8 +290,10 @@ const assignUserPetition = async (req: Express.Request, res: Express.Response) =
           petition.userIdAsigned = req.params.uid;
           petition.status = 'ASSIGNED';
           const user = await User.findById(petition.userId).exec();
+          const userAssigned = await User.findById(req.params.uid).exec();
           if(user){
-            await emailService.sendSomeoneAssignedPetition(user,petition);
+            await emailService.sendSomeoneAssignedPetition(user,petition,userAssigned);
+            await emailService.userAssignedPetition(userAssigned, petition, user);
           }
           petition.save((err: any, petition: typeof Petition) => {
             if (err) {
@@ -361,8 +363,9 @@ const cancelAssignUserPetition = async (req: Express.Request, res: Express.Respo
       petition.userIdAsigned = petition.userQueueAsigned[0];
       petition.userQueueAsigned.shift();
       const user = await User.findById(petition.userIdAsigned).exec();
+      const userHelped = await User.findById(petition.userId).exec();
           if(user){
-            await emailService.fromQueueToAssigned(user,petition);
+            await emailService.fromQueueToAssigned(user,petition, userHelped);
           }
     } else if (petition.userIdAsigned == req.params.uid){
       petition.userIdAsigned = null;
