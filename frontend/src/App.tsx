@@ -13,10 +13,12 @@ import CreatePetition from './petitions/CreatePetition';
 import PostDetalle from './posts/PostDetalle';
 import PeticionDetalle from './petitions/PeticionDetalle';
 import NotFoundComponent from './NotFoundComponent';
+import useToken from './auth/Token/useToken';
+import PrivateRoute from './PrivateRoute';
 
 
 const App = () => {
-
+  
   return (
     <Router>
       <Switch>
@@ -32,44 +34,26 @@ const App = () => {
           <Navbar />
           <div className="container">
             {/* Perfil del usuario propio */}
-            <Route exact path="/cuenta">
-              <UserProfile />
-            </Route>
+            <PrivateRoute path="/cuenta" Component={UserProfile} ></PrivateRoute>
             {/* Página del administrador */}
-            <Route exact path="/admin">
-              <AdminPage />
-            </Route>
+            <PrivateRoute path="/admin" Component={AdminPage} ></PrivateRoute>
             {/* Estadisticas COVID (página principal) */}
             <Route exact path="/">
               <Redirect to="/estadisticas" />
             </Route>
-            <Route exact path="/estadisticas">
-              <EstadisticasCovid />
-            </Route>
+            <PrivateRoute path="/estadisticas" Component={EstadisticasCovid} ></PrivateRoute>
             {/* Vista detallada de post */}
-            <Route exact path="/postDetalle/:id">
-              <PostDetalle />
-            </Route>
+            <PrivateRoute path="/postDetalle/:id" Component={PostDetalle} ></PrivateRoute>
             {/* Vista detallada de peticion */}
-            <Route exact path="/peticionDetalle/:id">
-              <PeticionDetalle />
-            </Route>
+            <PrivateRoute path="/peticionDetalle/:id" Component={PeticionDetalle} ></PrivateRoute>
             {/* Foro */}
-            <Route exact path="/foro">
-              <PostList />
-            </Route>
+            <PrivateRoute path="/foro" Component={PostList} ></PrivateRoute>
             {/* Ayuda */}
-            <Route exact path="/peticionesayuda">
-              <PetitionList />
-            </Route>
+            <PrivateRoute path="/peticionesayuda" Component={PetitionList} ></PrivateRoute>
             {/* Creación de posts */}
-            <Route exact path="/createPost">
-              <CreatePost />
-            </Route>
+            <PrivateRoute path="/createPost" Component={CreatePost} ></PrivateRoute>
             {/* Creación de peticiones */}
-            <Route exact path="/createPetition">
-              <CreatePetition />
-            </Route>
+            <PrivateRoute path="/createPetition" Component={CreatePetition} ></PrivateRoute>
             {/* Error */}
             <Route exact path="/error">
               <NotFoundComponent />
