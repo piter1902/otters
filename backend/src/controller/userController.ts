@@ -3,6 +3,7 @@ import Express from 'express';
 import User, { bannedSchema } from '../models/User';
 import bcrypt from 'bcrypt';
 import userPicture from '../UserPicture';
+import Petition from '../models/Petitions';
 
 const createNewUser = async (req: Express.Request, res: Express.Response) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -73,7 +74,16 @@ const banUser = async (req: Express.Request, res: Express.Response) => {
         error: "El usuario no existe"
       });
     } else {
-      _doAddBannedObj(req, res, user);
+      if(user.isAdmin){
+        _doAddBannedObj(req, res, user);
+      }else{
+        res
+      .status(400)
+      .json({
+        message: 'El usuario no es administrador'
+      });
+      }
+      
     }
   } else {
     res
@@ -109,6 +119,158 @@ const _doAddBannedObj = (req: Express.Request, res: Express.Response, user: any)
           .json(user);
       }
     });
+  }
+};
+
+
+const strikeUser = async (req: Express.Request, res: Express.Response) => {
+  // Get query params
+  const userId = req.params.uid;
+  logger.info(`Metiendo strike para user = ${userId}`);
+  if (userId != null) {
+    const user = await User
+      .findById(userId)
+      .exec();
+    if (user == null) {
+      res.status(400).json({
+        error: "El usuario no existe"
+      });
+    } else {
+      _doAddStrikeObj(req, res, user);
+    }
+  } else {
+    res
+      .status(404)
+      .json({
+        message: 'uid query param is required'
+      });
+  }
+};
+
+// Private methods
+const _doAddStrikeObj = (req: Express.Request, res: Express.Response, user: any) => {
+  if (!user) {
+    res
+      .status(404)
+      .json({
+        message: "userId not found"
+      });
+  } else {
+    
+    const totalStrikes = user.strikes + 1;
+    if (totalStrikes == 5){
+      user.bannedObject.banned = true;
+      user.bannedObject.bannedUntil = new Date(Date.now() + (86400000 * 7));
+    }
+    user.strikes = totalStrikes;
+    user.save((err: Express.ErrorRequestHandler, user: any) => {
+      if (err) {
+        logger.error(err.toString());
+        res
+          .status(400)
+          .json(err);
+      } else {
+        //let thisPetition = user.petitions[user.petitions.length - 1];
+        res
+          .status(201)
+          .json(user);
+      }
+    });
+  }
+};
+
+const strikeUserInPet = async (req: Express.Request, res: Express.Response) => {
+  // Get query params
+  const userId = req.params.uid;
+  const petitionId = req.params.petId;
+  logger.info(`Metiendo strike para user = ${userId} en la peticion: ${petitionId}`);
+  if (userId != null) {
+    const user = await User
+      .findById(userId)
+      .exec();
+    if (user == null) {
+      res.status(400).json({
+        error: "El usuario no existe"
+      });
+    } else {
+      if (petitionId != null) {
+        const petition = await Petition
+          .findById(petitionId)
+          .exec();
+        if (petition == null) {
+          res.status(400).json({
+            error: "La petition no existe"
+          });
+        } else {
+          _doAddStrikePetObj(req, res, user, petition);
+        }
+      } else {
+        res
+          .status(404)
+          .json({
+            message: 'petId query param is required'
+          });
+      }
+
+      
+    }
+  } else {
+    res
+      .status(404)
+      .json({
+        message: 'uid query param is required'
+      });
+  }
+};
+
+// Private methods
+const _doAddStrikePetObj = (req: Express.Request, res: Express.Response, user: any, petition: any) => {
+  if (!user) {
+    res
+      .status(404)
+      .json({
+        message: "userId not found"
+      });
+  } else {
+    logger.info(`else`);
+    if(petition.status == "COMPLETED"){
+      petition.status = 'CANCELED';
+      petition.save((err: any, petition: typeof Petition) => {
+        if (err) {
+          res
+            .status(404)
+            .json(err);
+        }
+      });
+      logger.info(`else2`);
+      const totalStrikes = user.strikes + 1;
+      if (totalStrikes == 5){
+        user.bannedObject.banned = true;
+        user.bannedObject.bannedUntil = new Date(Date.now() + (86400000 * 7));
+      }
+      user.strikes = totalStrikes;
+      user.save((err: Express.ErrorRequestHandler, user: any) => {
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        } else {
+          //let thisPetition = user.petitions[user.petitions.length - 1];
+          res
+            .status(201)
+            .json(user);
+        }
+      });
+    } else{
+      logger.info(`else3`);
+      res
+          .status(404)
+          .json({
+            message: 'peticion no está en el estado correcto para meter strike'
+          });
+    }
+    
   }
 };
 
@@ -159,5 +321,7 @@ export default {
   getUserByUID,
   deleteUserByUID,
   updateUser,
-  banUser
+  banUser,
+  strikeUser,
+  strikeUserInPet
 }

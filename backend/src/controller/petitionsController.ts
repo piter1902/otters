@@ -22,6 +22,8 @@ interface PetitionsWithUsername {
   isUrgent: Boolean;
   status: string;
   expTime: string;
+  userIdAsigned: string;
+  userQueueAsigned: [string];
 }
 
 const petitionsCreate = (req: Express.Request, res: Express.Response) => {
@@ -101,7 +103,9 @@ const getUserPetitions = (req: Express.Request, res: Express.Response) => {
               isUrgent: petition.isUrgent,
               status: petition.status,
               targetDate: petition.targetDate,
-              expTime: petition.expTime
+              expTime: petition.expTime,
+              userIdAsigned: petition.userIdAsigned,
+              userQueueAsigned: petition.userQueueAsigned
             });// Debemos hacer esto ya que sino se devuelve el array antes de cargar la info
             if (data.length == (userPetitions as any[]).length) {
               res.status(200).json(data);
@@ -150,7 +154,9 @@ const getPetitions = async (req: Express.Request, res: Express.Response) => {
             isUrgent: petition.isUrgent,
             status: petition.status,
             targetDate: petition.targetDate,
-            expTime: petition.expTime
+            expTime: petition.expTime,
+            userIdAsigned: petition.userIdAsigned,
+            userQueueAsigned: petition.userQueueAsigned
           });
         }
         // Debemos hacer esto ya que sino se devuelve el array antes de cargar la info
@@ -195,7 +201,9 @@ const readOnePetition = async (req: Express.Request, res: Express.Response) => {
             isUrgent: petition.isUrgent,
             status: petition.status,
             targetDate: petition.targetDate,
-            expTime: petition.expTime
+            expTime: petition.expTime,
+            userIdAsigned: petition.userIdAsigned,
+            userQueueAsigned: petition.userQueueAsigned
           }
           res
             .status(200)
@@ -244,7 +252,7 @@ const updateOnePetition = async (req: Express.Request, res: Express.Response) =>
     petition.title = req.body.title && req.body.title || petition.title;
     petition.body = req.body.body && req.body.body || petition.body;
     petition.targetDate = tempDate && new Date(tempDate.setMonth(tempDate.getMonth() + 1)) || petition.targetDate,
-      petition.place = req.body.place && req.body.place || petition.place;
+    petition.place = req.body.place && req.body.place || petition.place;
     petition.isUrgent = req.body.isUrgent && req.body.isUrgent || petition.isUrgent;
     petition.status = req.body.status && req.body.status || petition.status;
     petition.save((err: any, petition: typeof Petition) => {
@@ -267,6 +275,110 @@ const updateOnePetition = async (req: Express.Request, res: Express.Response) =>
       });
   }
 };
+
+const assignUserPetition = async (req: Express.Request, res: Express.Response) => {
+  const petId = req.params.petitionId;
+
+  if (req.params && petId) {
+    const petition = await Petition.findById(petId).exec();
+
+    if(req.params.uid != petition.userIdAsigned && !petition.userQueueAsigned.includes(req.params.uid) && req.params.uid != petition.userIdAsigned){
+      if(petition.userIdAsigned == null){
+        petition.userIdAsigned = req.params.uid;
+        petition.status = 'ASSIGNED';
+        petition.save((err: any, petition: typeof Petition) => {
+          if (err) {
+            res
+              .status(404)
+              .json(err);
+          } else {
+            res
+              .status(200)
+              .json(petition);
+          }
+        });
+      } else{
+        if (petition.userQueueAsigned.length < 5){
+          petition.userQueueAsigned.push(req.params.uid);
+          petition.save((err: any, petition: typeof Petition) => {
+            if (err) {
+              res
+                .status(404)
+                .json(err);
+            } else {
+              res
+                .status(200)
+                .json(petition);
+            }
+          });
+        }else{
+          res
+            .status(400)
+            .json({
+              "message": "Cola llena"
+            });
+        }
+      }
+    } else{
+      res
+            .status(400)
+            .json({
+              "message": "Usuario ya está registrado"
+            });
+    }
+    
+
+  } else {
+    res
+      .status(404)
+      .json({
+        "message": "Not found, petitonId is required"
+      });
+  }
+};
+
+const cancelAssignUserPetition = async (req: Express.Request, res: Express.Response) => {
+  const petId = req.params.petitionId;
+
+  if (req.params && petId) {
+    const petition = await Petition.findById(petId).exec();
+
+    if((petition.userIdAsigned == req.params.uid) && (petition.userQueueAsigned.length > 0)){
+      petition.userIdAsigned = petition.userQueueAsigned[0];
+      petition.userQueueAsigned.shift();
+    } else if (petition.userIdAsigned == req.params.uid){
+      petition.userIdAsigned = null;
+      petition.status = 'OPEN';
+    } else{
+      for( var i = 0; i < petition.userQueueAsigned.length; i++){ 
+        if ( petition.userQueueAsigned[i] === req.params.uid) { 
+          petition.userQueueAsigned.splice(i, 1); 
+        }
+      }
+    }
+
+  
+    petition.save((err: any, petition: typeof Petition) => {
+      if (err) {
+        res
+          .status(404)
+          .json(err);
+      } else {
+        res
+          .status(200)
+          .json(petition);
+      }
+    });
+
+  } else {
+    res
+      .status(404)
+      .json({
+        "message": "Not found, petitonId is required"
+      });
+  }
+};
+
 
 
 const deleteOnePetition = async (req: Express.Request, res: Express.Response) => {
@@ -368,5 +480,7 @@ export default {
   petitionsCreate,
   readOnePetition,
   updateOnePetition,
-  deleteOnePetition
+  deleteOnePetition,
+  assignUserPetition,
+  cancelAssignUserPetition
 }

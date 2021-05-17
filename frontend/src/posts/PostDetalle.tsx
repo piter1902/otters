@@ -5,6 +5,7 @@ import useToken from '../auth/Token/useToken';
 import useGetFetch from '../useGetFetch';
 import ComentarioList from './Comentario';
 import './Post.css'
+import { Link } from 'react-router-dom';
 
 interface PostDetalleProps {
 
@@ -22,6 +23,21 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
     // Navegación
     const history = useHistory();
 
+    const [userInfo, setUserInfo] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            if (token != null && token.userId) {
+                const response = await fetch(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}`, { method: "GET" });
+                if (response.status === 200) {
+                    setUserInfo(await response.json());
+                }
+            }
+        }
+        fetchUserInfo();
+        return () => { }
+    }, [token]);
+
     // Redirección en caso de error en la carga
     useEffect(() => {
         if (error != null) {
@@ -30,6 +46,23 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
         }
         return () => { }
     }, [error, history]);
+
+    const deletePost = async () => {
+        // Cerrar sesión y recargar
+        console.log("delete post: "+id)
+
+        await fetch(`${process.env.REACT_APP_BASEURL}/post/${id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `${token?.type} ${token?.token}`
+                    },
+                    body: JSON.stringify({
+                    })
+                }) 
+    }
 
     // Cuerpo del comentario
     const [body, setBody] = useState('');
@@ -138,6 +171,14 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
                             </div>
                         </form>
                     }
+                    {(mainPost.publisher.userId==token?.userId || (userInfo && userInfo.isAdmin))  &&
+                    <p className="h2 fw-bold d-flex justify-content-center">
+                    <Link to={"/peticionesayuda"} className="div" >
+                        <button className="btn btn-danger mx-2"  onClick={deletePost}>
+                            Borrar post
+                        </button>
+                    </Link>    
+                    </p>}
                     <p className="lead texto">Comentarios</p>
                     <ComentarioList mainPost={mainPost} />
                 </div>
