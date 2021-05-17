@@ -47,7 +47,7 @@ const app = Express();
 const port = process.env.PORT || 8080;
 
 
-app.use(bodyParser.json( {limit: "50mb"}));
+app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }))
 
 // CORS
@@ -82,21 +82,21 @@ app.use("/api_docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.get("/", (req: Express.Request, res: Express.Response) => res.status(200).send("Hello world"));
 
 // Controlador para los usuarios
-app.use("/user", userRoute);
+app.use("/user", passport.authenticate('jwt', { session: false }), userRoute);
 
 // Controlador para los posts
-app.use("/post", postRoute);
+app.use("/post", passport.authenticate('jwt', { session: false }), postRoute);
 
 // Controlador para las zonas sanitarias
-app.use("/zone", sanitaryZoneRoute);
+app.use("/zone", passport.authenticate('jwt', { session: false }), sanitaryZoneRoute);
 
 // Controlador para las peticiones
-app.use("/petitions", petitionsRoute);
+app.use("/petitions", passport.authenticate('jwt', { session: false }), petitionsRoute);
 
 // Controlador para autenticacion
 app.use("/auth", authRoute);
 
 // Controlador para las estadisticas
-app.use("/stats", estadisticasRoute);
+app.use("/stats", passport.authenticate('jwt', { session: false }), estadisticasRoute);
 
 app.listen(port, () => console.log(`Listening at ${port} 🛠`))
