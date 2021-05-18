@@ -4,6 +4,7 @@ import Posts from '../models/Posts';
 import Comments from '../models/Comments';
 import User from '../models/User';
 import mongoose from 'mongoose';
+import emailService from '../service/emailService';
 
 interface UserInfo {
   userId: string;
@@ -519,7 +520,6 @@ const createComment = async (req: Express.Request, res: Express.Response) => {
   if (postId != null) {
     const post = await Posts
       .findById(postId)
-      .select('comments')
       .exec();
     if (post == null) {
       res.status(400).json({
@@ -538,48 +538,63 @@ const createComment = async (req: Express.Request, res: Express.Response) => {
 };
 
 // Private methods
-const _doAddCommentObj = (req: Express.Request, res: Express.Response, post: any) => {
-  if (!post) {
-    res
-      .status(404)
-      .json({
-        message: "userId not found"
+const _doAddCommentObj = async (req: Express.Request, res: Express.Response, post: any) => {
+  try{
+    if (!post) {
+      res
+        .status(404)
+        .json({
+          message: "userId not found"
+        });
+    } else {
+      const user = await User.findById(post.publisher).exec();
+      const userWhoComment = await User.findById(req.body.publisherId).exec();
+      console.log(post);
+      if(user){
+        await emailService.sendSomeoneCommentedPost(user,post,userWhoComment);
+      }
+      var tempDate = new Date(req.body.date);
+      const comment = new Comments({
+        body: req.body.body,
+        //TODO: No tengo claro que lo acabe de hacer bien
+        date: new Date(tempDate.setMonth(tempDate.getMonth())),
+        publisherId: req.body.publisherId,
       });
-  } else {
-    var tempDate = new Date(req.body.date);
-    const comment = new Comments({
-      body: req.body.body,
-      //TODO: No tengo claro que lo acabe de hacer bien
-      date: new Date(tempDate.setMonth(tempDate.getMonth())),
-      publisherId: req.body.publisherId,
-    });
-    
-    post.comments.push(
-      comment
-    );
 
-   post.save((err: Express.ErrorRequestHandler, user: any) => {
-      if (err) {
-        logger.error(err.toString());
-        res
-          .status(400)
-          .json(err);
-      }
-    });
+      post.comments.push(
+        comment
+      );
 
-    comment.save((err: Express.ErrorRequestHandler, user: any) => {
-      if (err) {
-        logger.error(err.toString());
-        res
-          .status(400)
-          .json(err);
-      } else {
-        res
-          .status(201)
-          .json(post);
-      }
-    });
+      post.save((err: Express.ErrorRequestHandler, user: any) => {
+          if (err) {
+            logger.error(err.toString());
+            res
+              .status(400)
+              .json(err);
+          }
+        });
+  
+      comment.save((err: Express.ErrorRequestHandler, user: any) => {
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        } else {
+          res
+            .status(201)
+            .json(post);
+        }
+      });
+    }
+  } catch (err) {
+    logger.error("ERROR!" + err);
+  
+    res
+      .status(400)
+      .json(err);
   }
+  
 };
 
 const getCommentById = async (req: Express.Request, res: Express.Response) => {

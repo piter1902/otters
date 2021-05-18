@@ -3,6 +3,7 @@ import Express from 'express';
 import Petition from '../models/Petitions';
 import User from '../models/User';
 import mongoose, { mongo } from 'mongoose';
+import emailService from "../service/emailService";
 
 // Evitamos mensaje de warning de deprecated
 mongoose.set('useFindAndModify', false);
@@ -277,29 +278,23 @@ const updateOnePetition = async (req: Express.Request, res: Express.Response) =>
 };
 
 const assignUserPetition = async (req: Express.Request, res: Express.Response) => {
-  const petId = req.params.petitionId;
+  
+  try{
+    const petId = req.params.petitionId;
 
-  if (req.params && petId) {
-    const petition = await Petition.findById(petId).exec();
+    if (req.params && petId) {
+      const petition = await Petition.findById(petId).exec();
 
-    if(req.params.uid != petition.userIdAsigned && !petition.userQueueAsigned.includes(req.params.uid) && req.params.uid != petition.userIdAsigned){
-      if(petition.userIdAsigned == null){
-        petition.userIdAsigned = req.params.uid;
-        petition.status = 'ASSIGNED';
-        petition.save((err: any, petition: typeof Petition) => {
-          if (err) {
-            res
-              .status(404)
-              .json(err);
-          } else {
-            res
-              .status(200)
-              .json(petition);
+      if(req.params.uid != petition.userIdAsigned && !petition.userQueueAsigned.includes(req.params.uid) && req.params.uid != petition.userIdAsigned){
+        if(petition.userIdAsigned == null){
+          petition.userIdAsigned = req.params.uid;
+          petition.status = 'ASSIGNED';
+          const user = await User.findById(petition.userId).exec();
+          const userAssigned = await User.findById(req.params.uid).exec();
+          if(user){
+            await emailService.sendSomeoneAssignedPetition(user,petition,userAssigned);
+            await emailService.userAssignedPetition(userAssigned, petition, user);
           }
-        });
-      } else{
-        if (petition.userQueueAsigned.length < 5){
-          petition.userQueueAsigned.push(req.params.uid);
           petition.save((err: any, petition: typeof Petition) => {
             if (err) {
               res
@@ -311,30 +306,51 @@ const assignUserPetition = async (req: Express.Request, res: Express.Response) =
                 .json(petition);
             }
           });
-        }else{
-          res
-            .status(400)
-            .json({
-              "message": "Cola llena"
+        } else{
+          if (petition.userQueueAsigned.length < 5){
+            petition.userQueueAsigned.push(req.params.uid);
+            petition.save((err: any, petition: typeof Petition) => {
+              if (err) {
+                res
+                  .status(404)
+                  .json(err);
+              } else {
+                res
+                  .status(200)
+                  .json(petition);
+              }
             });
+          }else{
+            res
+              .status(400)
+              .json({
+                "message": "Cola llena"
+              });
+          }
         }
+      } else{
+        res
+              .status(400)
+              .json({
+                "message": "Usuario ya está registrado"
+              });
       }
-    } else{
-      res
-            .status(400)
-            .json({
-              "message": "Usuario ya está registrado"
-            });
-    }
-    
+      
 
-  } else {
-    res
-      .status(404)
-      .json({
-        "message": "Not found, petitonId is required"
-      });
-  }
+    } else {
+      res
+        .status(404)
+        .json({
+          "message": "Not found, petitonId is required"
+        });
+    }
+} catch (err) {
+  logger.error("ERROR!" + err);
+
+  res
+    .status(400)
+    .json(err);
+}
 };
 
 const cancelAssignUserPetition = async (req: Express.Request, res: Express.Response) => {
@@ -346,6 +362,11 @@ const cancelAssignUserPetition = async (req: Express.Request, res: Express.Respo
     if((petition.userIdAsigned == req.params.uid) && (petition.userQueueAsigned.length > 0)){
       petition.userIdAsigned = petition.userQueueAsigned[0];
       petition.userQueueAsigned.shift();
+      const user = await User.findById(petition.userIdAsigned).exec();
+      const userHelped = await User.findById(petition.userId).exec();
+          if(user){
+            await emailService.fromQueueToAssigned(user,petition, userHelped);
+          }
     } else if (petition.userIdAsigned == req.params.uid){
       petition.userIdAsigned = null;
       petition.status = 'OPEN';
