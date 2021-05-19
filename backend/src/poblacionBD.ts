@@ -3,6 +3,7 @@ import logger from '@poppinss/fancy-logs';
 import Petition from './models/Petitions';
 import Post from './models/Posts';
 import Comments from './models/Comments';
+import SanitaryZone from './models/SanitaryZone';
 import userPicture from './UserPicture';
 import bcrypt from 'bcrypt';
 
@@ -18,11 +19,12 @@ const populateDB = async () => {
         
         mail = userArrayName[i].substring(0,1)+userArraySurname[i].substring(0,1)+"@gmail.com";
         const hashedPassword = await bcrypt.hash("xxxxxx", 10);
+        const allZones = await SanitaryZone.find().exec();
         const user = new User({
             name: userArrayName[i]+" "+userArraySurname[j],
             picture: userPicture,
             email: mail.toLowerCase(),
-            sanitaryZone: "6080a0635558ed2aa445f250",
+            sanitaryZone: allZones[1]._id,
             password: hashedPassword,
             bannedObject: { "banned": false },
             strikes: 0,
