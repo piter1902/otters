@@ -83,7 +83,7 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                 }
             }
             setIsPending(true);
-            if (user !== null) {
+            if (user !== null && user.sanitaryZone!= null) {
                 
                 console.log("Buscando info de la zona:" +user.sanitaryZone)
                 await fetchInfo(`${process.env.REACT_APP_BASEURL!}/zone/${user.sanitaryZone}`, setZone);
@@ -137,10 +137,10 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                             </div>
                             {/* Zona sanitaria */}
                             <div className="input-group mt-md-4 mt-3">
-                                <label htmlFor="useremail" className="input-group-text">
+                                <label htmlFor="zone" className="input-group-text">
                                     Zona sanitaria
                                 </label>
-                                <input type="text" id="useremail" className="form-control" value={zone.name} disabled />
+                                <input type="text" id="zone" className="form-control" value={zone.name} disabled />
                             </div>
                         </div>
                         {/* Columna de la imagen del usuario */}

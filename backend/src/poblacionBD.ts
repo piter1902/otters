@@ -4,6 +4,7 @@ import Petition from './models/Petitions';
 import Post from './models/Posts';
 import Comments from './models/Comments';
 import userPicture from './UserPicture';
+import bcrypt from 'bcrypt';
 
 
 const userArrayName:string[] = ["Santiago","Ramon","Cajal"];
@@ -12,37 +13,36 @@ const userArrayPass:string[] = [];
 
 const populateDB = async () => {
     var mail;
-    /**for (let i = 0; i < userArrayName.length; i++) {
+    for (let i = 0; i < userArrayName.length; i++) {
         for (let j = 0; j < userArraySurname.length; j++) {
         
         mail = userArrayName[i].substring(0,1)+userArraySurname[i].substring(0,1)+"@gmail.com";
+        const hashedPassword = await bcrypt.hash("xxxxxx", 10);
         const user = new User({
             name: userArrayName[i]+" "+userArraySurname[j],
             picture: userPicture,
-            email: mail,//userArray[i].email,
-            sanitaryZone: 1,
-            password: "xxxxxxx",
+            email: mail.toLowerCase(),
+            sanitaryZone: "6080a0635558ed2aa445f250",
+            password: hashedPassword,
             bannedObject: { "banned": false },
             strikes: 0,
             isAdmin: false,
-            isVerified: true,
-            petitions: [],
-            posts: []
+            isVerified: true, 
           });
           // Save to mongodb
           await user.save();
           logger.info("Creating a new user");
         }
-    }**/
+    }
     const userArray:InstanceType<typeof User>[] = await await User.find().exec();
     var randomUser = Math.floor(Math.random() * (userArray.length ));
-    /*_doAddPetition(userArray[randomUser]);
-    randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPetition(userArray[randomUser]);
     randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPetition(userArray[randomUser]);
     randomUser = Math.floor(Math.random() * (userArray.length ));
-    _doAddPetition(userArray[randomUser]);*/
+    _doAddPetition(userArray[randomUser]);
+    randomUser = Math.floor(Math.random() * (userArray.length ));
+    _doAddPetition(userArray[randomUser]);
     /**randomUser = Math.floor(Math.random() * (userArray.length ));
     _doAddPost(userArray[randomUser]);
     randomUser = Math.floor(Math.random() * (userArray.length ));
@@ -60,7 +60,7 @@ const petArrayTitle:string[] = ["Aiuda","Jelp","Hadme la compra","Post numero 12
 const petArrayPlace:string[] = ["San Jose","Las Fuentes","Centro","Calle de la piruleta","San juan 23"];
 const petBody:string = "Eam ex integre quaeque bonorum, ea assum solet scriptorem pri. At eius choro sit, possit recusabo corrumpit vim ne.";
 
-/*const _doAddPetition = async function (user: any) {
+const _doAddPetition = async function (user: any) {
     var numTitle = Math.floor(Math.random() * (petArrayTitle.length ));
     var numPlace = Math.floor(Math.random() * (petArrayPlace.length ));
     var urgent = Math.floor(Math.random() * (1 + 1));
@@ -77,9 +77,10 @@ const petBody:string = "Eam ex integre quaeque bonorum, ea assum solet scriptore
         userId: user.id,
         body: petBody,
         place: petArrayPlace[numPlace],
-        targetDate: new Date(),//tempDate.setMonth(tempDate.getMonth())),
+        targetDate: new Date(),
         isUrgent: isUrgent,
-        status: 'OPEN'
+        status: 'OPEN',
+        expTime: new Date(),
     });
 
     user.petitions.push(
@@ -92,7 +93,7 @@ const petBody:string = "Eam ex integre quaeque bonorum, ea assum solet scriptore
     // Save petition to mongoDb
     petition.save(); 
     
-  };*/
+  };
 
   const postArrayTitle:string[] = ["Post de prueba","Hoy comi macarrones","Covid T.T", "A tope de covid","Cuando acaba esta wea"];
   const _doAddPost = async function (user: any) {
