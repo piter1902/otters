@@ -82,7 +82,7 @@ const getPosts = (req: Express.Request, res: Express.Response) => {
             return mongoose.Types.ObjectId(ele);
           });
 
-          let userPosts= await Posts.find({
+          let userPosts = await Posts.find({
             _id: {
               $in: postsId
             }
@@ -156,7 +156,7 @@ const readOnePost = (req: Express.Request, res: Express.Response) => {
 }
 
 
-const deleteOnePost= async (req: Express.Request, res: Express.Response) => {
+const deleteOnePost = async (req: Express.Request, res: Express.Response) => {
   if (req.params && req.params.uid && req.params.postId) {
     User
       .findByIdAndUpdate(req.params.uid, { $pull: { posts: req.params.postId } })
@@ -183,7 +183,7 @@ const deleteOnePost= async (req: Express.Request, res: Express.Response) => {
             // Delete post from posts collection
             await Posts.findByIdAndDelete(req.params.postId).exec();
 
-            user.save((err: any, post : typeof User) => {
+            user.save((err: any, post: typeof User) => {
               if (err) {
                 res
                   .status(404)
@@ -230,12 +230,12 @@ const _doAddPost = async function (req: Express.Request, res: Express.Response, 
       date: new Date(tempDate.setMonth(tempDate.getMonth())),
       publisher: userId,
     });
-    
+
     user.posts.push(
       post._id
     );
 
-   user.save((err: Express.ErrorRequestHandler, user: any) => {
+    user.save((err: Express.ErrorRequestHandler, user: any) => {
       if (err) {
         logger.error(err.toString());
         res
@@ -261,29 +261,29 @@ const _doAddPost = async function (req: Express.Request, res: Express.Response, 
 
 //Operaciones sobre los posts /post
 const createNewPost = async (req: Express.Request, res: Express.Response) => {
-    // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
-    // se almacena en numeros del 0-11 por defecto
-    var tempDate = new Date(req.body.date);
-    const post = new Posts({
-      title: req.body.title,
-      body: req.body.body,
-      //TODO: No tengo claro que lo acabe de hacer bien
-      date: new Date(tempDate.setMonth(tempDate.getMonth())),
-      publisher: req.body.publisher,
-    });
+  // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
+  // se almacena en numeros del 0-11 por defecto
+  var tempDate = new Date(req.body.date);
+  const post = new Posts({
+    title: req.body.title,
+    body: req.body.body,
+    //TODO: No tengo claro que lo acabe de hacer bien
+    date: new Date(tempDate.setMonth(tempDate.getMonth())),
+    publisher: req.body.publisher,
+  });
 
-    User
-      .findById(req.body.publisher)
-      .select('posts')
-      .exec(async (err: any, user: typeof User) => {
-        if (err) {
-          res
-            .status(400)
-            .json(err);
-        } else {
-            _addPost(req, res, user, post);
-        }
-      });
+  User
+    .findById(req.body.publisher)
+    .select('posts')
+    .exec(async (err: any, user: typeof User) => {
+      if (err) {
+        res
+          .status(400)
+          .json(err);
+      } else {
+        _addPost(req, res, user, post);
+      }
+    });
 
 };
 
@@ -319,7 +319,7 @@ const getAllPosts = async (req: Express.Request, res: Express.Response) => {
   try {
     const posts = await Posts.find().exec();
     const data: PostsWithUsername[] = [];
-    if (posts) {
+    if (posts && posts.length > 0) {
       (posts as any[]).forEach(async (post: any) => {
         const user = await User.findById(post.publisher).exec();
         if (user) {
@@ -344,6 +344,9 @@ const getAllPosts = async (req: Express.Request, res: Express.Response) => {
           res.status(200).json(data);
         }
       });
+    } else {
+      // Se devuelve un 200 con un array de posts vacio
+      res.status(200).json([]);
     }
   } catch (err) {
     res
@@ -411,67 +414,67 @@ const getPostByID = async (req: Express.Request, res: Express.Response) => {
 const deletePostByID = async (req: Express.Request, res: Express.Response) => {
   const id = req.params.id;
   logger.info(`Deleting post with uid = ${id}`);
-  if(id){
+  if (id) {
     Posts.findById(id)
-    .exec((err: any, post: typeof Posts) => {
-      if (err) {
-        res
-          .status(400)
-          .json(err);
-      } else {
+      .exec((err: any, post: typeof Posts) => {
+        if (err) {
+          res
+            .status(400)
+            .json(err);
+        } else {
           doDeletePost(req, res, post, id);
-      }
-    });
+        }
+      });
   }
-  
-} 
 
-const doDeletePost = async function (req: Express.Request, res: Express.Response, post: any ,id:any) {
+}
+
+const doDeletePost = async function (req: Express.Request, res: Express.Response, post: any, id: any) {
   User
-  .findByIdAndUpdate(post.publisher, { $pull: { posts: id } })
-  .exec(async (err: any, user: any) => {
-    if (!user) {
-      res
-        .status(404)
-        .json({ "message": "uid not found"+ post.publisher });
-    } else if (err) {
-      res
-        .status(404)
-        .json(err);
-    }
-    if (user.posts && user.posts.length > 0) {
-      const postRef = user.posts.includes(id);
-      if (!postRef) {
+    .findByIdAndUpdate(post.publisher, { $pull: { posts: id } })
+    .exec(async (err: any, user: any) => {
+      if (!user) {
+        res
+          .status(404)
+          .json({ "message": "uid not found" + post.publisher });
+      } else if (err) {
+        res
+          .status(404)
+          .json(err);
+      }
+      if (user.posts && user.posts.length > 0) {
+        const postRef = user.posts.includes(id);
+        if (!postRef) {
+          res
+            .status(404)
+            .json({
+              "message": "postId not found"
+            });
+        } else {
+          // En este caso el post pertenece al user y se elimina
+          // Delete post from posts collection
+          await Posts.findByIdAndDelete(id).exec();
+
+          user.save((err: any, post: typeof User) => {
+            if (err) {
+              res
+                .status(404)
+                .json(err);
+            } else {
+              res
+                .status(204)
+                .json("Ok");
+            }
+          });
+        }
+      } else {
         res
           .status(404)
           .json({
-            "message": "postId not found"
+            "message": "No posts found"
           });
-      } else {
-        // En este caso el post pertenece al user y se elimina
-        // Delete post from posts collection
-        await Posts.findByIdAndDelete(id).exec();
-
-        user.save((err: any, post : typeof User) => {
-          if (err) {
-            res
-              .status(404)
-              .json(err);
-          } else {
-            res
-              .status(204)
-              .json("Ok");
-          }
-        });
       }
-    } else {
-      res
-        .status(404)
-        .json({
-          "message": "No posts found"
-        });
-    }
-  });
+    });
 }
 
 //Funciones de comentarios en posts
@@ -483,32 +486,32 @@ const getComments = async (req: Express.Request, res: Express.Response) => {
       const post = await Posts.findById(id).exec();
       const comments = post.comments;
       const data: CommentsWithUsername[] = [];
-    if (comments) {
-      (comments as any[]).forEach(async (comment: any) => {
-        const user = await User.findById(comment.publisherId).exec();
-        if (user) {
-          const userInfo: UserInfo = {
-            userId: user._id,
-            userName: user.name
+      if (comments) {
+        (comments as any[]).forEach(async (comment: any) => {
+          const user = await User.findById(comment.publisherId).exec();
+          if (user) {
+            const userInfo: UserInfo = {
+              userId: user._id,
+              userName: user.name
+            }
+            data.push({
+              _id: comment._id,
+              body: comment.body,
+              date: comment.date,
+              publisher: userInfo,
+            });
           }
-          data.push({
-            _id: comment._id,
-            body: comment.body,
-            date: comment.date,
-            publisher: userInfo,
-          });
-        }
-        // Debemos hacer esto ya que sino se devuelve el array antes de cargar la info
-        if (data.length == (comments as any[]).length) {
-          res.status(200).json(data);
-        }
-      });
+          // Debemos hacer esto ya que sino se devuelve el array antes de cargar la info
+          if (data.length == (comments as any[]).length) {
+            res.status(200).json(data);
+          }
+        });
+      }
+    } catch (err) {
+      res
+        .status(400)
+        .json(err);
     }
-  } catch (err) {
-    res
-      .status(400)
-      .json(err);
-  }
   }
 }
 
@@ -553,12 +556,12 @@ const _doAddCommentObj = (req: Express.Request, res: Express.Response, post: any
       date: new Date(tempDate.setMonth(tempDate.getMonth())),
       publisherId: req.body.publisherId,
     });
-    
+
     post.comments.push(
       comment
     );
 
-   post.save((err: Express.ErrorRequestHandler, user: any) => {
+    post.save((err: Express.ErrorRequestHandler, user: any) => {
       if (err) {
         logger.error(err.toString());
         res
@@ -583,15 +586,15 @@ const _doAddCommentObj = (req: Express.Request, res: Express.Response, post: any
 };
 
 const getCommentById = async (req: Express.Request, res: Express.Response) => {
-    const cid = req.params.cid;
-    const comment = await Comments.findById(cid).exec();
-    if (comment != null) {
-        res.status(200).json(comment);
-    } else {
-        res.status(404).json({
-            error: `Comment with id = ${cid} doesn't exist`
-        })
-    }
+  const cid = req.params.cid;
+  const comment = await Comments.findById(cid).exec();
+  if (comment != null) {
+    res.status(200).json(comment);
+  } else {
+    res.status(404).json({
+      error: `Comment with id = ${cid} doesn't exist`
+    })
+  }
 }
 
 const deleteCommentById = async (req: Express.Request, res: Express.Response) => {
@@ -609,22 +612,22 @@ const deleteCommentById = async (req: Express.Request, res: Express.Response) =>
             .json(err);
         }
         if (post.comments && post.comments.length > 0) {
-            // En este caso el post pertenece al user y se elimina
-            // Delete post from posts collection
-            await Comments.findByIdAndDelete(req.params.cid).exec();
-            post.save((err: any, post : typeof User) => {
-              if (err) {
-                res
-                  .status(404)
-                  .json(err);
-              } else {
-                res
-                  .status(204)
-                  .json("Ok");
-              }
-            });
-            //TODO: Eliminar del post
-          }
+          // En este caso el post pertenece al user y se elimina
+          // Delete post from posts collection
+          await Comments.findByIdAndDelete(req.params.cid).exec();
+          post.save((err: any, post: typeof User) => {
+            if (err) {
+              res
+                .status(404)
+                .json(err);
+            } else {
+              res
+                .status(204)
+                .json("Ok");
+            }
+          });
+          //TODO: Eliminar del post
+        }
       });
   } else {
     res
@@ -640,11 +643,11 @@ const getPositiveValoration = async (req: Express.Request, res: Express.Response
   const id = req.params.id;
   const post = await Posts.findById(id).exec();
   if (post != null) {
-      res.status(200).json(post.possitive_valorations);
+    res.status(200).json(post.possitive_valorations);
   } else {
-      res.status(404).json({
-          error: `Post with id = ${id} doesn't exist`
-      })
+    res.status(404).json({
+      error: `Post with id = ${id} doesn't exist`
+    })
   }
 }
 
@@ -653,11 +656,11 @@ const addPositiveValoration = async (req: Express.Request, res: Express.Response
   const post = await Posts.findById(id).exec();
   if (post != null) {
     const userRef = post.possitive_valorations.includes(req.body.userId);
-    if(!userRef){
+    if (!userRef) {
       post.possitive_valorations.push(
         req.body.userId
       );
-      if(post.negative_valorations.includes(req.body.userId)){
+      if (post.negative_valorations.includes(req.body.userId)) {
         post.negative_valorations.pull(
           req.body.userId
         );
@@ -668,21 +671,21 @@ const addPositiveValoration = async (req: Express.Request, res: Express.Response
           res
             .status(400)
             .json(err);
-        } else{
+        } else {
           res
             .status(200)
             .json(req.body.userId);
         }
       });
-    } else{
-        res
-          .status(204)
-          .json({"message": "Repetida valoración"});
+    } else {
+      res
+        .status(204)
+        .json({ "message": "Repetida valoración" });
     }
   } else {
-      res.status(404).json({
-          error: `Post with id = ${id} doesn't exist`
-      })
+    res.status(404).json({
+      error: `Post with id = ${id} doesn't exist`
+    })
   }
 }
 
@@ -691,7 +694,7 @@ const deletePositiveValoration = async (req: Express.Request, res: Express.Respo
   const post = await Posts.findById(id).exec();
   if (post != null) {
     const userRef = post.possitive_valorations.includes(req.body.userId);
-    if(userRef){
+    if (userRef) {
       post.possitive_valorations.pull(
         req.body.userId
       );
@@ -701,21 +704,21 @@ const deletePositiveValoration = async (req: Express.Request, res: Express.Respo
           res
             .status(400)
             .json(err);
-        } else{
+        } else {
           res
             .status(200)
             .json(req.body.userId);
         }
       });
-    } else{
-        res
-          .status(204)
-          .json({"message": "No existe valoración"});
+    } else {
+      res
+        .status(204)
+        .json({ "message": "No existe valoración" });
     }
   } else {
-      res.status(404).json({
-          error: `Post with id = ${id} doesn't exist`
-      })
+    res.status(404).json({
+      error: `Post with id = ${id} doesn't exist`
+    })
   }
 }
 
@@ -724,11 +727,11 @@ const getNegativeValoration = async (req: Express.Request, res: Express.Response
   const id = req.params.id;
   const post = await Posts.findById(id).exec();
   if (post != null) {
-      res.status(200).json(post.negative_valorations);
+    res.status(200).json(post.negative_valorations);
   } else {
-      res.status(404).json({
-          error: `Post with id = ${id} doesn't exist`
-      })
+    res.status(404).json({
+      error: `Post with id = ${id} doesn't exist`
+    })
   }
 }
 
@@ -739,11 +742,11 @@ const addNegativeValoration = async (req: Express.Request, res: Express.Response
   const post = await Posts.findById(id).exec();
   if (post != null) {
     const userRef = post.negative_valorations.includes(req.body.userId);
-    if(!userRef){
+    if (!userRef) {
       post.negative_valorations.push(
         req.body.userId
       );
-      if(post.possitive_valorations.includes(req.body.userId)){
+      if (post.possitive_valorations.includes(req.body.userId)) {
         post.possitive_valorations.pull(
           req.body.userId
         );
@@ -754,21 +757,21 @@ const addNegativeValoration = async (req: Express.Request, res: Express.Response
           res
             .status(400)
             .json(err);
-        } else{
+        } else {
           res
             .status(200)
             .json(req.body.userId);
         }
       });
-    } else{
-        res
-          .status(204)
-          .json({"message": "Repetida valoración"});
+    } else {
+      res
+        .status(204)
+        .json({ "message": "Repetida valoración" });
     }
   } else {
-      res.status(404).json({
-          error: `Post with id = ${id} doesn't exist`
-      })
+    res.status(404).json({
+      error: `Post with id = ${id} doesn't exist`
+    })
   }
 }
 
@@ -777,7 +780,7 @@ const deleteNegativeValoration = async (req: Express.Request, res: Express.Respo
   const post = await Posts.findById(id).exec();
   if (post != null) {
     const userRef = post.negative_valorations.includes(req.body.userId);
-    if(userRef){
+    if (userRef) {
       post.negative_valorations.pull(
         req.body.userId
       );
@@ -787,21 +790,21 @@ const deleteNegativeValoration = async (req: Express.Request, res: Express.Respo
           res
             .status(400)
             .json(err);
-        } else{
+        } else {
           res
             .status(200)
             .json(req.body.userId);
         }
       });
-    } else{
-        res
-          .status(204)
-          .json({"message": "No existe valoración"});
+    } else {
+      res
+        .status(204)
+        .json({ "message": "No existe valoración" });
     }
   } else {
-      res.status(404).json({
-          error: `Post with id = ${id} doesn't exist`
-      })
+    res.status(404).json({
+      error: `Post with id = ${id} doesn't exist`
+    })
   }
 }
 
