@@ -28,6 +28,7 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
 
     // Control del captcha
     const [enableRegister, setEnableRegister] = useState<boolean>(false);
+    const [captchaResponse, setCaptchaResponse] = useState<string>("");
 
     // Cambio de la zona de salud a visualizar
     const zonaSaludChanged = (event: { target: { value: string; }; }) => {
@@ -39,6 +40,7 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
         if (token != null) {
             // El captcha es válido
             setEnableRegister(true);
+            setCaptchaResponse(token);
         } else {
             // El captcha es inválido (ha caducado)
             setEnableRegister(false);
@@ -61,7 +63,8 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
                     name: credentials.userName,
                     password: credentials.userPassword,
                     email: credentials.userMail,
-                    sanitaryZone: credentials.zonaSalud
+                    sanitaryZone: credentials.zonaSalud,
+                    captchaResponse: credentials.captchaResponse
                 })
             });
         if (response.status === 201) {
@@ -82,7 +85,8 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
                 userName,
                 userPassword,
                 userMail,
-                zonaSalud
+                zonaSalud,
+                captchaResponse
             });
         }
     }

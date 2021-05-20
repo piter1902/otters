@@ -1149,6 +1149,7 @@ paths:
                 - email
                 - password
                 - sanitaryZone
+                - captchaResponse
               properties:
                 name:
                   type: string
@@ -1161,6 +1162,9 @@ paths:
                 sanitaryZone:
                   type: string
                   description: SanitaryZone of the user
+                captchaResponse:
+                  type: string
+                  description: ReCaptcha verification token to verify user is not a robot
       responses:
         "400":
           description: Bad request. User already exist with that email
