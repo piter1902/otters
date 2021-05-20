@@ -224,6 +224,8 @@ paths:
           required: true
           schema:
             type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: User strike info updated
@@ -257,6 +259,8 @@ paths:
           required: true
           schema:
             type: string
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: User strike info updated and petition is cancelled
@@ -936,7 +940,8 @@ paths:
           required: true
           schema:
             type: string
-
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: User assigned successfully
@@ -976,7 +981,8 @@ paths:
           required: true
           schema:
             type: string
-
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: User unassigned successfully
