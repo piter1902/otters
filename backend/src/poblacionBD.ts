@@ -38,7 +38,7 @@ const populateDB = async () => {
             email: mail.toLowerCase(),
             sanitaryZone: allZones[1]._id,
             password: hashedPassword,
-            bannedObject: { "banned": false },
+            bannedObject:{ "banned": false},  //{ "banned": true, "bannedUntil": new Date(Date.now())  },
             strikes: 0,
             isAdmin: false,
             isVerified: true, 

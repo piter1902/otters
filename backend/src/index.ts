@@ -7,6 +7,7 @@ import petitionsRoute from './route/petitionsRoute';
 import sanitaryZoneRoute from './route/sanitaryZoneRoute';
 import sanitaryZoneService from './service/sanitaryZoneService';
 import petitionsService from './service/petitionService';
+import userService from './service/userService';
 import authRoute from './route/authRoute';
 import cron from 'node-cron';
 import cors from 'cors';
@@ -42,9 +43,14 @@ cron.schedule("0 */6 * * *", async () => {
     await sanitaryZoneService.findAndJoinDuplicates();
 });
 
-cron.schedule("0 0 * * *", async () => {
+cron.schedule("0 * * * *", async () => {
     logger.success("Cron status peticiones ejecutandose");
     await petitionsService.updateStatusPetitions();
+});
+
+cron.schedule("0 0 * * *", async () => {
+    logger.success("Cron unban users ejecutandose");
+    await userService.unbanUsers();
 });
 
 // Express app
