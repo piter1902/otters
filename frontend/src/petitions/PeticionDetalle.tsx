@@ -100,7 +100,16 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
                         <StatusBadge status={petition.status} />
                     </p>
                     <p className="h2 fw-bold d-flex justify-content-between">
-                        <p className="lead ">Creado por {petition.userInfo.userName}</p>
+                        
+                        {petition.userInfo.userId==token?.userId && 
+                            <Link to={"/cuenta"} className="custom-card" >
+                                <p className="lead texto">{petition.userInfo.userName}</p>
+                            </Link>
+                        }
+                        {petition.userInfo.userId!=token?.userId && 
+                            <Link to={"/perfil/" + petition.userInfo.userId} className="custom-card" >
+                            <p className="lead ">Creado por {petition.userInfo.userName}</p>
+                        </Link>}
                         <PetitionButton userAsigned={petition.userIdAsigned} userQueue={petition.userQueueAsigned} petitionId={petition._id} userCreator={petition.userInfo.userId} status={petition.status}/>
                     </p>
 

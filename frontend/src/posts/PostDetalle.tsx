@@ -139,7 +139,16 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
 
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    <p className="lead ms-3 texto">{mainPost.publisher.userName}</p>
+                                    
+                                    {mainPost.publisher.userId==token?.userId && 
+                                        <Link to={"/cuenta"} className="custom-card" >
+                                            <p className="lead texto">{mainPost.publisher.userName}</p>
+                                        </Link>
+                                    }
+                                    {mainPost.publisher.userId!=token?.userId && 
+                                        <Link to={"/perfil/" + mainPost.publisher.userId} className="custom-card" >
+                                        <p className="lead ms-3 texto">{mainPost.publisher.userName}</p>
+                                    </Link>}
                                 </div>
                                 <div className="col-lg-1 col-md-2 col-3 sm-12">
                                     <p className=" lead texto">{mainPost.possitive_valorations.length - mainPost.negative_valorations.length}</p>
@@ -180,7 +189,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
                     </Link>    
                     </p>}
                     <p className="lead texto">Comentarios</p>
-                    <ComentarioList mainPost={mainPost} />
+                    <ComentarioList mainPost={mainPost} userId={token?.userId} />
                 </div>
 
             )}
