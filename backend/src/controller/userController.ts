@@ -19,8 +19,9 @@ const createNewUser = async (req: Express.Request, res: Express.Response) => {
     strikes: req.body.strikes,
     isAdmin: req.body.isAdmin,
     isVerified: false,
+    isLocal: true,
     petitions: req.body.petitions,
-    posts: req.body.posts
+    posts: req.body.posts,
   });
   // Save to mongodb
   await user.save();

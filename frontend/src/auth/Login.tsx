@@ -75,18 +75,27 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
     // Respuesta de google login
     // Source: https://medium.com/@alexanderleon/implement-social-authentication-with-react-restful-api-9b44f4714fa
     const googleResponse = async (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+        // const googleLoginUrl = `${process.env.REACT_APP_BASEURL}/auth/google`;
+        // const newWindow = window.open(
+        //     googleLoginUrl, 
+        //     "_blank",
+        //     "width=500, height=500"
+        // );
+        
         console.log("Google Reponse token: " + (response as GoogleLoginResponse).accessToken)
-        const tokenBlob = new Blob(
-            [JSON.stringify({
-                access_token: (response as GoogleLoginResponse).accessToken
-            }, null, 2)],
-            { type: 'application/json' });
+            
         const result = await fetch(`${process.env.REACT_APP_BASEURL}/auth/google`,
             {
-                method: "POST",
-                body: tokenBlob,
-                mode: 'no-cors',
-                cache: 'default'
+                method: "GET",
+                body: JSON.stringify({
+                    access_token: (response as GoogleLoginResponse).accessToken
+                }),
+                mode: 'cors',
+                cache: 'default',
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-Type": "application/json"
+                }
             });
         const tokenJson = (await result.json())
         console.log("Result: " + tokenJson);
@@ -153,11 +162,11 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                                     <span className="btn-label pe-1"><i className="fab fa-google"></i></span>
                                     Iniciar sesión con Google
                                 </button> */}
-                                {/* <GoogleButton onClick={() => googleLogin()} /> */}
+                                {/* <GoogleButton onClick={googleResponse} /> */}
                                 <GoogleLogin
                                     clientId="488176144101-nksd69ithfpreq0qqefa51btkkc9d9cb.apps.googleusercontent.com"
                                     buttonText="Login"
-                                    onSuccess={googleResponse}
+                                    onSuccess={() => googleResponse}
                                     onFailure={onFailure}
                                     render={renderProps => (<GoogleButton onClick={renderProps.onClick}></GoogleButton>)
 

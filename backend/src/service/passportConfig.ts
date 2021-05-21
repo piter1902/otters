@@ -4,12 +4,13 @@ import passportLocal from 'passport-local';
 import logger from '@poppinss/fancy-logs';
 import passport from 'passport';
 import passportJwt, { ExtractJwt } from 'passport-jwt';
-import passportGoogleAuth from 'passport-google-oauth20';
+import passportGoogleAuth from 'passport-google-oauth';
 import userPicture from '../UserPicture';
+import emailService from "../service/emailService";
 
 const LocalStrategy = passportLocal.Strategy;
 const JwtStrategy = passportJwt.Strategy;
-const GoogleStrategy = passportGoogleAuth.Strategy;
+const GoogleStrategy = passportGoogleAuth.OAuth2Strategy;
 
 /**
  * Estrategia JWT
@@ -49,26 +50,29 @@ passport.use(new GoogleStrategy(
   },
   async (accesToken, refreshToken, profile, done) => {
     logger.info("Ejecutando estrategia Google Oauth");
+
     try {
-      const user = await User.findOne({ email: profile.emails });
+      const user = await User.findOne({ email: profile.emails![0].value });
       if (!user) {
         logger.info("Creando nuevo user - GoogleAuth");
         // TODO: Esta pass por defecto deberia estar en el env
-        const hashedPassword = await bcrypt.hash("1234", 10);
 
         const newUser = new User({
-          name: profile.name,
+          name: profile.name?.givenName,
           picture: userPicture,
-          email: profile.emails,
+          email: profile.emails![0].value,
           sanitaryZone: 1, // TODO: No puede ser 1
-          password: hashedPassword,
+          password: "contraseñaInaccesible",
           bannedObject: { "banned": false },
           isAdmin: false,
+          isLocal: false,
+          isVerified: false,
           petitions: [],
           posts: []
         })
 
         await newUser.save();
+        await emailService.sendVerificationEmail(newUser);
         return done(null, newUser);
       } else {
         logger.info("User admitido - GoogleAuth")
