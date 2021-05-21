@@ -7,13 +7,16 @@ import PetitionListComponent from "./PetitionListComponent";
 import useGetFetch from '../useGetFetch';
 import ClipLoader from "react-spinners/ClipLoader";
 import Petition from "./Petition";
+import useToken from "../auth/Token/useToken";
 
 export interface PetitionListProps {
 
 }
 
 const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
-
+    // Token
+    const { token } = useToken();
+    
     const { data, isPending, error } = useGetFetch(`${process.env.REACT_APP_BASEURL!}/petitions`);
 
     // Peticiones filtradas
@@ -35,16 +38,44 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
                     petition.status.toUpperCase() === "OPEN"
                 )
             )
-        } else if (filter === "Recent") {
+        } else if (filter === "Urgent") {
             setFilteredPetitions(
-                // data.sort((a: Petition, b: Petition) => (a.targetDate > b.targetDate) ? 1 : -1)
+                [].concat(
                 data.sort((a: Petition, b: Petition) =>{
-                    return +new Date(b.targetDate) - +new Date(a.targetDate)
+                    return +new Date(b.targetDate) - +new Date(a.targetDate)  
                 }
-                ))
-        } else {
-            setFilteredPetitions(data)
+                ).reverse()));
+            setFilteredPetitions(
+                [].concat(
+                data.filter((petition: Petition) =>
+                    petition.status.toUpperCase() === "OPEN"
+                )))
+        }
+        else if (filter === "MeAssigned") {
+            setFilteredPetitions(
+                [].concat(
+                data.filter((petition: Petition) =>
+                    petition.userIdAsigned == token?.userId
+                )))
+                console.log(data)
+                console.log(token?.userId)
+                
+        }
+        else {
+            if(data !== null){
+                setFilteredPetitions([].concat(
+                    data.sort((a: Petition, b: Petition) =>{
+                        return +new Date(b.creationDate) - +new Date(a.creationDate)
+                    }
+                    )))
+                setFilteredPetitions(
+                    [].concat(
+                    data.filter((petition: Petition) =>
+                        petition.status.toUpperCase() === "OPEN"
+                    )))
+            }
             setFilter("0")
+            console.log(data)
         }
     }, [filter, data])
 
@@ -62,8 +93,9 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
                     <div className="col-4 d-grid gap-2 justify-content-md-end">
                         <select id="petitionFilter" className="navbar-azul text-light btn form-select" value={filter} onChange={filterChanged}>
                             <option value="0" style={{ backgroundColor: "white" }} disabled>Filtrar</option>
-                            <option value="Recent" className="text-dark" style={{ backgroundColor: "white" }}>Más reciente</option>
+                            <option value="Urgent" className="text-dark" style={{ backgroundColor: "white" }}>Más urgente</option>
                             <option value="Open" className="text-dark" style={{ backgroundColor: "white" }}>Peticiones abiertas</option>
+                            <option value="MeAssigned" className="text-dark" style={{ backgroundColor: "white" }}>Peticiones asignadas a mí</option>
                             <option style={{ backgroundColor: "white", textAlign: "center" }} disabled value="">_______________</option>
                             <option value="Reset" className="text-dark" style={{ backgroundColor: "white" }}>Limpiar filtro</option>
                         </select>

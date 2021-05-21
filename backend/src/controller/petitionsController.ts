@@ -18,6 +18,7 @@ interface PetitionsWithUsername {
   title: string;
   body: string;
   userInfo: UserInfo;
+  creationDate: Date;
   targetDate: Date;
   place: string;
   isUrgent: Boolean;
@@ -104,6 +105,7 @@ const getUserPetitions = (req: Express.Request, res: Express.Response) => {
               isUrgent: petition.isUrgent,
               status: petition.status,
               targetDate: petition.targetDate,
+              creationDate: petition.creationDate,
               expTime: petition.expTime,
               userIdAsigned: petition.userIdAsigned,
               userQueueAsigned: petition.userQueueAsigned
@@ -154,6 +156,7 @@ const getPetitions = async (req: Express.Request, res: Express.Response) => {
             place: petition.place,
             isUrgent: petition.isUrgent,
             status: petition.status,
+            creationDate: petition.creationDate,
             targetDate: petition.targetDate,
             expTime: petition.expTime,
             userIdAsigned: petition.userIdAsigned,
@@ -200,6 +203,7 @@ const readOnePetition = async (req: Express.Request, res: Express.Response) => {
             userInfo: userInfo,
             place: petition.place,
             isUrgent: petition.isUrgent,
+            creationDate: petition.creationDate,
             status: petition.status,
             targetDate: petition.targetDate,
             expTime: petition.expTime,
@@ -455,12 +459,17 @@ const _doAddPetition = async function (req: Express.Request, res: Express.Respon
     // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
     // se almacena en numeros del 0-11 por defecto
     var tempDate = new Date(req.body.targetDate);
+    var hour = req.body.expTime.split(":")[0];
+    var minute = req.body.expTime.split(":")[1];
+    tempDate.setHours(hour)
+    tempDate.setMinutes(minute)
     const petition = new Petition({
       title: req.body.title,
       userId: req.body.userId,
       body: req.body.body,
       place: req.body.place,
-      targetDate: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
+      targetDate: new Date(tempDate.setMonth(tempDate.getMonth())),
+      creationDate: new Date(),
       isUrgent: req.body.isUrgent,
       status: 'OPEN',
       expTime: req.body.expTime

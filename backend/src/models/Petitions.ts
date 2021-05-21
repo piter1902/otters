@@ -16,6 +16,10 @@ const PetitionsSchema = new Schema({
         type: String,
         required: true
     },
+    creationDate: {
+        type: Date,
+        required: true
+    },
     targetDate: {
         type: Date,
         required: true

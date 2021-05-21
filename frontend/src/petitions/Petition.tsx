@@ -8,11 +8,13 @@ interface Petition {
     title: string,
     body: string,
     userInfo: UserInfo,
+    creationDate: Date,
     targetDate: Date,
     place: string,
     isUrgent: boolean,
     status: string,
-    expTime: string
+    expTime: string,
+    userIdAsigned: string
 }
 
 export default Petition;

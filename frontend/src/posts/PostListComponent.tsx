@@ -14,7 +14,7 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
     const { token } = useToken();
 
     const handleLike = (id: any) => {
-        const valoration = { user: token?.userId };
+        const valoration = { userId: token?.userId };
         fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/possitivevaloration", {
             method: "POST",
             headers: {
@@ -28,7 +28,7 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
     }
 
     const handleDislike = (id: any) => {
-        const valoration = { user: token?.userId };
+        const valoration = { userId: token?.userId };
         fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/negativevaloration", {
             method: "POST",
             headers: {

@@ -68,7 +68,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
     const [body, setBody] = useState('');
 
     const handleLike = () => {
-        const valoration = { user: token?.userId };
+        const valoration = { userId: token?.userId };
         fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/possitivevaloration", {
             method: "POST",
             headers: {
@@ -78,11 +78,12 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
             body: JSON.stringify(valoration)
         }).then(() => {
             console.log("nueva valoración añadida creado")
+            console.log(valoration)
         })
     }
 
     const handleDislike = () => {
-        const valoration = { user: token?.userId };
+        const valoration = { userId: token?.userId };
         fetch(`${process.env.REACT_APP_BASEURL!}/post/` + id + "/negativevaloration", {
             method: "POST",
             headers: {
@@ -157,7 +158,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
 
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    <p className="ms-3 mt-3 texto">{new Date(mainPost.date).toLocaleDateString("es-ES")}</p>
+                                    <p className="ms-3 mt-3 texto">{new Date(mainPost.date).toLocaleDateString("es-ES")} {new Date(mainPost.date).getHours()}:{new Date(mainPost.date).getMinutes()}</p>
                                 </div>
                                 <div className="col-lg-1 col-md-2 col-3 sm-12 align-self-center">
                                     <i className="fas fa-chevron-down" onClick={handleDislike}></i>
