@@ -3,10 +3,9 @@ import GoogleButton from 'react-google-button';
 import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { Link, useHistory } from 'react-router-dom';
 import './Login.css';
-import SelectZoneGoogleUser from './SelectZoneGoogleUser';
 import Token from './Token/Token';
 import useToken from './Token/useToken';
-
+import SelectZoneGoogleUser from './SelectZoneGoogleUser';
 // Funcionalidad login: https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications
 export interface LoginProps {
 }
@@ -30,6 +29,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
 
     // Almacenamiento y modificación del token
     const { token, saveToken } = useToken();
+
     // Para mostrar el popup
     const [show, setShow] = useState<boolean>(false);
     const [userId, setUserId] = useState<String>();
@@ -122,9 +122,6 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
             // Mostramos el Popup
             setShow(true);
 
-            // Recargamos la página
-            // history.push("/");
-            // window.location.reload();
         } else {
             // Error -> Mostrar un alert
             setError({
@@ -188,7 +185,9 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                                 <p className="font-weight-bold">¿No tienes cuenta? </p>
                                 <Link to="/register">Regístrate</Link>
                             </div>
+                            {/* Popup que se muestra tras realizar el Login por Google */}
                             <SelectZoneGoogleUser idUser={userId} token={token} show={show}></SelectZoneGoogleUser>
+
                         </div>
                     </div>
                 </div>
