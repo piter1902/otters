@@ -13,7 +13,7 @@ userRoute.route("/:uid")
     .delete(userController.deleteUserByUID)
     .post(userController.updateUser);
 
-userRoute.route("/:uid/ban")
+userRoute.route("/:uid/ban/:uidAdmin")
     .post(userController.banUser);
 
 userRoute.route("/:uid/strike")

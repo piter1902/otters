@@ -29,7 +29,7 @@ const populateDB = async () => {
     for (let i = 0; i < userArrayName.length; i++) {
         for (let j = 0; j < userArraySurname.length; j++) {
         saveUsers[i+j]=false;
-        mail = userArrayName[i].substring(0,1)+userArraySurname[i].substring(0,1)+"@gmail.com";
+        mail = userArrayName[i].substring(0,1)+userArraySurname[j].substring(0,1)+"@gmail.com";
         const hashedPassword = await bcrypt.hash("xxxxxx", 10);
         
         const user = new User({

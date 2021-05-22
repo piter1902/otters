@@ -8,9 +8,10 @@ interface AdminPageUserTileProps {
             banned: boolean;
         }
     }
+    idAdmin: any;
 }
 
-const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user }) => {
+const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user, idAdmin }) => {
 
     // Estado del usuario
     const [isBanned, setIsBanned] = useState<boolean>(user.bannedObject.banned);
@@ -20,7 +21,7 @@ const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user
         console.log("Banning user with id = " + user._id);
         if (!isBanned) {
             // TODO: Esta URI puede cambiar ya que no tiene tampoco mucho sentido
-            await fetch(`${process.env.REACT_APP_BASEURL}/user/${user._id}/ban`,
+            await fetch(`${process.env.REACT_APP_BASEURL}/user/${user._id}/ban/${idAdmin}`,
                 {
                     method: "POST",
                     headers: {
@@ -42,7 +43,7 @@ const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user
         console.log("Un banning user with id = " + user._id);
         if (isBanned) {
             // TODO: Esta URI puede cambiar ya que no tiene tampoco mucho sentido
-            await fetch(`${process.env.REACT_APP_BASEURL}/user/${user._id}/ban`,
+            await fetch(`${process.env.REACT_APP_BASEURL}/user/${user._id}/ban/${idAdmin}`,
                 {
                     method: "POST",
                     headers: {
@@ -50,7 +51,7 @@ const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user
                     },
                     body: JSON.stringify({
                         banned: false,
-                        bannedUntil: new Date(Date.now())
+                        bannedUntil: null//new Date(Date.now())
                     })
                 }
             )
