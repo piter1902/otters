@@ -25,6 +25,8 @@ tags:
     description: "Help petitions created by an user"
   - name: "Authentication"
     description: "User authentication logic"
+  - name: "Posts"
+    description: "Forum publications"
 
 paths:
   /stats:
@@ -472,7 +474,7 @@ paths:
     # Add a post
     post:
       tags:
-        - "User"
+        - "Posts"
       description: Add new post
       summary: Add new post
       requestBody:
@@ -508,7 +510,7 @@ paths:
   /post/{postId}:
     get:
       tags:
-        - "Post"
+        - "Posts"
       description: Get a post with _id = postId
       summary: Get a specific post
       security:
@@ -535,7 +537,7 @@ paths:
                 $ref: "#/components/schemas/error"
     delete:
       tags:
-        - "Post"
+        - "Posts"
       description: Delete the post with _id = postId
       summary: Delete a post
       security:
@@ -567,7 +569,7 @@ paths:
   /post/{postId}/comment:
     get:
       tags:
-        - "Post"
+        - "Posts"
       description: Get all comment of post with _id = postId
       summary: Get all comments
       security:
@@ -594,7 +596,7 @@ paths:
                 $ref: "#/components/schemas/error"
     post:
       tags:
-        - "Post"
+        - "Posts"
       description: Post a comment the post with _id = postId
       summary: Post a comment
       security:
@@ -633,7 +635,7 @@ paths:
   /post/{postId}/possitivevaloration:
     get:
       tags:
-        - "Post"
+        - "Posts"
       description: Get all possitive valorations of post with _id = postId
       summary: Get all possitive valorations
       parameters:
@@ -660,7 +662,7 @@ paths:
                 $ref: "#/components/schemas/error"
     post:
       tags:
-        - "Post"
+        - "Posts"
       description: Post a possitive valoration the post with _id = postId
       summary: Post a possitive valoration
       parameters:
@@ -699,7 +701,7 @@ paths:
   /post/{postId}/negativevaloration:
     get:
       tags:
-        - "Post"
+        - "Posts"
       description: Get all negative valorations of post with _id = postId
       summary: Get all negative valorations
       parameters:
@@ -726,7 +728,7 @@ paths:
                 $ref: "#/components/schemas/error"
     post:
       tags:
-        - "Post"
+        - "Posts"
       description: Post a negative valoration the post with _id = postId
       summary: Post a negative valoration
       parameters:
