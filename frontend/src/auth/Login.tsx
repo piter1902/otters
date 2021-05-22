@@ -3,6 +3,7 @@ import GoogleButton from 'react-google-button';
 import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { Link, useHistory } from 'react-router-dom';
 import './Login.css';
+import SelectZoneGoogleUser from './SelectZoneGoogleUser';
 import Token from './Token/Token';
 import useToken from './Token/useToken';
 
@@ -28,7 +29,10 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
     const history = useHistory();
 
     // Almacenamiento y modificación del token
-    const { saveToken } = useToken();
+    const { token, saveToken } = useToken();
+    // Para mostrar el popup
+    const [show, setShow] = useState<boolean>(false);
+    const [userId, setUserId] = useState<String>();
 
     // Realiza el login del usuario
     const login = async (credentials: any) => {
@@ -81,14 +85,14 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
         //     "_blank",
         //     "width=500, height=500"
         // );
-        
+
         console.log("Google Reponse token: " + (response as GoogleLoginResponse).accessToken)
-            
+
         const result = await fetch(`${process.env.REACT_APP_BASEURL}/auth/google`,
             {
-                method: "GET",
+                method: "POST",
                 body: JSON.stringify({
-                    access_token: (response as GoogleLoginResponse).accessToken
+                    token: (response as GoogleLoginResponse).tokenId
                 }),
                 mode: 'cors',
                 cache: 'default',
@@ -97,24 +101,30 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                     "Content-Type": "application/json"
                 }
             });
-        const tokenJson = (await result.json())
-        console.log("Result: " + tokenJson);
         // TODO: Faltan las redirecciones
         if (result.ok) {
+            //Obtención de los resultados del loggin
+            const resultJson = (await result.json())
+            const resToken = result.headers.get("x-auth-token");
+            console.log("Respuesta:  " + resultJson.userId + " " + resToken)
             // Todo correcto
             const token: Token = {
-                userId: tokenJson.data.userId,
-                token: tokenJson.data.token,
+                userId: resultJson.userId,
+                token: resToken!,
                 type: "Bearer"
             }
             saveToken(token);
+            setUserId(resultJson.userId);
             setError({
                 error: false,
                 message: ""
             });
+            // Mostramos el Popup
+            setShow(true);
+
             // Recargamos la página
-            history.push("/");
-            window.location.reload();
+            // history.push("/");
+            // window.location.reload();
         } else {
             // Error -> Mostrar un alert
             setError({
@@ -166,7 +176,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                                 <GoogleLogin
                                     clientId="488176144101-nksd69ithfpreq0qqefa51btkkc9d9cb.apps.googleusercontent.com"
                                     buttonText="Login"
-                                    onSuccess={() => googleResponse}
+                                    onSuccess={googleResponse}
                                     onFailure={onFailure}
                                     render={renderProps => (<GoogleButton onClick={renderProps.onClick}></GoogleButton>)
 
@@ -178,6 +188,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                                 <p className="font-weight-bold">¿No tienes cuenta? </p>
                                 <Link to="/register">Regístrate</Link>
                             </div>
+                            <SelectZoneGoogleUser idUser={userId} token={token} show={show}></SelectZoneGoogleUser>
                         </div>
                     </div>
                 </div>

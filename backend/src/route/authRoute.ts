@@ -24,7 +24,7 @@ authRoute.route("/verifyUser")
   .get(authController.verifyUser);
 
 authRoute.route("/google")
-  .get(passport.authenticate("google", { session: false, scope: ["profile", "email"] }));
+  .post(authController.loginGoogle);
 
 authRoute.route("/google/redirect")
   .get(passport.authenticate("google",

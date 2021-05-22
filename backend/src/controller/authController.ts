@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import emailService from "../service/emailService";
 import '../service/passportConfig';
+import { OAuth2Client } from 'google-auth-library';
 import userPicture from '../UserPicture';
 
 const loginUser = async (req: Express.Request, res: Express.Response, next: NextFunction) => {
@@ -162,27 +163,76 @@ const checkPasswords = async (req: Express.Request, res: Express.Response) => {
   }
 }
 
-const loginGoogle = (req: any, res: Express.Response, next: NextFunction) => {
+const loginGoogle = async (req: any, res: Express.Response) => {
+  try {
+    // UserId
+    var userId;
+    const googleClient = new OAuth2Client(process.env.OAUTH_CLIENT_ID!);
+    logger.info("Loggin por Google")
+    const reqToken = req.body.token;
 
-  // Una vez hecho el log por google, creamos el token JWt como en el loggin normal
-  logger.info("Comienza generacion del token por GoogleAuth")
-  const payload = {
-    id: req.user._id
+    // Verificamos el token de google obtenido en la petición
+    const ticket = await googleClient.verifyIdToken({
+      idToken: reqToken,
+      audience: process.env.OAUTH_CLIENT_ID!
+    });
+
+    const { name, email } = ticket.getPayload()!;
+
+    logger.info("Email en google: " + email);
+    logger.info("Nombre en google: " + name);
+
+    const user = await User.findOne({ email: email }).exec();
+    if (!user) {
+      logger.info("Creando nuevo user - GoogleAuth");
+      // TODO: Esta pass por defecto deberia estar en el env
+
+      const newUser = new User({
+        name: name,
+        picture: userPicture,
+        email: email,
+        sanitaryZone: 1, // TODO: No puede ser 1
+        password: "contraseñaInaccesible",
+        bannedObject: { "banned": false },
+        isAdmin: false,
+        isLocal: false,
+        isVerified: false,
+        petitions: [],
+        posts: []
+      })
+
+      await newUser.save();
+      await emailService.sendVerificationEmail(newUser);
+
+      userId = newUser._id;
+    } else {
+      logger.info("User existente - GoogleAuth");
+      userId = user._id;
+    }
+    
+    // Una vez hecho el log por google, creamos el token JWt como en el loggin normal
+    
+    const payload = {
+      id: userId
+    }
+    // Creación del token JWT
+    const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1d' });
+
+    // Introducimos el token en la cabecera 'x-auth-token' de la respuesta
+    res
+      .setHeader('x-auth-token', token);
+
+    res
+      .status(200)
+      .json({ userId: userId });
+
+  } catch (err) {
+    logger.error(err);
+    res
+      .status(400)
+      .json(err)
   }
-  // Creación del token JWT
-  const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1d' });
-
-  // Introducimos el token en la cabecera 'x-auth-token' de la respuesta
-  res
-    .setHeader('x-auth-token', token);
-
-  res
-    .status(200)
-    .json({ userId: req.user._id });
-  next();
-
 }
-
 
 export default {
   registerUser,

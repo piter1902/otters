@@ -11,7 +11,7 @@ const useToken = () => {
     const saveToken = (t: Token | null) => {
         // Modificación del localstorage dependiendo del valor de token
         console.log("Almacenando token con valor = ")
-        // console.log(t);
+        console.log(t);
         setToken(t);
         if (t == null) {
             // Se borra todo el almacenamiento
