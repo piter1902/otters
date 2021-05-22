@@ -128,12 +128,15 @@ const _doAddPetition = async function (user: any) {
     } 
 
     var tempDate = new Date();
+    tempDate.setMinutes(0);
+    tempDate.setHours(tempDate.getHours() + 2);
     const petition = new Petition({
         title: petArrayTitle[numTitle],
         userId: user.id,
         body: petBody,
         place: petArrayPlace[numPlace],
-        targetDate: new Date(),
+        creationDate: new Date(Date.now()),
+        targetDate: tempDate,
         isUrgent: isUrgent,
         status: 'OPEN',
         expTime: new Date(),
