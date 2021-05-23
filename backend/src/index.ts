@@ -88,7 +88,7 @@ app.use("/user", passport.authenticate('jwt', { session: false }), userRoute);
 app.use("/post", passport.authenticate('jwt', { session: false }), postRoute);
 
 // Controlador para las zonas sanitarias
-app.use("/zone", passport.authenticate('jwt', { session: false }), sanitaryZoneRoute);
+app.use("/zone", sanitaryZoneRoute);
 
 // Controlador para las peticiones
 app.use("/petitions", passport.authenticate('jwt', { session: false }), petitionsRoute);

@@ -11,7 +11,6 @@ const useZBS = (baseURL: string) => {
     const [zones, setZones] = useState<ZbsWithoutData[]>([]);
 
     // Token
-    const { token } = useToken();
 
     useEffect(() => {
         const fetchZones = async () => {
@@ -19,7 +18,6 @@ const useZBS = (baseURL: string) => {
                 await fetch(`${baseURL}/zone`,
                     {
                         method: "GET",
-                        headers: { 'Authorization': `${token?.type} ${token?.token}` }
                     });
             if (response.status === 200) {
                 // Nos devuelve las zonas sanitarias
@@ -38,11 +36,10 @@ const useZBS = (baseURL: string) => {
                 setZones(zbsArray.sort((zbs1, zbs2) => zbs1.name < zbs2.name ? -1 : 1));
             }
         };
-        if (token !== null && token !== undefined) {
-            fetchZones();
-        }
+        fetchZones();
+
         return () => { }
-    }, [baseURL, token]);
+    }, [baseURL]);
 
     return zones;
 }
