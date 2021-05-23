@@ -13,8 +13,14 @@ userRoute.route("/:uid")
     .delete(userController.deleteUserByUID)
     .post(userController.updateUser);
 
-userRoute.route("/:uid/ban")
+userRoute.route("/:uid/ban/:uidAdmin")
     .post(userController.banUser);
+
+userRoute.route("/:uid/strike")
+    .post(userController.strikeUser);
+
+    userRoute.route("/:uid/strike/:petId")
+    .post(userController.strikeUserInPet);
 
 // Petitions
 userRoute.route("/:uid/petitions")

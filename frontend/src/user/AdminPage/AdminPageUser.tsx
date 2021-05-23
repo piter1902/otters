@@ -5,9 +5,10 @@ import AdminPageUserTile from './AdminPageUserTile';
 interface AdminPageUserProps {
     registrados: number;
     verificados: number;
+    idAdmin: any;
 }
 
-const AdminPageUser: JSXElementConstructor<AdminPageUserProps> = ({ registrados, verificados }) => {
+const AdminPageUser: JSXElementConstructor<AdminPageUserProps> = ({ registrados, verificados, idAdmin }) => {
 
     // Cadena de busqueda
     const [searchUsername, setSearchUsername] = useState<string>("");
@@ -63,7 +64,7 @@ const AdminPageUser: JSXElementConstructor<AdminPageUserProps> = ({ registrados,
                                 {
                                     listUsers.length !== 0 &&
                                     listUsers.map((user) => (
-                                        <AdminPageUserTile user={user} key={user._id} />
+                                        <AdminPageUserTile user={user} key={user._id} idAdmin={idAdmin}/>
                                     ))
                                 }
                             </ul>

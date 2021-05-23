@@ -12,7 +12,7 @@ const StatusBadge: JSXElementConstructor<StatusBadgeProps> = ({ status }) => {
     useEffect(() => {
         if(status.toUpperCase() === "OPEN") {
             setBgColorClass("bg-success");
-        } else if (status.toUpperCase() === "CLOSED") {
+        } else if (status.toUpperCase() === "COMPLETED") {
             setBgColorClass("bg-secondary");
         } else {
             setBgColorClass("bg-danger");

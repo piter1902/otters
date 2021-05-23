@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from './Navbar';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import UserProfile from './user/UserProfile';
+import ExternalUserProfile from './user/ExternalUserProfile';
 import AdminPage from './user/AdminPage/AdminPage';
 import EstadisticasCovid from './estadisticas/EstadisticasCovid';
 import Login from './auth/Login';
@@ -31,7 +32,10 @@ const App = () => {
           <Navbar />
           <div className="container">
             {/* Perfil del usuario propio */}
+
             <PrivateRoute path="/cuenta" Component={UserProfile} ></PrivateRoute>
+            <PrivateRoute path="/perfil/:id" Component={ExternalUserProfile} ></PrivateRoute>
+
             {/* Página del administrador */}
             <PrivateRoute path="/admin" Component={AdminPage} ></PrivateRoute>
             {/* Estadisticas COVID (página principal) */}

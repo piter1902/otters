@@ -53,7 +53,7 @@ passport.use(new LocalStrategy({
   try {
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      logger.info("No se ha encontrado user - LocalStrategy");
+      logger.info("No se ha encontrado user - LocalStrategy:");
       return done(null, false, { message: `Email ${email} not found.` });
     }
 

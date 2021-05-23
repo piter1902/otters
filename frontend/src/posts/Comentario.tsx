@@ -1,12 +1,14 @@
 import React from 'react';
 import useGetFetch from '../useGetFetch';
 import './Post.css'
+import { Link } from 'react-router-dom';
 
 interface ComentarioListProps {
     mainPost: any
+    userId: any
 }
 
-const ComentarioList: React.JSXElementConstructor<ComentarioListProps> = ({ mainPost }) => {
+const ComentarioList: React.JSXElementConstructor<ComentarioListProps> = ({ mainPost,userId }) => {
 
     const { data: comments } = useGetFetch(`${process.env.REACT_APP_BASEURL}/post/` + mainPost._id + "/comment");
 
@@ -15,7 +17,16 @@ const ComentarioList: React.JSXElementConstructor<ComentarioListProps> = ({ main
             { comments &&
                 comments.map((comment: any) => (
                     <div className="card-body px-3 py-3" key={comment._id}>
-                        <p className="lead texto">{comment.publisher.userName}</p>
+                        {comment.publisher.userId==userId && 
+                            <Link to={"/cuenta"} className="custom-card" >
+                                <p className="lead texto">{comment.publisher.userName}</p>
+                            </Link>
+                        }
+                        {comment.publisher.userId!=userId && 
+                            <Link to={"/perfil/" + comment.publisher.userId} className="custom-card" >
+                                <p className="lead texto">{comment.publisher.userName}</p>
+                            </Link>}
+                        
                         <p className="lead texto">{new Date(comment.date).toLocaleDateString("es-ES")}</p>
                         <p className="texto">{comment.body}</p>
                     </div>
