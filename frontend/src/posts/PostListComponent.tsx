@@ -69,7 +69,7 @@ const PostListComponent: JSXElementConstructor<PostListComponentProps> = ({ post
                         </div>
                         <div className="row row justify-content-between">
                             <div className="col">
-                                <p className="ms-3 mt-3"> {post.body} </p>
+                                <p className="ms-3 mt-3"> {post.body.substr(0,100)} ...</p>
                             </div>
                             <div className="col-1 sm-12 align-self-start">
                                 <i className="fas fa-chevron-down" onClick={() => handleDislike(post._id)}></i>
