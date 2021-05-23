@@ -8,6 +8,7 @@ import emailService from "../service/emailService";
 import '../service/passportConfig';
 import { OAuth2Client } from 'google-auth-library';
 import userPicture from '../UserPicture';
+import fetch from 'node-fetch';
 
 const loginUser = async (req: Express.Request, res: Express.Response, next: NextFunction) => {
   passport.authenticate("local", { session: false }, (err: any, user: any) => {
@@ -167,6 +168,9 @@ const loginGoogle = async (req: any, res: Express.Response) => {
   try {
     // UserId
     var userId;
+    // Indica si el usuario existia anteriormente
+    var userExists;
+
     const googleClient = new OAuth2Client(process.env.OAUTH_CLIENT_ID!);
     logger.info("Loggin por Google")
     const reqToken = req.body.token;
@@ -205,13 +209,15 @@ const loginGoogle = async (req: any, res: Express.Response) => {
       await emailService.sendVerificationEmail(newUser);
 
       userId = newUser._id;
+      userExists = false;
     } else {
       logger.info("User existente - GoogleAuth");
       userId = user._id;
+      userExists = true;
     }
-    
+
     // Una vez hecho el log por google, creamos el token JWt como en el loggin normal
-    
+
     const payload = {
       id: userId
     }
@@ -224,8 +230,100 @@ const loginGoogle = async (req: any, res: Express.Response) => {
 
     res
       .status(200)
-      .json({ userId: userId });
+      .json(
+        {
+          userId: userId,
+          userExists: userExists
+        });
 
+  } catch (err) {
+    logger.error(err);
+    res
+      .status(400)
+      .json(err)
+  }
+}
+
+const loginFacebook = async (req: any, res: Express.Response) => {
+
+  try {
+
+    logger.info("Loggin por Facebook")
+    const { accessToken, userId } = req.body;
+
+    var urlGraphFacebook = `https://graph.facebook.com/v2.11/${userId}/?fields=id,name,email&access_token=${accessToken}`
+    // Realizamos consulta a la api de facebook
+    const response = await fetch(urlGraphFacebook,
+      {
+        method: 'GET'
+      });
+
+    if (response.ok) {
+      // Logged UserId
+      var loggedUserID;
+      // Indica si el usuario existia anteriormente
+      var userExists;
+
+      const resultJson = await response.json();
+      logger.info("Respuesta de facebook: " + response)
+      const { email, name } = resultJson;
+      logger.info("Email " + email)
+      logger.info("Name: " + name)
+
+      const user = await User.findOne({ email: email }).exec();
+      if (!user) {
+        logger.info("Creando nuevo user - FacebookLogin");
+        // TODO: Esta pass por defecto deberia estar en el env
+
+        const newUser = new User({
+          name: name,
+          picture: userPicture,
+          email: email,
+          sanitaryZone: 1, // TODO: No puede ser 1
+          password: "contraseñaInaccesible",
+          bannedObject: { "banned": false },
+          isAdmin: false,
+          isLocal: false,
+          isVerified: false,
+          petitions: [],
+          posts: []
+        })
+
+        await newUser.save();
+        await emailService.sendVerificationEmail(newUser);
+
+        loggedUserID = newUser._id;
+        userExists = false;
+      } else {
+        logger.info("User existente - FacebookLogin");
+        loggedUserID = user._id;
+        userExists = true;
+      }
+
+      // Una vez hecho el log por Facebook, creamos el token JWt como en el loggin normal
+
+      const payload = {
+        id: loggedUserID
+      }
+      // Creación del token JWT
+      const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1d' });
+
+      // Introducimos el token en la cabecera 'x-auth-token' de la respuesta
+      res
+        .setHeader('x-auth-token', token);
+
+      res
+        .status(200)
+        .json(
+          {
+            userId: loggedUserID,
+            userExists: userExists
+          });
+    } else {
+      res
+        .status(400)
+        .json(response.text)
+    }
   } catch (err) {
     logger.error(err);
     res
@@ -239,5 +337,6 @@ export default {
   loginUser,
   checkPasswords,
   verifyUser,
-  loginGoogle
+  loginGoogle,
+  loginFacebook
 }

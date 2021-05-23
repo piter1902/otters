@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+import FacebookLogin, { ReactFacebookLoginInfo, ReactFacebookFailureResponse } from 'react-facebook-login';
 import { Link, useHistory } from 'react-router-dom';
 import './Login.css';
 import Token from './Token/Token';
@@ -33,7 +34,46 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
     // Para mostrar el popup
     const [show, setShow] = useState<boolean>(false);
     const [userId, setUserId] = useState<String>();
+    const [userName, setUserName] = useState<String>("");
+    // Procesa la respuesta de los proveedores externos (Google, Facebook)
+    const _processProviderResponse = async (result: Response) => {
 
+        if (result.ok) {
+            //Obtención de los resultados del loggin
+            const resultJson = (await result.json())
+            const resToken = result.headers.get("x-auth-token");
+            console.log("Respuesta:  " + resultJson.userId + " " + resToken)
+            // Todo correcto
+            const token: Token = {
+                userId: resultJson.userId,
+                token: resToken!,
+                type: "Bearer"
+            }
+            saveToken(token);
+            setUserId(resultJson.userId);
+            setError({
+                error: false,
+                message: ""
+            });
+            // Para comprobar si el usuario ya existía o acaba de crearse
+            const userExists = resultJson.userExists;
+            if (userExists) {
+                // Recargamos la página
+                history.push("/");
+                // window.location.reload();
+            } else {
+                // Si se acaba de crear el user, se debe mostrar el popup para seleccionar si zona básica
+                setShow(true);
+            }
+
+        } else {
+            // Error -> Mostrar un alert
+            setError({
+                error: true,
+                message: "Usuario o contraseña incorrecto(s)"
+            });
+        }
+    }
     // Realiza el login del usuario
     const login = async (credentials: any) => {
         const result = await fetch(`${process.env.REACT_APP_BASEURL}/auth/login`,
@@ -76,18 +116,32 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
         }
     };
 
+    const responseFacebook = async (response: ReactFacebookLoginInfo | ReactFacebookFailureResponse) => {
+        console.log("Facebook response: " + (response as ReactFacebookLoginInfo).accessToken)
+        setUserName((response as ReactFacebookLoginInfo).name!);
+        const result = await fetch(`${process.env.REACT_APP_BASEURL}/auth/facebook`,
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    accessToken: (response as ReactFacebookLoginInfo).accessToken,
+                    userId: (response as ReactFacebookLoginInfo).userID
+                }),
+                mode: 'cors',
+                cache: 'default',
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-Type": "application/json"
+                }
+            });
+        _processProviderResponse(result);
+    }
+
     // Respuesta de google login
     // Source: https://medium.com/@alexanderleon/implement-social-authentication-with-react-restful-api-9b44f4714fa
     const googleResponse = async (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-        // const googleLoginUrl = `${process.env.REACT_APP_BASEURL}/auth/google`;
-        // const newWindow = window.open(
-        //     googleLoginUrl, 
-        //     "_blank",
-        //     "width=500, height=500"
-        // );
 
         console.log("Google Reponse token: " + (response as GoogleLoginResponse).accessToken)
-
+        setUserName((response as GoogleLoginResponse).profileObj.name);
         const result = await fetch(`${process.env.REACT_APP_BASEURL}/auth/google`,
             {
                 method: "POST",
@@ -101,42 +155,10 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                     "Content-Type": "application/json"
                 }
             });
-        // TODO: Faltan las redirecciones
-        if (result.ok) {
-            //Obtención de los resultados del loggin
-            const resultJson = (await result.json())
-            const resToken = result.headers.get("x-auth-token");
-            console.log("Respuesta:  " + resultJson.userId + " " + resToken)
-            // Todo correcto
-            const token: Token = {
-                userId: resultJson.userId,
-                token: resToken!,
-                type: "Bearer"
-            }
-            saveToken(token);
-            setUserId(resultJson.userId);
-            setError({
-                error: false,
-                message: ""
-            });
-            // Mostramos el Popup
-            setShow(true);
 
-        } else {
-            // Error -> Mostrar un alert
-            setError({
-                error: true,
-                message: "Usuario o contraseña incorrecto(s)"
-            });
-        }
-
+        _processProviderResponse(result);
     }
 
-    // Accion en caso de fallo al loggearse
-    const onFailure = (err: any) => {
-        console.log("ERRROR")
-        alert(err)
-    }
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
@@ -164,21 +186,23 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                             <div className="text-center mb-3">
                                 <button type="submit" className="btn btn-md-lg btn-light rounded-pill">Inicia Sesión</button>
                             </div>
-                            <div className="text-center mb-3">
-                                {/* <button type="button" className="btn btn-md-lg btn-light btn-labeled rounded-pill">
-                                    <span className="btn-label pe-1"><i className="fab fa-google"></i></span>
-                                    Iniciar sesión con Google
-                                </button> */}
-                                {/* <GoogleButton onClick={googleResponse} /> */}
+                            <div className="text-center mb-3 d-grid gap-2">
                                 <GoogleLogin
                                     clientId="488176144101-nksd69ithfpreq0qqefa51btkkc9d9cb.apps.googleusercontent.com"
                                     buttonText="Login"
                                     onSuccess={googleResponse}
-                                    onFailure={onFailure}
+                                    onFailure={err => { console.log(err); alert("Google login error") }}
                                     render={renderProps => (<GoogleButton onClick={renderProps.onClick}></GoogleButton>)
-
                                     }
                                 ></GoogleLogin>
+                                <div>
+
+                                </div>
+                                <FacebookLogin
+                                    appId="315641319935168"
+                                    autoLoad={false}
+                                    fields="name,email,picture"
+                                    callback={responseFacebook} />
                             </div>
 
                             <div className="d-flex align-self-center mt-2 mt-xl-6">
@@ -186,7 +210,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                                 <Link to="/register">Regístrate</Link>
                             </div>
                             {/* Popup que se muestra tras realizar el Login por Google */}
-                            <SelectZoneGoogleUser idUser={userId} token={token} show={show}></SelectZoneGoogleUser>
+                            <SelectZoneGoogleUser idUser={userId} token={token} show={show} userName={userName}></SelectZoneGoogleUser>
 
                         </div>
                     </div>

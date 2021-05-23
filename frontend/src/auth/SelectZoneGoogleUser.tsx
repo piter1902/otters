@@ -6,11 +6,12 @@ import { useHistory } from 'react-router-dom';
 interface SelectZoneGoogleUserProps {
     token?: Token | null,
     idUser: String | undefined,
-    show: boolean
+    show: boolean,
+    userName: String
 }
 
 
-const SelectZoneGoogleUser: JSXElementConstructor<SelectZoneGoogleUserProps> = ({ idUser, token, show }) => {
+const SelectZoneGoogleUser: JSXElementConstructor<SelectZoneGoogleUserProps> = ({ idUser, token, show, userName }) => {
 
     const [zone, setZone] = useState("");
 
@@ -53,8 +54,11 @@ const SelectZoneGoogleUser: JSXElementConstructor<SelectZoneGoogleUserProps> = (
             <div className="modal-dialog" role="document">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title" id="selectZoneLabel">Seleccione su zona básica de salud</h5>
+                        <h4 className="modal-title" id="selectZoneLabel">Bienvenido, {userName}</h4>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-header">
+                        <h6 className="modal-title" id="selectZoneLabel">Seleccione su zona básica de salud</h6>
                     </div>
                     <div className="modal-body">
                         {/* Cambio de zona sanitaria */}
