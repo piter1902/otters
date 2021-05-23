@@ -15,21 +15,18 @@ import PeticionDetalle from './petitions/PeticionDetalle';
 import NotFoundComponent from './NotFoundComponent';
 import useToken from './auth/Token/useToken';
 import PrivateRoute from './PrivateRoute';
+import AuthenticationRoute from './AuthenticationRoute';
 
 
 const App = () => {
-  
+
   return (
     <Router>
       <Switch>
         {/* Login page */}
         {/* Se dejan fuera para evitar la Navbar */}
-        <Route exact path="/login">
-          <Login></Login>
-        </Route>
-        <Route exact path="/register">
-          <Register></Register>
-        </Route>
+        <AuthenticationRoute path="/login" Component={Login}></AuthenticationRoute>
+        <AuthenticationRoute path="/register" Component={Register}></AuthenticationRoute>
         <div>
           <Navbar />
           <div className="container">
