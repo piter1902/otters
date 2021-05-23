@@ -1379,6 +1379,12 @@ components:
           type: boolean
           description: Indicates if the petition is urgent or not
           default: false
+        creationDate:
+          type: string
+          format: date
+          pattern: /([0-9]{4})-(?:[0-9]{2})-([0-9]{2})/
+          example: "2019-05-17"
+          description: Date when the petition is created
         targetDate:
           type: string
           format: date
