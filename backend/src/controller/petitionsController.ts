@@ -138,7 +138,7 @@ const getPetitions = async (req: Express.Request, res: Express.Response) => {
   try {
     const petitions = await Petition.find().exec();
     const data: PetitionsWithUsername[] = [];
-    if (petitions.length > 0) {
+    if (petitions && petitions.length > 0) {
       (petitions as any[]).forEach(async (petition: any) => {
         const user = await User.findById(petition.userId).exec();
         if (user) {

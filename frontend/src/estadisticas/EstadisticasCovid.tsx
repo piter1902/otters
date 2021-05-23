@@ -21,15 +21,20 @@ const EstadisticasCovid: React.JSXElementConstructor<EstadisticasCovidProps> = (
 
     useEffect(() => {
         const fetchUser = async () => {
-            const response = await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`, {
-                method: "GET"
-            });
+            const response =
+                await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            'Authorization': `${token?.type} ${token?.token}`
+                        }
+                    });
             if (response.status === 200) {
                 // Set zone to zonaSalud by default
                 setZonaSaludSelected((await response.json()).sanitaryZone);
             }
         }
-        if (token != null) {
+        if (token !== null && token !== undefined) {
             fetchUser();
         }
         return () => { }
