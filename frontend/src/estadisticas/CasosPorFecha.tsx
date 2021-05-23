@@ -1,4 +1,5 @@
 import React, { JSXElementConstructor, useEffect, useState } from 'react'
+import useToken from '../auth/Token/useToken';
 
 // Modelos
 interface ZbsData {
@@ -34,10 +35,20 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setD
     // Para ver si se tienen datos de la fecha
     const [hasStarted, setHasStarted] = useState<boolean>(false);
 
+    // Token para mantener el estado del usuario
+    const { token } = useToken();
+    
     // Obtención de los casos por la zona de salud seleccionada
     useEffect(() => {
         const fetchDataForSelectedZBS = async () => {
-            const response = await fetch(`${process.env.REACT_APP_BASEURL!}/zone/${idZona}`, { method: "GET" });
+            const response =
+                await fetch(`${process.env.REACT_APP_BASEURL!}/zone/${idZona}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            'Authorization': `${token?.type} ${token?.token}`
+                        }
+                    });
             if (response.status === 200) {
                 // Respuesta correcta, cargamos los datos
                 const jsonData = await response.json();
@@ -46,14 +57,14 @@ const CasosPorFecha: JSXElementConstructor<CasosPorFechaProps> = ({ idZona, setD
                 setDataFunction(jsonData.data);
             }
         }
-        if (idZona !== "0") {
+        if (idZona !== "0" && token !== null && token !== undefined) {
             // Se pone el componente en el estado inicial
             setHasStarted(false);
             // Si se ha escogido una zona -> en caso de no es 0
             fetchDataForSelectedZBS();
         }
         return () => { }
-    }, [idZona, setDataFunction]);
+    }, [idZona, setDataFunction, token]);
 
     // Control del cambio de fecha
     const dateChange = (event: { target: { value: string; }; }) => {

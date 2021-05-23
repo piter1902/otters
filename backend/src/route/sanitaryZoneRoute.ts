@@ -1,4 +1,5 @@
 import Express from 'express';
+import passport from 'passport';
 import sanitaryZoneController from '../controller/sanitaryZoneController';
 
 // Create route
@@ -9,19 +10,19 @@ sanitaryZoneRoute.route("/")
     .get(sanitaryZoneController.getAllSanitaryZones);
 
 sanitaryZoneRoute.route("/fetchData")
-    .get(sanitaryZoneController.fetchRemoteData);
+    .get(passport.authenticate('jwt', { session: false }), sanitaryZoneController.fetchRemoteData);
 
 sanitaryZoneRoute.route("/aragon")
-    .get(sanitaryZoneController.getAragonZone);
+    .get(passport.authenticate('jwt', { session: false }), sanitaryZoneController.getAragonZone);
 
 sanitaryZoneRoute.route("/aragon/data")
-    .get(sanitaryZoneController.getAragonZoneData);
+    .get(passport.authenticate('jwt', { session: false }), sanitaryZoneController.getAragonZoneData);
 
 sanitaryZoneRoute.route("/:id")
-    .get(sanitaryZoneController.getZoneById);
+    .get(passport.authenticate('jwt', { session: false }), sanitaryZoneController.getZoneById);
 
 sanitaryZoneRoute.route("/:id/data")
-    .get(sanitaryZoneController.getDataZone);
+    .get(passport.authenticate('jwt', { session: false }), sanitaryZoneController.getDataZone);
 
 
 export default sanitaryZoneRoute;

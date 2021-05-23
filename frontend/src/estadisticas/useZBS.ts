@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import useToken from "../auth/Token/useToken";
 
 interface ZbsWithoutData {
     _id: string;
@@ -9,9 +10,15 @@ interface ZbsWithoutData {
 const useZBS = (baseURL: string) => {
     const [zones, setZones] = useState<ZbsWithoutData[]>([]);
 
+    // Token
+
     useEffect(() => {
         const fetchZones = async () => {
-            const response = await fetch(`${baseURL}/zone`, { method: "GET" });
+            const response =
+                await fetch(`${baseURL}/zone`,
+                    {
+                        method: "GET",
+                    });
             if (response.status === 200) {
                 // Nos devuelve las zonas sanitarias
                 let jsonBody = await response.json();
@@ -29,8 +36,8 @@ const useZBS = (baseURL: string) => {
                 setZones(zbsArray.sort((zbs1, zbs2) => zbs1.name < zbs2.name ? -1 : 1));
             }
         };
-
         fetchZones();
+
         return () => { }
     }, [baseURL]);
 

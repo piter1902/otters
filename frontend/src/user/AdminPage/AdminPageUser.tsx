@@ -1,4 +1,5 @@
 import React, { JSXElementConstructor, useState } from 'react';
+import useToken from '../../auth/Token/useToken';
 import AdminPageUserTile from './AdminPageUserTile';
 
 interface AdminPageUserProps {
@@ -15,9 +16,12 @@ const AdminPageUser: JSXElementConstructor<AdminPageUserProps> = ({ registrados,
     // Resultados de la búsqueda
     const [listUsers, setListUsers] = useState<any[]>([]);
 
+    // Token
+    const { token } = useToken();
+
     // Busqueda de los usuarios
     const searchForUsers = async () => {
-        const usersResponse = await fetch(`${process.env.REACT_APP_BASEURL}/user`);
+        const usersResponse = await fetch(`${process.env.REACT_APP_BASEURL}/user`, { headers: { 'Authorization': `${token?.type} ${token?.token}` } });
         const users = await usersResponse.json();
         setListUsers((users as any[]).filter((user) => user.name.match(searchUsername)));
     }
