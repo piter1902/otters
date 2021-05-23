@@ -108,7 +108,7 @@ const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
                     </div>
                 </div>
                 {/* Usuarios */}
-                <AdminPageUser registrados={stats.usuarios.registrados} verificados={stats.usuarios.verificados} />
+                <AdminPageUser registrados={stats.usuarios.registrados} verificados={stats.usuarios.verificados} idAdmin={token?.userId}/>
                 {/* Fuenta de datos */}
                 <AdminPageFetchData />
             </div>}

@@ -80,6 +80,24 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
                 }) 
         window.location.reload();
     }
+
+    const unassign = async () => {
+        // Cerrar sesión y recargar
+        console.log("user "+token?.userId+" unasigned to petitionId "+petition._id)
+
+        await fetch(`${process.env.REACT_APP_BASEURL}/petitions/${petition._id}/cancel/${token?.userId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `${token?.type} ${token?.token}`
+                    },
+                    body: JSON.stringify({
+                    })
+                }) 
+        window.location.reload();
+    }
     
 
     return (
@@ -133,7 +151,7 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
                     <p className="h2 fw-bold d-flex justify-content-center">
                     <Link to={"/peticionesayuda"} className="div" >
                         <button className="btn btn-danger mx-2"  onClick={deletePet}>
-                            Borrar peticion
+                            Borrar petición
                         </button>
                     </Link>    
                     </p>}
@@ -141,6 +159,12 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
                     <p className="h2 fw-bold d-flex justify-content-center">
                     <button className="btn btn-danger mx-2"  onClick={strikeUser}>
                         El usuario no ha realizado la petición
+                    </button>
+                    </p>}
+                    {(petition.userInfo.userId!=token?.userId) && (petition.status!="COMPLETED") && (petition.userIdAsigned==token?.userId || petition.userQueueAsigned.includes(token?.userId))  &&
+                    <p className="h2 fw-bold d-flex justify-content-center">
+                    <button className="btn btn-danger mx-2"  onClick={unassign}>
+                        Desasignarme de la petición
                     </button>
                     </p>}
                 </div>)

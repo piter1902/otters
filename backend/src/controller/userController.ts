@@ -63,18 +63,22 @@ const deleteUserByUID = async (req: Express.Request, res: Express.Response) => {
 const banUser = async (req: Express.Request, res: Express.Response) => {
   // Get query params
   const userId = req.params.uid;
-  logger.info(`Creando objeto de ban para user = ${userId}`);
+  const adminId = req.params.uidAdmin;
+  logger.info(`Creando objeto de ban para user = ${userId} por ${adminId}`);
   if (userId != null) {
     const user = await User
       .findById(userId)
       .select('bannedObject')
+      .exec();
+      const userAdmin = await User
+      .findById(adminId)
       .exec();
     if (user == null) {
       res.status(400).json({
         error: "El usuario no existe"
       });
     } else {
-      if(user.isAdmin){
+      if(userAdmin.isAdmin){
         _doAddBannedObj(req, res, user);
       }else{
         res
@@ -103,6 +107,7 @@ const _doAddBannedObj = (req: Express.Request, res: Express.Response, user: any)
         message: "userId not found"
       });
   } else {
+    logger.info(`Baneo aceptado`);
     user.bannedObject.banned = req.body.banned;
     user.bannedObject.bannedUntil = req.body.bannedUntil;
     //user.strikes= user.strikes+1;
