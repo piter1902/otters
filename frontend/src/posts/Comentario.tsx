@@ -27,7 +27,7 @@ const ComentarioList: React.JSXElementConstructor<ComentarioListProps> = ({ main
                                 <p className="lead texto">{comment.publisher.userName}</p>
                             </Link>}
                         
-                        <p className="lead texto">{new Date(comment.date).toLocaleDateString("es-ES")}</p>
+                        <p className="lead texto">{new Date(comment.date).toLocaleDateString("es-ES")} {new Date(comment.date).getHours()}:{new Date(comment.date).getMinutes()}</p>
                         <p className="texto">{comment.body}</p>
                     </div>
                 ))
