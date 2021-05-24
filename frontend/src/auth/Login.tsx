@@ -7,6 +7,8 @@ import './Login.css';
 import Token from './Token/Token';
 import useToken from './Token/useToken';
 import SelectZoneGoogleUser from './SelectZoneGoogleUser';
+import ClipLoader from "react-spinners/ClipLoader";
+
 // Funcionalidad login: https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications
 export interface LoginProps {
 }
@@ -35,6 +37,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
     const [show, setShow] = useState<boolean>(false);
     const [userId, setUserId] = useState<String>();
     const [userName, setUserName] = useState<String>("");
+    const [isPending, setIsPending] = useState<boolean>(false);
     // Procesa la respuesta de los proveedores externos (Google, Facebook)
     const _processProviderResponse = async (result: Response) => {
 
@@ -57,6 +60,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
             });
             // Para comprobar si el usuario ya existía o acaba de crearse
             const userExists = resultJson.userExists;
+            setIsPending(false)
             if (userExists) {
                 // Recargamos la página
                 history.push("/");
@@ -117,6 +121,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
     };
 
     const responseFacebook = async (response: ReactFacebookLoginInfo | ReactFacebookFailureResponse) => {
+        setIsPending(true);
         console.log("Facebook response: " + (response as ReactFacebookLoginInfo).accessToken)
         setUserName((response as ReactFacebookLoginInfo).name!);
         const result = await fetch(`${process.env.REACT_APP_BASEURL}/auth/facebook`,
@@ -139,8 +144,8 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
     // Respuesta de google login
     // Source: https://medium.com/@alexanderleon/implement-social-authentication-with-react-restful-api-9b44f4714fa
     const googleResponse = async (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-
         console.log("Google Reponse token: " + (response as GoogleLoginResponse).accessToken)
+        setIsPending(true);
         setUserName((response as GoogleLoginResponse).profileObj.name);
         const result = await fetch(`${process.env.REACT_APP_BASEURL}/auth/google`,
             {
@@ -211,7 +216,9 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                             </div>
                             {/* Popup que se muestra tras realizar el Login por Google */}
                             <SelectZoneGoogleUser idUser={userId} token={token} show={show} userName={userName}></SelectZoneGoogleUser>
-
+                            <div style={{ textAlign: "center", verticalAlign: "middle" }}>
+                                <ClipLoader color="#172c48" loading={isPending} size={50} />
+                            </div>
                         </div>
                     </div>
                 </div>
