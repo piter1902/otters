@@ -71,7 +71,7 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
             fetchRemote();
         }
         return () => { }
-    }, [id]);
+    }, [id, token]);
 
     // Carga de la info de la zona
     useEffect(() => {
@@ -80,7 +80,13 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
             const fetchInfo = async (url: string, setFunction: (p: any) => void) => {
                 if (token != null && token.userId) {
                     setIsPending(true);
-                    const response = await fetch(url, { method: "GET" });
+                    const response = await fetch(url,
+                        {
+                            method: "GET",
+                            headers: {
+                                'Authorization': `${token?.type} ${token?.token}`
+                            }
+                        });
                     if (response.status === 200) {
                         const dataJson = await response.json();
                         console.log("Para " + url + " el resultado es ");
