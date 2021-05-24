@@ -26,6 +26,12 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
     const [userPassword, setUserPassword] = useState("");
     const [userConfirmPassword, setUserConfirmPassword] = useState("");
 
+    const [errors, setErrors] = useState({
+        email: "",
+        password: "",
+        name: "",
+        zone: ""
+    });
     // Control del captcha
     const [enableRegister, setEnableRegister] = useState<boolean>(false);
     const [captchaResponse, setCaptchaResponse] = useState<string>("");
@@ -76,10 +82,41 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
         }
     };
 
+    const validateInputs = () => {
+        var formIsValid = true;
+
+        setErrors({ email: "", name: "", password: "", zone: "" })
+        if (userConfirmMail !== userMail) {
+            formIsValid = false;
+            setErrors(errors => ({
+                ...errors,
+                email: "Los emails deben coincidir"
+            }))
+        }
+
+        if (userPassword !== userConfirmPassword) {
+            formIsValid = false;
+            setErrors(errors => ({
+                ...errors,
+                password: "Las contraseñas deben coincidir"
+            }))
+        }
+
+        if (zonaSalud === "0") {
+            formIsValid = false;
+            setErrors(errors => ({
+                ...errors,
+                zone: "Por favor, seleccione una zona"
+            }))
+        }
+
+        return formIsValid;
+    }
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
-        if (enableRegister) {
+        const isValid = validateInputs();
+        if (enableRegister && isValid) {
             // Si se ha verificado el captcha
             register({
                 userName,
@@ -101,11 +138,12 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
                                 placeholder="Nombre de usuario" onChange={e => setUsername(e.target.value)} required></input>
                         </div>
                         <div className="input-group">
-                            <input type="text" className="form-control p-xl-3 p-md-1 mx-md-3  p-0 rounded-pill"
+                            <input type="email" className="form-control p-xl-3 p-md-1 mx-md-3  p-0 rounded-pill"
                                 placeholder="Correo" onChange={e => setUserMail(e.target.value)} required></input>
+                            {/* <span style={{ color: "red" }}>{errors.email}</span> */}
                         </div>
                         <div className="input-group">
-                            <input type="text" className="form-control p-xl-3 p-md-1 mx-md-3  p-0 rounded-pill"
+                            <input type="email" className="form-control p-xl-3 p-md-1 mx-md-3  p-0 rounded-pill"
                                 placeholder="Confirmar correo" onChange={e => setUserConfirmMail(e.target.value)} required></input>
                         </div>
                         <div className="input-group">
@@ -120,10 +158,13 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
                                     ))
                                 }
                             </select>
+                            <span style={{ color: "red" }}>{errors.zone}</span>
+
                         </div>
                         <div className="input-group">
                             <input type="password" className="form-control p-xl-3 p-md-1 mx-md-3  p-0 rounded-pill"
                                 placeholder="Contraseña" onChange={e => setUserPassword(e.target.value)} required></input>
+                            <span style={{ color: "red" }}>{errors.password}</span>
                         </div>
                         <div className="input-group">
                             <input type="password" className="form-control p-xl-3 p-md-1 mx-md-3  p-0 rounded-pill"
