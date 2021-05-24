@@ -311,7 +311,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/petitions"
+                $ref: "#/components/schemas/petitionsWithUsername"
         "404":
           description: User does not exist
           content:
@@ -341,7 +341,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/posts"
+                $ref: "#/components/schemas/postsWithUsername"
         "404":
           description: User does not exist
           content:
@@ -411,7 +411,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/posts"
+                $ref: "#/components/schemas/postsWithUsername"
         "404":
           description: User or post does not exist
           content:

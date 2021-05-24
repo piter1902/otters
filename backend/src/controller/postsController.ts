@@ -89,6 +89,12 @@ const getPosts = (req: Express.Request, res: Express.Response) => {
             }
           });
 
+          const userInfo: UserInfo = {
+            userId: user._id,
+            userName: user.name
+          }
+
+          userPosts = userPosts.map((p: any) => p.publisher = userInfo);
           res
             .status(200)
             .json(userPosts);
@@ -135,6 +141,11 @@ const readOnePost = (req: Express.Request, res: Express.Response) => {
               });
           } else {
             const post = await Posts.findById(req.params.postId).exec();
+            const userInfo: UserInfo = {
+              userId: user._id,
+              userName: user.name
+            }
+            post.publisher = userInfo;
             res
               .status(200)
               .json(post);
@@ -542,7 +553,7 @@ const createComment = async (req: Express.Request, res: Express.Response) => {
 
 // Private methods
 const _doAddCommentObj = async (req: Express.Request, res: Express.Response, post: any) => {
-  try{
+  try {
     if (!post) {
       res
         .status(404)
@@ -553,8 +564,8 @@ const _doAddCommentObj = async (req: Express.Request, res: Express.Response, pos
       const user = await User.findById(post.publisher).exec();
       const userWhoComment = await User.findById(req.body.publisherId).exec();
       console.log(post);
-      if(user){
-        await emailService.sendSomeoneCommentedPost(user,post,userWhoComment);
+      if (user) {
+        await emailService.sendSomeoneCommentedPost(user, post, userWhoComment);
       }
       var tempDate = new Date(req.body.date);
       const comment = new Comments({
@@ -563,20 +574,20 @@ const _doAddCommentObj = async (req: Express.Request, res: Express.Response, pos
         date: new Date(tempDate.setMonth(tempDate.getMonth())),
         publisherId: req.body.publisherId,
       });
-      
+
       post.comments.push(
         comment
       );
 
       post.save((err: Express.ErrorRequestHandler, user: any) => {
-          if (err) {
-            logger.error(err.toString());
-            res
-              .status(400)
-              .json(err);
-          }
-        });
-  
+        if (err) {
+          logger.error(err.toString());
+          res
+            .status(400)
+            .json(err);
+        }
+      });
+
       comment.save((err: Express.ErrorRequestHandler, user: any) => {
         if (err) {
           logger.error(err.toString());
@@ -592,12 +603,12 @@ const _doAddCommentObj = async (req: Express.Request, res: Express.Response, pos
     }
   } catch (err) {
     logger.error("ERROR!" + err);
-  
+
     res
       .status(400)
       .json(err);
   }
-  
+
 };
 
 const getCommentById = async (req: Express.Request, res: Express.Response) => {
