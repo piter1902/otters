@@ -48,7 +48,7 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
             setFilteredPetitions(
                 [].concat(
                 data.filter((petition: Petition) =>
-                    petition.status.toUpperCase() === "OPEN"
+                    (petition.status.toUpperCase() === "OPEN") || (petition.status.toUpperCase() === "ASSIGNED")
                 )))
         }
         else if (filter === "MeAssigned") {
@@ -71,7 +71,7 @@ const PetitionList: React.JSXElementConstructor<PetitionListProps> = () => {
                 setFilteredPetitions(
                     [].concat(
                     data.filter((petition: Petition) =>
-                        petition.status.toUpperCase() === "OPEN"
+                        (petition.status.toUpperCase() === "OPEN") || (petition.status.toUpperCase() === "ASSIGNED")
                     )))
             }
             setFilter("0")
