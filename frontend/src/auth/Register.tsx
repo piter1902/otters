@@ -8,6 +8,11 @@ export interface RegisterProps {
 
 }
 
+interface ErrorMessage {
+    error: boolean;
+    message: string;
+}
+
 const Register: React.JSXElementConstructor<RegisterProps> = () => {
 
     // Navegacion
@@ -19,6 +24,8 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
     // Zonas de salud
     const zbs = useZBS(process.env.REACT_APP_BASEURL!);
 
+    // Posibles errores del back
+    const [backError, setBackError] = useState<ErrorMessage>({ error: false, message: "" });
     // Información introducida del usuario
     const [userName, setUsername] = useState("");
     const [userMail, setUserMail] = useState("");
@@ -79,6 +86,13 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
             // Recargamos la página y navegamos al login
             history.push("/login");
             window.location.reload();
+        } else {
+
+            const message = await response.json();
+            setBackError({
+                error: true,
+                message: message.error ?? "Ha ocurrido un error durante el registro. Por favor, inténtalo más tarde"
+            });
         }
     };
 
@@ -186,8 +200,14 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
                     </div>
                 </div>
             </form>
-            <div className="col px-md-3 mt-2">
-            </div>
+            {/* Error de autenticación */}
+            {backError && backError.error &&
+                <div className="alert alert-danger w-50 h-25 d-flex justify-content-center align-middle" role="alert">
+                    {backError.message}
+                </div>
+            }
+            {/* <div className="col px-md-3 mt-2">
+            </div> */}
         </div>);
 }
 

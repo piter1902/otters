@@ -75,7 +75,7 @@ const registerUser = async (req: Express.Request, res: Express.Response) => {
       if (user != null) {
         res
           .status(400)
-          .send("User already exists");
+          .json({ error: "User already exists" });
       } else {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const newUser = new User({
@@ -104,7 +104,9 @@ const registerUser = async (req: Express.Request, res: Express.Response) => {
 
       res
         .status(400)
-        .json(err);
+        .json({
+          error: err
+        });
     }
   }
 }
