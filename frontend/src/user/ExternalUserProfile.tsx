@@ -67,7 +67,9 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
 
 
         }
-        fetchRemote();
+        if (token) {
+            fetchRemote();
+        }
         return () => { }
     }, [id]);
 
