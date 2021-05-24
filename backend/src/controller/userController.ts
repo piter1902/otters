@@ -71,7 +71,7 @@ const banUser = async (req: Express.Request, res: Express.Response) => {
       .findById(userId)
       .select('bannedObject')
       .exec();
-      const userAdmin = await User
+    const userAdmin = await User
       .findById(adminId)
       .exec();
     if (user == null) {
@@ -79,16 +79,16 @@ const banUser = async (req: Express.Request, res: Express.Response) => {
         error: "El usuario no existe"
       });
     } else {
-      if(userAdmin.isAdmin){
+      if (userAdmin.isAdmin) {
         _doAddBannedObj(req, res, user);
-      }else{
+      } else {
         res
-      .status(400)
-      .json({
-        message: 'El usuario no es administrador'
-      });
+          .status(400)
+          .json({
+            message: 'El usuario no es administrador'
+          });
       }
-      
+
     }
   } else {
     res
@@ -162,9 +162,9 @@ const _doAddStrikeObj = (req: Express.Request, res: Express.Response, user: any)
         message: "userId not found"
       });
   } else {
-    
+
     const totalStrikes = user.strikes + 1;
-    if (totalStrikes == 5){
+    if (totalStrikes == 5) {
       user.bannedObject.banned = true;
       user.bannedObject.bannedUntil = new Date(Date.now() + (86400000 * 7));
     }
@@ -218,7 +218,7 @@ const strikeUserInPet = async (req: Express.Request, res: Express.Response) => {
           });
       }
 
-      
+
     }
   } else {
     res
@@ -239,7 +239,7 @@ const _doAddStrikePetObj = (req: Express.Request, res: Express.Response, user: a
       });
   } else {
     logger.info(`else`);
-    if(petition.status == "COMPLETED"){
+    if (petition.status == "COMPLETED") {
       petition.status = 'CANCELED';
       petition.save((err: any, petition: typeof Petition) => {
         if (err) {
@@ -250,7 +250,7 @@ const _doAddStrikePetObj = (req: Express.Request, res: Express.Response, user: a
       });
       logger.info(`else2`);
       const totalStrikes = user.strikes + 1;
-      if (totalStrikes == 5){
+      if (totalStrikes == 5) {
         user.bannedObject.banned = true;
         user.bannedObject.bannedUntil = new Date(Date.now() + (86400000 * 7));
       }
@@ -268,15 +268,15 @@ const _doAddStrikePetObj = (req: Express.Request, res: Express.Response, user: a
             .json(user);
         }
       });
-    } else{
+    } else {
       logger.info(`else3`);
       res
-          .status(404)
-          .json({
-            message: 'peticion no está en el estado correcto para meter strike'
-          });
+        .status(404)
+        .json({
+          message: 'peticion no está en el estado correcto para meter strike'
+        });
     }
-    
+
   }
 };
 
@@ -286,9 +286,9 @@ const updateUser = async (req: Express.Request, res: Express.Response) => {
   const pic = req.body.picture;
   const zone = req.body.sanitaryZone;
   logger.info(`Actualizando informacion para user = ${userId}`);
-  logger.info(`New pass = ${pass}`);
-  logger.info(`New pic = ${pic}`);
-  logger.info(`New zone = ${zone}`);
+  // logger.info(`New pass = ${pass}`);
+  // logger.info(`New pic = ${pic}`);
+  // logger.info(`New zone = ${zone}`);
   if (req.params && userId) {
     const user = await User.findById(userId).exec();
 

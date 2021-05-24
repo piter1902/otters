@@ -17,11 +17,9 @@ const PetitionListComponent: JSXElementConstructor<PetitionListComponentProps> =
                     <div className="container-fluid d-flex justify-content-center card mb-4" key={petitionInfo._id} >
 
                         <h2 className="ms-3 mt-3"><b>{petitionInfo.title}</b></h2>
-                        <div className="row row justify-content-between">
-                            <div className="col">
-                                <p className="ms-3">Creado por {petitionInfo.userInfo.userName}</p>
-                            </div>
-                            <div className="col-1 sm-12">
+                        <div className=" d-flex justify-content-between">
+                            <p className="ms-3">Creado por {petitionInfo.userInfo.userName}</p>
+                            <div className="h5 fw-bold">
                                 <StatusBadge status={petitionInfo.status} />
                             </div>
                         </div>
