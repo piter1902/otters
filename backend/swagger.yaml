@@ -1136,15 +1136,106 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
-                    type: object
-                    properties:
-                      token:
-                        type: string
-                        description: Generated JWT token related to the user. Expires in one day
-                      userId:
-                        type: integer
-                        description: Logged user Id
+                  userId:
+                    type: integer
+                    description: Logged user Id
+          headers:
+            x-auth-token:
+              schema:
+                type: string
+                description: Generated JWT token related to the user. Expires in 6 hours
+
+  /auth/google:
+    post:
+      tags:
+        - "Authentication"
+      description: Log an user using Google Oauth. If user didn't exist previously, creates a new user. Once logged, creates a JWT token related to the user
+      requestBody:
+        description: Google auth information about selected google Account
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  description: Generated Google Token once selected an account
+      responses:
+        "400":
+          description: Google auth error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userExists:
+                    type: boolean
+                    description: Shows if an user existed previously
+                  userId:
+                    type: integer
+                    description: Logged user Id
+          headers:
+            x-auth-token:
+              schema:
+                type: string
+                description: Generated JWT token related to the user. Expires in 6 hours
+
+  /auth/facebook:
+    post:
+      tags:
+        - "Authentication"
+      description: Log an user using Facebook Oauth. If user didn't exist previously, creates a new user. Once logged, creates a JWT token related to the user
+      requestBody:
+        description: Facebook auth information about selected Facebook Account
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - accessToken
+                - userId
+              properties:
+                accessToken:
+                  type: string
+                  description: Generated Facebook Token once selected an account
+                userId:
+                  type: string
+                  description: Id related to the selected Facebook account. Is used to obtain the email and the name on the backend.
+      responses:
+        "400":
+          description: Facebook auth error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userExists:
+                    type: boolean
+                    description: Shows if an user existed previously
+                  userId:
+                    type: integer
+                    description: Logged user Id
+          headers:
+            x-auth-token:
+              schema:
+                type: string
+                description: Generated JWT token related to the user. Expires in 6 hours
   # Register
   /auth/register:
     post:

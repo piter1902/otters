@@ -92,14 +92,17 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                     email: credentials.userMail,
                 })
             });
-        const responseJson = (await result.json())
-        console.log("Result: " + responseJson);
+        
         // TODO: Faltan las redirecciones
         if (result.ok) {
+            //Obtención de los resultados del loggin
+            const resultJson = (await result.json())
+            const resToken = result.headers.get("x-auth-token");
+            console.log("Respuesta:  " + resultJson.userId + " " + resToken)
             // Todo correcto
             const token: Token = {
-                userId: responseJson.data.userId,
-                token: responseJson.data.token,
+                userId: resultJson.userId,
+                token: resToken!,
                 type: "Bearer"
             }
             saveToken(token);
@@ -112,7 +115,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
             // window.location.reload();
         } else {
             // Error -> Mostrar una alerta
-            const message = responseJson.error;
+            const message = await result.json();
             setError({
                 error: true,
                 message: message ?? "Usuario o contraseña incorrecto(s)"

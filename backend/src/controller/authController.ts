@@ -47,7 +47,7 @@ const loginUser = async (req: Express.Request, res: Express.Response, next: Next
           id: user._id
         }
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1d' });
+        const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: process.env.JWT_LIFETIME! });
 
         res
           .setHeader('x-auth-token', token);
@@ -241,7 +241,7 @@ const loginGoogle = async (req: any, res: Express.Response) => {
       id: userId
     }
     // Creación del token JWT
-    const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1d' });
+    const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: process.env.JWT_LIFETIME! });
 
     // Introducimos el token en la cabecera 'x-auth-token' de la respuesta
     res
@@ -324,7 +324,7 @@ const loginFacebook = async (req: any, res: Express.Response) => {
         id: loggedUserID
       }
       // Creación del token JWT
-      const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1d' });
+      const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: process.env.JWT_LIFETIME! });
 
       // Introducimos el token en la cabecera 'x-auth-token' de la respuesta
       res

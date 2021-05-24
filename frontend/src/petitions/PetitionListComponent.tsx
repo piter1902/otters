@@ -2,6 +2,7 @@ import React, { JSXElementConstructor } from 'react'
 import { Link } from 'react-router-dom';
 import './Petition'
 import Petition from './Petition';
+import StatusBadge from './StatusBadge';
 
 interface PetitionListComponentProps {
     petitionsInfo: Petition[];
@@ -21,9 +22,7 @@ const PetitionListComponent: JSXElementConstructor<PetitionListComponentProps> =
                                 <p className="ms-3">Creado por {petitionInfo.userInfo.userName}</p>
                             </div>
                             <div className="col-1 sm-12">
-                                {petitionInfo.status === "COMPLETED"
-                                    ? <i className="fas fa-check"></i>
-                                    : "COMPLETED" && <i className="fas fa-times"></i>}
+                                <StatusBadge status={petitionInfo.status} />
                             </div>
                         </div>
                         <div className="d-flex justify-content-between">
@@ -31,7 +30,7 @@ const PetitionListComponent: JSXElementConstructor<PetitionListComponentProps> =
                                 <p className="ms-3 mt-3"> {petitionInfo.body} -- {petitionInfo.place} <i className="fas fa-map-marker-alt"></i></p>
                             </div>
                             <div className="p2 ml-auto">
-                            <p className="ms-3 mt-3"> {new Date(petitionInfo.targetDate).toLocaleDateString("es-ES")} <i className="far fa-clock"></i></p>
+                                <p className="ms-3 mt-3"> {new Date(petitionInfo.targetDate).toLocaleDateString("es-ES")} <i className="far fa-clock"></i></p>
                             </div>
                         </div>
                     </div>
