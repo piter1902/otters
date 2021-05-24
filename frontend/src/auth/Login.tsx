@@ -118,7 +118,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
             const message = await result.json();
             setError({
                 error: true,
-                message: message ?? "Usuario o contraseña incorrecto(s)"
+                message: message.error ?? "Usuario o contraseña incorrecto(s)"
             });
         }
     };
