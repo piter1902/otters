@@ -94,10 +94,23 @@ const getPosts = (req: Express.Request, res: Express.Response) => {
             userName: user.name
           }
 
-          userPosts = userPosts.map((p: any) => p.publisher = userInfo);
+
+          const data: PostsWithUsername[] = [];
+          (userPosts as any[]).forEach((post: any) => {
+            data.push({
+              _id: post._id,
+              title: post.title,
+              body: post.body,
+              date: post.date,
+              publisher: userInfo,
+              comments: post.comments,
+              possitive_valorations: post.possitive_valorations,
+              negative_valorations: post.negative_valorations,
+            })
+          });
           res
             .status(200)
-            .json(userPosts);
+            .json(data);
         } else {
           res
             .status(404)
