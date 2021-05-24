@@ -116,8 +116,7 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
             {/* Show error if exists */}
             { error && <div style={{ textAlign: "center", verticalAlign: "middle" }}>{error}</div>}
             {!isPending && (
-
-                < div className="card-body px-3 py-3">
+                <div className="card-body px-3 py-3">
                     <p className="h2 fw-bold d-flex justify-content-between">
                         {petition.title}
                         <StatusBadge status={petition.status} />
@@ -142,36 +141,45 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
 
                     <p className="lead ">Lugar: {petition.place}</p>
                     <p className="lead ">Fecha: {new Date(petition.targetDate).toLocaleDateString("es-ES")}</p>
-                    {petition.expTime != ""
-                        ? <p className="lead ">Hora de expiración: {petition.expTime}</p>
-                        : <p className="lead ">Hora de expiración: --:--</p>
+                    {
+                        petition.expTime != ""
+                            ? <p className="lead ">Hora de expiración: {petition.expTime}</p>
+                            : <p className="lead ">Hora de expiración: --:--</p>
                     }
-                    {petition.isUrgent &&
+                    {
+                        petition.isUrgent &&
                         <p className="lead ">Urgente: Sí</p>
                     }
-                    {!petition.isUrgent &&
+                    {
+                        !petition.isUrgent &&
                         <p className="lead ">Urgente: No</p>
                     }
-                    {(petition.userInfo.userId == token?.userId || (userInfo && userInfo.isAdmin)) &&
+                    {
+                        (petition.userInfo.userId == token?.userId || (userInfo && userInfo.isAdmin)) &&
                         <p className="h2 fw-bold d-flex justify-content-center">
                             <Link to={"/peticionesayuda"} className="div" >
                                 <button className="btn btn-danger mx-2" onClick={deletePet}>
                                     Borrar petición
-                        </button>
+                                </button>
                             </Link>
-                        </p>}
-                    {(petition.userInfo.userId == token?.userId) && (petition.status == "COMPLETED") &&
+                        </p>
+                    }
+                    {
+                        (petition.userInfo.userId == token?.userId) && (petition.status == "COMPLETED") && 
                         <p className="h2 fw-bold d-flex justify-content-center">
                             <button className="btn btn-danger mx-2" onClick={strikeUser}>
                                 El usuario no ha realizado la petición
-                    </button>
-                    </p>}
-                    {(petition.userInfo.userId!=token?.userId) && (petition.status!="COMPLETED") && (petition.status!="CANCELED") && (petition.userIdAsigned==token?.userId || petition.userQueueAsigned.includes(token?.userId))  &&
-                    <p className="h2 fw-bold d-flex justify-content-center">
-                    <button className="btn btn-danger mx-2"  onClick={unassign}>
-                        Desasignarme de la petición
-                    </button>
-                        </p>}
+                            </button>
+                        </p>
+                    }
+                    {
+                        (petition.userInfo.userId != token?.userId) && (petition.status != "COMPLETED") && (petition.status != "CANCELED") && (petition.userIdAsigned == token?.userId || petition.userQueueAsigned.includes(token?.userId)) &&
+                        <p className="h2 fw-bold d-flex justify-content-center">
+                            <button className="btn btn-danger mx-2" onClick={unassign}>
+                                Desasignarme de la petición
+                            </button>
+                        </p>
+                    }
                 </div>)
             }
 
