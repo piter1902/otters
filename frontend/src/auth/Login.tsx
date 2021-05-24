@@ -182,7 +182,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                     <div className="form-group">
                         <div className="d-grid gap-2 gap-md-3 mt-sm-6 mt-3 px-3">
                             <div className="input-group pt-2">
-                                <input type="text" className="form-control p-md-2 p-xl-4 rounded-pill"
+                                <input type="email" className="form-control p-md-2 p-xl-4 rounded-pill"
                                     placeholder="Correo" onChange={e => setUserMail(e.target.value)} required></input>
                             </div>
                             <div className="input-group">
