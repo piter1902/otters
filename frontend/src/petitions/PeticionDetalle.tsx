@@ -161,7 +161,7 @@ const PeticionDetalle: React.JSXElementConstructor<PeticionDetalleProps> = () =>
                         El usuario no ha realizado la petición
                     </button>
                     </p>}
-                    {(petition.userInfo.userId!=token?.userId) && (petition.status!="COMPLETED") && (petition.userIdAsigned==token?.userId || petition.userQueueAsigned.includes(token?.userId))  &&
+                    {(petition.userInfo.userId!=token?.userId) && (petition.status!="COMPLETED") && (petition.status!="CANCELED") && (petition.userIdAsigned==token?.userId || petition.userQueueAsigned.includes(token?.userId))  &&
                     <p className="h2 fw-bold d-flex justify-content-center">
                     <button className="btn btn-danger mx-2"  onClick={unassign}>
                         Desasignarme de la petición
