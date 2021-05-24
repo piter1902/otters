@@ -17,10 +17,10 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
     const { token, saveToken } = useToken();
 
     const [userInfo, setUserInfo] = useState<any>(null);
-    
+
     // Navegacion
     const history = useHistory();
-    
+
     // Obtención de la info del usuario (se hace para cada actualización del token)
     useEffect(() => {
         const fetchUserInfo = async () => {
@@ -34,7 +34,16 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
                             }
                         });
                 if (response.status === 200) {
-                    setUserInfo(await response.json());
+                    const jsonUser = await response.json();
+                    if (!jsonUser.bannedObject.banned) {
+                        // El usuario no está baneado
+                        setUserInfo(jsonUser);
+                    } else {
+                        // El usuario está baneado -> exipiramos el token
+                        saveToken(null);
+                        history.replace("/login");
+                    }
+
                 } else {
                     // Error -> borramos el localstorage y remitimos a /login
                     saveToken(null);
@@ -42,7 +51,7 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
                 }
             }
         }
-        if(token !== null && token !== undefined){
+        if (token !== null && token !== undefined) {
             fetchUserInfo();
         }
         return () => { }
