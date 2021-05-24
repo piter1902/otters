@@ -51,6 +51,10 @@ const userSchema = new Schema({
         type: Boolean,
         required: true
     },
+    isLocal: {
+        type: Boolean,
+        required: true
+    },
     // En cuenta de almacenar toda la petition dentro de usuario, 
     // se almacena solo su Id
     petitions: [String],

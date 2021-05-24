@@ -4,19 +4,11 @@ import passportLocal from 'passport-local';
 import logger from '@poppinss/fancy-logs';
 import passport from 'passport';
 import passportJwt, { ExtractJwt } from 'passport-jwt';
+import passportGoogleAuth from 'passport-google-oauth';
 
 const LocalStrategy = passportLocal.Strategy;
 const JwtStrategy = passportJwt.Strategy;
-
-// passport.serializeUser((user: any, done: any) => {
-//   logger.info("User en serialze: " + user);
-//   done(null, user.id);
-// });
-
-// passport.deserializeUser((id, done) => {
-//   User.findById(id, (err: any, user: any) => done(err, user));
-// });
-
+const GoogleStrategy = passportGoogleAuth.OAuth2Strategy;
 /**
  * Estrategia JWT
  * Source: https://davidinformatico.com/jwt-express-js-passport/

@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import GoogleButton from 'react-google-button';
+import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+import FacebookLogin, { ReactFacebookLoginInfo, ReactFacebookFailureResponse } from 'react-facebook-login';
 import { Link, useHistory } from 'react-router-dom';
 import './Login.css';
 import Token from './Token/Token';
 import useToken from './Token/useToken';
+import SelectZoneGoogleUser from './SelectZoneGoogleUser';
+import ClipLoader from "react-spinners/ClipLoader";
 
 // Funcionalidad login: https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications
 export interface LoginProps {
@@ -27,8 +31,53 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
     const history = useHistory();
 
     // Almacenamiento y modificación del token
-    const { saveToken } = useToken();
+    const { token, saveToken } = useToken();
 
+    // Para mostrar el popup
+    const [show, setShow] = useState<boolean>(false);
+    const [userId, setUserId] = useState<String>();
+    const [userName, setUserName] = useState<String>("");
+    const [isPending, setIsPending] = useState<boolean>(false);
+    // Procesa la respuesta de los proveedores externos (Google, Facebook)
+    const _processProviderResponse = async (result: Response) => {
+
+        if (result.ok) {
+            //Obtención de los resultados del loggin
+            const resultJson = (await result.json())
+            const resToken = result.headers.get("x-auth-token");
+            console.log("Respuesta:  " + resultJson.userId + " " + resToken)
+            // Todo correcto
+            const token: Token = {
+                userId: resultJson.userId,
+                token: resToken!,
+                type: "Bearer"
+            }
+            saveToken(token);
+            setUserId(resultJson.userId);
+            setError({
+                error: false,
+                message: ""
+            });
+            // Para comprobar si el usuario ya existía o acaba de crearse
+            const userExists = resultJson.userExists;
+            setIsPending(false)
+            if (userExists) {
+                // Recargamos la página
+                history.push("/");
+                // window.location.reload();
+            } else {
+                // Si se acaba de crear el user, se debe mostrar el popup para seleccionar si zona básica
+                setShow(true);
+            }
+
+        } else {
+            // Error -> Mostrar un alert
+            setError({
+                error: true,
+                message: "Usuario o contraseña incorrecto(s)"
+            });
+        }
+    }
     // Realiza el login del usuario
     const login = async (credentials: any) => {
         const result = await fetch(`${process.env.REACT_APP_BASEURL}/auth/login`,
@@ -71,6 +120,50 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
         }
     };
 
+    const responseFacebook = async (response: ReactFacebookLoginInfo | ReactFacebookFailureResponse) => {
+        setIsPending(true);
+        console.log("Facebook response: " + (response as ReactFacebookLoginInfo).accessToken)
+        setUserName((response as ReactFacebookLoginInfo).name!);
+        const result = await fetch(`${process.env.REACT_APP_BASEURL}/auth/facebook`,
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    accessToken: (response as ReactFacebookLoginInfo).accessToken,
+                    userId: (response as ReactFacebookLoginInfo).userID
+                }),
+                mode: 'cors',
+                cache: 'default',
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-Type": "application/json"
+                }
+            });
+        _processProviderResponse(result);
+    }
+
+    // Respuesta de google login
+    // Source: https://medium.com/@alexanderleon/implement-social-authentication-with-react-restful-api-9b44f4714fa
+    const googleResponse = async (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+        console.log("Google Reponse token: " + (response as GoogleLoginResponse).accessToken)
+        setIsPending(true);
+        setUserName((response as GoogleLoginResponse).profileObj.name);
+        const result = await fetch(`${process.env.REACT_APP_BASEURL}/auth/google`,
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    token: (response as GoogleLoginResponse).tokenId
+                }),
+                mode: 'cors',
+                cache: 'default',
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-Type": "application/json"
+                }
+            });
+
+        _processProviderResponse(result);
+    }
+
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
@@ -98,17 +191,33 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
                             <div className="text-center mb-3">
                                 <button type="submit" className="btn btn-md-lg btn-light rounded-pill">Inicia Sesión</button>
                             </div>
-                            <div className="text-center mb-3">
-                                {/* <button type="button" className="btn btn-md-lg btn-light btn-labeled rounded-pill">
-                                    <span className="btn-label pe-1"><i className="fab fa-google"></i></span>
-                                    Iniciar sesión con Google
-                                </button> */}
-                                <GoogleButton onClick={() => console.log("Singing in with google")}/>
+                            <div className="text-center mb-3 d-grid gap-2">
+                                <GoogleLogin
+                                    clientId="488176144101-nksd69ithfpreq0qqefa51btkkc9d9cb.apps.googleusercontent.com"
+                                    buttonText="Login"
+                                    onSuccess={googleResponse}
+                                    onFailure={err => { console.log(err); alert("Google login error") }}
+                                    render={renderProps => (<GoogleButton onClick={renderProps.onClick}></GoogleButton>)
+                                    }
+                                ></GoogleLogin>
+                                <div>
+
+                                </div>
+                                <FacebookLogin
+                                    appId="315641319935168"
+                                    autoLoad={false}
+                                    fields="name,email,picture"
+                                    callback={responseFacebook} />
                             </div>
 
                             <div className="d-flex align-self-center mt-2 mt-xl-6">
                                 <p className="font-weight-bold">¿No tienes cuenta? </p>
                                 <Link to="/register">Regístrate</Link>
+                            </div>
+                            {/* Popup que se muestra tras realizar el Login por Google */}
+                            <SelectZoneGoogleUser idUser={userId} token={token} show={show} userName={userName}></SelectZoneGoogleUser>
+                            <div style={{ textAlign: "center", verticalAlign: "middle" }}>
+                                <ClipLoader color="#172c48" loading={isPending} size={50} />
                             </div>
                         </div>
                     </div>

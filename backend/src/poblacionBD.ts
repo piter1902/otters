@@ -10,9 +10,9 @@ import bcrypt from 'bcrypt';
 import Utils from './Utils';
 
 
-const userArrayName:string[] = ["Santiago","Ramon","Cajal"];
-const userArraySurname:string[] = ["Perez","Garcia","Moreno"];
-const userArrayPass:string[] = [];
+const userArrayName: string[] = ["Santiago", "Ramon", "Cajal"];
+const userArraySurname: string[] = ["Perez", "Garcia", "Moreno"];
+const userArrayPass: string[] = [];
 
 const populateDB = async () => {
     //Poblar zonas
@@ -28,68 +28,68 @@ const populateDB = async () => {
     let saveUsers: boolean[] = new Array();
     for (let i = 0; i < userArrayName.length; i++) {
         for (let j = 0; j < userArraySurname.length; j++) {
-        saveUsers[i+j]=false;
-        mail = userArrayName[i].substring(0,1)+userArraySurname[j].substring(0,1)+"@gmail.com";
-        const hashedPassword = await bcrypt.hash("xxxxxx", 10);
-        
-        const user = new User({
-            name: userArrayName[i]+" "+userArraySurname[j],
-            picture: userPicture,
-            email: mail.toLowerCase(),
-            sanitaryZone: allZones[1]._id,
-            password: hashedPassword,
-            bannedObject:{ "banned": false},  //{ "banned": true, "bannedUntil": new Date(Date.now())  },
-            strikes: 0,
-            isAdmin: false,
-            isVerified: true, 
-          });
-          // Save to mongodb
-          await user.save();
-          logger.info("Creating a new user");
+            saveUsers[i + j] = false;
+            mail = userArrayName[i].substring(0, 1) + userArraySurname[j].substring(0, 1) + "@gmail.com";
+            const hashedPassword = await bcrypt.hash("xxxxxx", 10);
+
+            const user = new User({
+                name: userArrayName[i] + " " + userArraySurname[j],
+                picture: userPicture,
+                email: mail.toLowerCase(),
+                sanitaryZone: allZones[1]._id,
+                password: hashedPassword,
+                bannedObject: { "banned": false },  //{ "banned": true, "bannedUntil": new Date(Date.now())  },
+                strikes: 0,
+                isAdmin: false,
+                isLocal: true,
+                isVerified: true,
+            });
+            // Save to mongodb
+            await user.save();
+            logger.info("Creating a new user");
         }
     }
-    const userArray:InstanceType<typeof User>[] = await await User.find().exec();
+    const userArray: InstanceType<typeof User>[] = await await User.find().exec();
     //logger.info("array: "+saveUsers);
-    
+
     //Poblar posts y peticiones
-    try{
-        var randomUser = Math.floor(Math.random() * (userArray.length ));
-        saveUsers[randomUser]=true;
-        _doAddPetition(userArray[randomUser]);
-        randomUser = Math.floor(Math.random() * (userArray.length ));
-        saveUsers[randomUser]=true;
-        _doAddPost(userArray[randomUser]);
-        randomUser = Math.floor(Math.random() * (userArray.length ));
-        saveUsers[randomUser]=true;
-        _doAddPetition(userArray[randomUser]);
-        randomUser = Math.floor(Math.random() * (userArray.length ));
-        saveUsers[randomUser]=true;
-        _doAddPost(userArray[randomUser]);
-        randomUser = Math.floor(Math.random() * (userArray.length ));
-        saveUsers[randomUser]=true;
-        _doAddPetition(userArray[randomUser]);
-        randomUser = Math.floor(Math.random() * (userArray.length ));
-        saveUsers[randomUser]=true;
-        _doAddPost(userArray[randomUser]);
-        randomUser = Math.floor(Math.random() * (userArray.length ));
-        saveUsers[randomUser]=true;
-        _doAddPetition(userArray[randomUser]);
-        randomUser = Math.floor(Math.random() * (userArray.length ));
-        saveUsers[randomUser]=true;
-        _doAddPost(userArray[randomUser]);
-    }catch (Error)   
-    {  
-      alert(Error.message);  
-    } 
+    try {
+        var randomUser = Math.floor(Math.random() * (userArray.length));
+        saveUsers[randomUser] = true;
+        await _doAddPetition(userArray[randomUser]);
+        randomUser = Math.floor(Math.random() * (userArray.length));
+        saveUsers[randomUser] = true;
+        await _doAddPost(userArray[randomUser]);
+        randomUser = Math.floor(Math.random() * (userArray.length));
+        saveUsers[randomUser] = true;
+        await _doAddPetition(userArray[randomUser]);
+        randomUser = Math.floor(Math.random() * (userArray.length));
+        saveUsers[randomUser] = true;
+        await _doAddPost(userArray[randomUser]);
+        randomUser = Math.floor(Math.random() * (userArray.length));
+        saveUsers[randomUser] = true;
+        await _doAddPetition(userArray[randomUser]);
+        randomUser = Math.floor(Math.random() * (userArray.length));
+        saveUsers[randomUser] = true;
+        await _doAddPost(userArray[randomUser]);
+        randomUser = Math.floor(Math.random() * (userArray.length));
+        saveUsers[randomUser] = true;
+        await _doAddPetition(userArray[randomUser]);
+        randomUser = Math.floor(Math.random() * (userArray.length));
+        saveUsers[randomUser] = true;
+        await _doAddPost(userArray[randomUser]);
+    } catch (Error) {
+        alert(Error.message);
+    }
 
     // Update user info
-    for (let i = 0; i < saveUsers.length; i++){
-        if(saveUsers[i]){
+    for (let i = 0; i < saveUsers.length; i++) {
+        if (saveUsers[i]) {
             //logger.info("user: "+userArray[i].name);
             await userArray[i].save();
         }
     }
-    
+
     //create admin
     const hashedPassword2 = await bcrypt.hash("admin", 10);
     const user = new User({
@@ -101,38 +101,39 @@ const populateDB = async () => {
         bannedObject: { "banned": false },
         strikes: 0,
         isAdmin: true,
-        isVerified: true, 
-      });
-      // Save to mongodb
-      await user.save();
-      logger.info("Creating admin");
-    
+        isLocal: true,
+        isVerified: true,
+    });
+    // Save to mongodb
+    await user.save();
+    logger.info("Creating admin");
+
     logger.info("DB populated");
     //petitionModel
     //petitionControler.petitionsCreate();
 }
 
-const petArrayTitle:string[] = ["Aiuda","Jelp","Hadme la compra","Post numero 12212","Ayuda para pasarme el mario bros"];
-const petArrayPlace:string[] = ["San Jose","Las Fuentes","Centro","Calle de la piruleta","San juan 23"];
-const petBody:string = "Eam ex integre quaeque bonorum, ea assum solet scriptorem pri. At eius choro sit, possit recusabo corrumpit vim ne.";
+const petArrayTitle: string[] = ["Aiuda", "Jelp", "Hadme la compra", "Post numero 12212", "Ayuda para pasarme el mario bros"];
+const petArrayPlace: string[] = ["San Jose", "Las Fuentes", "Centro", "Calle de la piruleta", "San juan 23"];
+const petBody: string = "Eam ex integre quaeque bonorum, ea assum solet scriptorem pri. At eius choro sit, possit recusabo corrumpit vim ne.";
 
 const _doAddPetition = async function (user: any) {
-    var numTitle = Math.floor(Math.random() * (petArrayTitle.length ));
-    var numPlace = Math.floor(Math.random() * (petArrayPlace.length ));
+    var numTitle = Math.floor(Math.random() * (petArrayTitle.length));
+    var numPlace = Math.floor(Math.random() * (petArrayPlace.length));
     var urgent = Math.floor(Math.random() * (1 + 1));
-    
-    if (urgent = 0){
+
+    if (urgent = 0) {
         var isUrgent = true;
-    }else {
+    } else {
         var isUrgent = false;
-    } 
+    }
 
     var tempDate = new Date();
     tempDate.setMinutes(0);
     tempDate.setHours(tempDate.getHours() + 2);
     const petition = new Petition({
         title: petArrayTitle[numTitle],
-        userId: user.id,
+        userId: user._id,
         body: petBody,
         place: petArrayPlace[numPlace],
         creationDate: new Date(Date.now()),
@@ -147,20 +148,20 @@ const _doAddPetition = async function (user: any) {
     );
 
     // Save petition to mongoDb
-    petition.save(); 
-    
-  };
+    petition.save();
 
-  const postArrayTitle:string[] = ["Post de prueba","Hoy comi macarrones","Covid T.T", "A tope de covid","Cuando acaba esta wea"];
-  const _doAddPost = async function (user: any) {
-    var numTitle = Math.floor(Math.random() * (petArrayTitle.length ));
+};
+
+const postArrayTitle: string[] = ["Post de prueba", "Hoy comi macarrones", "Covid T.T", "A tope de covid", "Cuando acaba esta wea"];
+const _doAddPost = async function (user: any) {
+    var numTitle = Math.floor(Math.random() * (petArrayTitle.length));
     var urgent = Math.floor(Math.random() * (1 + 1));
-    
-    if (urgent = 0){
+
+    if (urgent = 0) {
         var isUrgent = true;
-    }else {
+    } else {
         var isUrgent = false;
-    } 
+    }
 
     var tempDate = new Date();
     const post = new Post({
@@ -174,7 +175,11 @@ const _doAddPetition = async function (user: any) {
         post._id
     );
 
-    
+    // Update user info
+    await user.save();
+
+    // Save petition to mongoDb
+
 
     const comment = new Comments({
         body: petBody,
@@ -187,11 +192,11 @@ const _doAddPetition = async function (user: any) {
     );
 
     // Save petition and comment to mongoDb
-    post.save(); 
+    post.save();
     comment.save();
-    
-    
-  };
+
+
+};
 
 export default {
     populateDB
