@@ -183,7 +183,7 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
                     }
                     {(mainPost.publisher.userId==token?.userId || (userInfo && userInfo.isAdmin))  &&
                     <p className="h2 fw-bold d-flex justify-content-center">
-                    <Link to={"/peticionesayuda"} className="div" >
+                    <Link to={"/foro"} className="div" >
                         <button className="btn btn-danger mx-2"  onClick={deletePost}>
                             Borrar post
                         </button>
