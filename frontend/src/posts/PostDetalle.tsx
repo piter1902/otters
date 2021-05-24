@@ -84,6 +84,8 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
         }).then(() => {
             console.log("nueva valoración añadida creado")
             console.log(valoration)
+            // Recarga de la página
+            window.location.reload();
         })
     }
 
@@ -98,6 +100,8 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
             body: JSON.stringify(valoration)
         }).then(() => {
             console.log("nueva valoración añadida creado")
+            // Recarga de la página
+            window.location.reload();
         })
     }
 
@@ -116,6 +120,8 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
             body: JSON.stringify(comment_complete)
         }).then(() => {
             console.log("nuevo comentario añadida creado")
+            // Recarga de la página
+            window.location.reload();
         })
     }
 
