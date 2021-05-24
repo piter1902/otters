@@ -81,14 +81,12 @@ const Register: React.JSXElementConstructor<RegisterProps> = () => {
                 })
             });
         if (response.status === 201) {
-            console.log("BIEN!")
             // Ha ido bien
             //const json = await response.json();
             // Recargamos la página y navegamos al login
             history.push("/login");
             window.location.reload();
         } else {
-            console.log("MAL!")
 
             const message = await response.json();
             setBackError({
