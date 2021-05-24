@@ -8,7 +8,7 @@ import emailService from "../service/emailService";
 import '../service/passportConfig';
 import { OAuth2Client } from 'google-auth-library';
 import userPicture from '../UserPicture';
-import fetch from 'node-fetch';
+import fetch from 'isomorphic-fetch';
 
 const loginUser = async (req: Express.Request, res: Express.Response, next: NextFunction) => {
   passport.authenticate("local", { session: false }, (err: any, user: any) => {
@@ -200,13 +200,12 @@ const loginGoogle = async (req: any, res: Express.Response) => {
         bannedObject: { "banned": false },
         isAdmin: false,
         isLocal: false,
-        isVerified: false,
+        isVerified: true,
         petitions: [],
         posts: []
       })
 
       await newUser.save();
-      await emailService.sendVerificationEmail(newUser);
 
       userId = newUser._id;
       userExists = false;
@@ -284,13 +283,12 @@ const loginFacebook = async (req: any, res: Express.Response) => {
           bannedObject: { "banned": false },
           isAdmin: false,
           isLocal: false,
-          isVerified: false,
+          isVerified: true,
           petitions: [],
           posts: []
         })
 
         await newUser.save();
-        await emailService.sendVerificationEmail(newUser);
 
         loggedUserID = newUser._id;
         userExists = false;
