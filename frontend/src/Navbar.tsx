@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Navbar.css'
 import logo from './otter2.png';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import useToken from './auth/Token/useToken';
 
 export interface NavbarProps {
@@ -14,12 +14,14 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
     const title = "OTTERS";
 
     // Token para mantener el estado del usuario
-    const { token } = useToken();
-
-    // Obtención de la info del usuario (se hace para cada actualización del token)
+    const { token, saveToken } = useToken();
 
     const [userInfo, setUserInfo] = useState<any>(null);
-
+    
+    // Navegacion
+    const history = useHistory();
+    
+    // Obtención de la info del usuario (se hace para cada actualización del token)
     useEffect(() => {
         const fetchUserInfo = async () => {
             if (token != null && token.userId) {
@@ -33,6 +35,10 @@ const Navbar: React.JSXElementConstructor<NavbarProps> = () => {
                         });
                 if (response.status === 200) {
                     setUserInfo(await response.json());
+                } else {
+                    // Error -> borramos el localstorage y remitimos a /login
+                    saveToken(null);
+                    history.replace("/login");
                 }
             }
         }
