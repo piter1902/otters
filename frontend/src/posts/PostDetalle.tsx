@@ -28,7 +28,12 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
     useEffect(() => {
         const fetchUserInfo = async () => {
             if (token != null && token.userId) {
-                const response = await fetch(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}`, { method: "GET" });
+                const response = await fetch(`${process.env.REACT_APP_BASEURL!}/user/${token?.userId}`,
+                    {
+                        method: "GET", headers: {
+                            'Authorization': `${token?.type} ${token?.token}`
+                        }
+                    });
                 if (response.status === 200) {
                     setUserInfo(await response.json());
                 }
@@ -49,19 +54,19 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
 
     const deletePost = async () => {
         // Cerrar sesión y recargar
-        console.log("delete post: "+id)
+        console.log("delete post: " + id)
 
         await fetch(`${process.env.REACT_APP_BASEURL}/post/${id}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `${token?.type} ${token?.token}`
-                    },
-                    body: JSON.stringify({
-                    })
-                }) 
+            {
+                method: "DELETE",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `${token?.type} ${token?.token}`
+                },
+                body: JSON.stringify({
+                })
+            })
     }
 
     // Cuerpo del comentario
@@ -140,16 +145,16 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
 
                             <div className="row row justify-content-between">
                                 <div className="col">
-                                    
-                                    {mainPost.publisher.userId==token?.userId && 
+
+                                    {mainPost.publisher.userId == token?.userId &&
                                         <Link to={"/cuenta"} className="custom-card" >
                                             <p className="lead texto">{mainPost.publisher.userName}</p>
                                         </Link>
                                     }
-                                    {mainPost.publisher.userId!=token?.userId && 
+                                    {mainPost.publisher.userId != token?.userId &&
                                         <Link to={"/perfil/" + mainPost.publisher.userId} className="custom-card" >
-                                        <p className="lead ms-3 texto">{mainPost.publisher.userName}</p>
-                                    </Link>}
+                                            <p className="lead ms-3 texto">{mainPost.publisher.userName}</p>
+                                        </Link>}
                                 </div>
                                 <div className="col-lg-1 col-md-2 col-3 sm-12">
                                     <p className=" lead texto">{mainPost.possitive_valorations.length - mainPost.negative_valorations.length}</p>
@@ -181,14 +186,14 @@ const PostDetalle: React.JSXElementConstructor<PostDetalleProps> = () => {
                             </div>
                         </form>
                     }
-                    {(mainPost.publisher.userId==token?.userId || (userInfo && userInfo.isAdmin))  &&
-                    <p className="h2 fw-bold d-flex justify-content-center">
-                    <Link to={"/foro"} className="div" >
-                        <button className="btn btn-danger mx-2"  onClick={deletePost}>
-                            Borrar post
+                    {(mainPost.publisher.userId == token?.userId || (userInfo && userInfo.isAdmin)) &&
+                        <p className="h2 fw-bold d-flex justify-content-center">
+                            <Link to={"/foro"} className="div" >
+                                <button className="btn btn-danger mx-2" onClick={deletePost}>
+                                    Borrar post
                         </button>
-                    </Link>    
-                    </p>}
+                            </Link>
+                        </p>}
                     <p className="lead texto">Comentarios</p>
                     <ComentarioList mainPost={mainPost} userId={token?.userId} />
                 </div>
