@@ -83,9 +83,13 @@ const registerUser = async (req: Express.Request, res: Express.Response) => {
           email: req.body.email,
           sanitaryZone: req.body.sanitaryZone,
           password: hashedPassword,
+          picture: userPicture,
           bannedObject: { "banned": false },
           isAdmin: false,
-          isVerified: false
+          isVerified: false,
+          isLocal: true,
+          petitions: [],
+          posts: []
         });
         // Save to mongoDb
         await newUser.save();
@@ -100,33 +104,7 @@ const registerUser = async (req: Express.Request, res: Express.Response) => {
 
       res
         .status(400)
-<<<<<<< HEAD
-        .send("User already exists");
-    } else {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      const newUser = new User({
-        name: req.body.name,
-        email: req.body.email,
-        sanitaryZone: req.body.sanitaryZone,
-        password: hashedPassword,
-        picture: userPicture,
-        bannedObject: { "banned": false },
-        isAdmin: false,
-        isVerified: false,
-        isLocal: true,
-        petitions: [],
-        posts: []
-      });
-      // Save to mongoDb
-      await newUser.save();
-      await emailService.sendVerificationEmail(newUser);
-      res
-        .status(201)
-        .send(newUser);
-      logger.info("Creating a new user");
-=======
         .json(err);
->>>>>>> master
     }
   }
 }

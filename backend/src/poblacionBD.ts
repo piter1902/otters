@@ -56,28 +56,28 @@ const populateDB = async () => {
     try {
         var randomUser = Math.floor(Math.random() * (userArray.length));
         saveUsers[randomUser] = true;
-        _doAddPetition(userArray[randomUser]);
+        await _doAddPetition(userArray[randomUser]);
         randomUser = Math.floor(Math.random() * (userArray.length));
         saveUsers[randomUser] = true;
-        _doAddPost(userArray[randomUser]);
+        await _doAddPost(userArray[randomUser]);
         randomUser = Math.floor(Math.random() * (userArray.length));
         saveUsers[randomUser] = true;
-        _doAddPetition(userArray[randomUser]);
+        await _doAddPetition(userArray[randomUser]);
         randomUser = Math.floor(Math.random() * (userArray.length));
         saveUsers[randomUser] = true;
-        _doAddPost(userArray[randomUser]);
+        await _doAddPost(userArray[randomUser]);
         randomUser = Math.floor(Math.random() * (userArray.length));
         saveUsers[randomUser] = true;
-        _doAddPetition(userArray[randomUser]);
+        await _doAddPetition(userArray[randomUser]);
         randomUser = Math.floor(Math.random() * (userArray.length));
         saveUsers[randomUser] = true;
-        _doAddPost(userArray[randomUser]);
+        await _doAddPost(userArray[randomUser]);
         randomUser = Math.floor(Math.random() * (userArray.length));
         saveUsers[randomUser] = true;
-        _doAddPetition(userArray[randomUser]);
+        await _doAddPetition(userArray[randomUser]);
         randomUser = Math.floor(Math.random() * (userArray.length));
         saveUsers[randomUser] = true;
-        _doAddPost(userArray[randomUser]);
+        await _doAddPost(userArray[randomUser]);
     } catch (Error) {
         alert(Error.message);
     }
@@ -101,6 +101,7 @@ const populateDB = async () => {
         bannedObject: { "banned": false },
         strikes: 0,
         isAdmin: true,
+        isLocal: true,
         isVerified: true,
     });
     // Save to mongodb
@@ -174,15 +175,11 @@ const _doAddPost = async function (user: any) {
         post._id
     );
 
-<<<<<<< HEAD
     // Update user info
     await user.save();
 
     // Save petition to mongoDb
 
-=======
-
->>>>>>> master
 
     const comment = new Comments({
         body: petBody,
@@ -194,12 +191,8 @@ const _doAddPost = async function (user: any) {
         comment
     );
 
-<<<<<<< HEAD
-    post.save();
-=======
     // Save petition and comment to mongoDb
     post.save();
->>>>>>> master
     comment.save();
 
 
