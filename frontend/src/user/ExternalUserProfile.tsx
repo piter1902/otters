@@ -1,5 +1,5 @@
 import React, { JSXElementConstructor, useEffect, useState } from 'react';
-import { useHistory,useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { ClipLoader } from 'react-spinners';
 import useToken from '../auth/Token/useToken';
 import CasosPorFecha from '../estadisticas/CasosPorFecha';
@@ -21,7 +21,7 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
     const { id } = useParams<{ id: string }>();
 
     // Token
-    const { token, saveToken } = useToken();
+    const { token } = useToken();
 
     // Navegacion
     const history = useHistory();
@@ -30,37 +30,42 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
     const [isPending, setIsPending] = useState<boolean>(true);
     const [zone, setZone] = useState<any>(null);
 
-    
+
 
     // Datos de la zona de salud selecionada
     const [datos, setDatos] = useState<ZbsData[]>([]);
 
-     
 
-    console.log("id: "+id);
-    
+
+    console.log("id: " + id);
+
     // Datos del usuario; peticiones; posts;
     useEffect(() => {
         const fetchRemote = async () => {
             const fetchInfo = async (url: string, setFunction: (p: any) => void) => {
                 //if (token != null && token.userId) {
-                    
-                    setIsPending(true);
-                    const response = await fetch(url, { method: "GET" });
-                    if (response.status === 200) {
-                        const dataJson = await response.json();
-                        console.log("Para " + url + " el resultado es ");
-                        console.log(dataJson);
-                        setFunction(dataJson);
+
+                setIsPending(true);
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `${token?.type} ${token?.token}`
                     }
+                });
+                if (response.status === 200) {
+                    const dataJson = await response.json();
+                    console.log("Para " + url + " el resultado es ");
+                    console.log(dataJson);
+                    setFunction(dataJson);
+                }
                 //}
             }
             setIsPending(true);
             console.log("user")
             await fetchInfo(`${process.env.REACT_APP_BASEURL!}/user/${id}`, setUser);
             setIsPending(false);
-            
-            
+
+
         }
         fetchRemote();
         return () => { }
@@ -83,11 +88,11 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                 }
             }
             setIsPending(true);
-            if (user !== null && user.sanitaryZone!= null) {
-                
-                console.log("Buscando info de la zona:" +user.sanitaryZone)
+            if (user !== null && user.sanitaryZone != null) {
+
+                console.log("Buscando info de la zona:" + user.sanitaryZone)
                 await fetchInfo(`${process.env.REACT_APP_BASEURL!}/zone/${user.sanitaryZone}`, setZone);
-                
+
             }
             setIsPending(false);
         }
@@ -95,7 +100,7 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
         return () => { }
     }, [user])
 
-    
+
 
     // Imagen del usuario
     const [picture, setPicture] = useState<string>("");
@@ -106,7 +111,7 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
         return () => { }
     }, [user]);
 
-    
+
 
     return (
         <div className="container-fluid d-flex justify-content-center card">
@@ -116,7 +121,7 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                     <input type="text" id="useremail" className="form-control" value={"aaa"} disabled />
                 </div>
             }
-            {!isPending && user && zone && 
+            {!isPending && user && zone &&
                 <div className="card-body">
                     <div className="row">
                         {/* Columna de datos de usuario */}
@@ -152,11 +157,11 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                             alt="user" className="rounded-circle w-50 border border-secondary border-2" />*/}
                         </div>
                     </div>
-                    
+
                     {/* Columna de la zona sanitaria seleccionada */}
                     <div className="col-md px-md-3 mt-2">
                         <div className="container-fluid d-flex flex-column justify-content-center">
-                            
+
                             {/* Selector de casos por día y visualizar */}
                             <CasosPorFecha idZona={user.sanitaryZone} setDataFunction={setDatos} />
                         </div>
@@ -164,10 +169,10 @@ const UserProfile: JSXElementConstructor<UserProfileProps> = () => {
                         <GraficaCasos data={datos} />
                     </div>
 
-                    
-                    
+
+
                 </div>
-                
+
             }
         </div>)
 
