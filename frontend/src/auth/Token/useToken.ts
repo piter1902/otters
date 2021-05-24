@@ -5,7 +5,7 @@ const useToken = () => {
 
     // const [firstTime, setFirstTime] = useState<boolean>(true);
 
-    const [token, setToken] = useState<Token | null>(null);
+    const [token, setToken] = useState<Token | undefined | null>(undefined);
 
     // Save token to localstorage
     const saveToken = (t: Token | null) => {
@@ -31,10 +31,31 @@ const useToken = () => {
         if (tokenString !== null) {
             setToken(JSON.parse(tokenString) as Token);
             // setFirstTime(false);
+        } else {
+            setToken(null)
         }
-
-        return () => { }
     }, []);
+
+    // Resuscripción a los eventos de localStorage en cada renderizado
+    useEffect(() => {
+        const localStorageChangeHandler = (e: StorageEvent) => {
+            console.log("holii")
+            console.log(e);
+            if (e.storageArea === localStorage && e.key === "token" && e.newValue !== null) {
+                console.log("El token se recarga");
+                setToken(JSON.parse(e.newValue));
+            } else if (e.newValue == null) {
+                // Es null -> borramos
+                console.log("LocalStorageEventHandler -> e.newValue soy null")
+                setToken(null);
+            }
+        }
+        // Suscripción a los eventos del localStorage
+        window.addEventListener('storage', localStorageChangeHandler);
+        return () => {
+            window.removeEventListener('storage', localStorageChangeHandler);
+        };
+    })
 
     return { token, saveToken };
 }

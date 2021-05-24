@@ -1,4 +1,5 @@
 import React, { JSXElementConstructor, useState } from 'react'
+import useToken from '../../auth/Token/useToken';
 
 interface AdminPageUserTileProps {
     user: {
@@ -8,23 +9,28 @@ interface AdminPageUserTileProps {
             banned: boolean;
         }
     }
+    idAdmin: any;
 }
 
-const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user }) => {
+const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user, idAdmin }) => {
 
     // Estado del usuario
     const [isBanned, setIsBanned] = useState<boolean>(user.bannedObject.banned);
 
+    // Token
+    const { token } = useToken();
+    
     // Ban user
     const banUser = async () => {
         console.log("Banning user with id = " + user._id);
         if (!isBanned) {
             // TODO: Esta URI puede cambiar ya que no tiene tampoco mucho sentido
-            await fetch(`${process.env.REACT_APP_BASEURL}/user/${user._id}/ban`,
+            await fetch(`${process.env.REACT_APP_BASEURL}/user/${user._id}/ban/${idAdmin}`,
                 {
                     method: "POST",
                     headers: {
-                        'Content-Type': "application/json"
+                        'Content-Type': "application/json",
+                        'Authorization': `${token?.type} ${token?.token}`
                     },
                     body: JSON.stringify({
                         banned: true,
@@ -42,15 +48,16 @@ const AdminPageUserTile: JSXElementConstructor<AdminPageUserTileProps> = ({ user
         console.log("Un banning user with id = " + user._id);
         if (isBanned) {
             // TODO: Esta URI puede cambiar ya que no tiene tampoco mucho sentido
-            await fetch(`${process.env.REACT_APP_BASEURL}/user/${user._id}/ban`,
+            await fetch(`${process.env.REACT_APP_BASEURL}/user/${user._id}/ban/${idAdmin}`,
                 {
                     method: "POST",
                     headers: {
-                        'Content-Type': "application/json"
+                        'Content-Type': "application/json",
+                        'Authorization': `${token?.type} ${token?.token}`
                     },
                     body: JSON.stringify({
                         banned: false,
-                        bannedUntil: new Date(Date.now())
+                        bannedUntil: null//new Date(Date.now())
                     })
                 }
             )

@@ -7,6 +7,7 @@ import petitionsRoute from './route/petitionsRoute';
 import sanitaryZoneRoute from './route/sanitaryZoneRoute';
 import sanitaryZoneService from './service/sanitaryZoneService';
 import petitionsService from './service/petitionService';
+import userService from './service/userService';
 import authRoute from './route/authRoute';
 import cron from 'node-cron';
 import cors from 'cors';
@@ -42,9 +43,14 @@ cron.schedule("0 */6 * * *", async () => {
     await sanitaryZoneService.findAndJoinDuplicates();
 });
 
-cron.schedule("0 0 * * *", async () => {
+cron.schedule("0 * * * *", async () => {
     logger.success("Cron status peticiones ejecutandose");
     await petitionsService.updateStatusPetitions();
+});
+
+cron.schedule("0 0 * * *", async () => {
+    logger.success("Cron unban users ejecutandose");
+    await userService.unbanUsers();
 });
 
 // Express app
@@ -53,7 +59,7 @@ const app = Express();
 const port = process.env.PORT || 8080;
 
 
-app.use(bodyParser.json( {limit: "50mb"}));
+app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }))
 
 // CORS
@@ -89,21 +95,21 @@ app.use("/api_docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.get("/", (req: Express.Request, res: Express.Response) => res.status(200).send("Hello world"));
 
 // Controlador para los usuarios
-app.use("/user", userRoute);
+app.use("/user", passport.authenticate('jwt', { session: false }), userRoute);
 
 // Controlador para los posts
-app.use("/post", postRoute);
+app.use("/post", passport.authenticate('jwt', { session: false }), postRoute);
 
 // Controlador para las zonas sanitarias
 app.use("/zone", sanitaryZoneRoute);
 
 // Controlador para las peticiones
-app.use("/petitions", petitionsRoute);
+app.use("/petitions", passport.authenticate('jwt', { session: false }), petitionsRoute);
 
 // Controlador para autenticacion
 app.use("/auth", authRoute);
 
 // Controlador para las estadisticas
-app.use("/stats", estadisticasRoute);
+app.use("/stats", passport.authenticate('jwt', { session: false }), estadisticasRoute);
 
 app.listen(port, () => console.log(`Listening at ${port} 🛠`))

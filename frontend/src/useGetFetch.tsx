@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import useToken from "./auth/Token/useToken";
 
 // Valido para realizar GET a Backend
 
@@ -9,6 +10,8 @@ const useGetFetch = (url: any) => {
   const [data, setData] = useState<any>(null);
   const [isPending, setIsPending] = useState<boolean>(true);
   const [error, setError] = useState<any>(null);
+  // Token para mantener el estado del usuario
+  const { token } = useToken();
 
   useEffect(() => {
 
@@ -17,7 +20,15 @@ const useGetFetch = (url: any) => {
     const getData = async () => {
       console.log("Fetching to: " + url);
       try {
-        const response = await fetch(url, { method: "GET", signal: abortCont.signal });
+        const response =
+          await fetch(url,
+            {
+              method: "GET",
+              signal: abortCont.signal,
+              headers: {
+                'Authorization': `${token?.type} ${token?.token}`
+              }
+            });
         if (response.ok) {
           // console.log(await response.json());
           setData(await response.json());
@@ -37,12 +48,13 @@ const useGetFetch = (url: any) => {
         }
       }
     }
-
-    getData();
+    if(token !== null && token !== undefined){
+      getData();
+    }
 
     return () => { }
 
-  }, [url]);
+  }, [url, token]);
   return { data, isPending, error };
 
 }

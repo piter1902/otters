@@ -3,6 +3,7 @@ import Express from 'express';
 import Petition from '../models/Petitions';
 import User from '../models/User';
 import mongoose, { mongo } from 'mongoose';
+import emailService from "../service/emailService";
 
 // Evitamos mensaje de warning de deprecated
 mongoose.set('useFindAndModify', false);
@@ -17,6 +18,7 @@ interface PetitionsWithUsername {
   title: string;
   body: string;
   userInfo: UserInfo;
+  creationDate: Date;
   targetDate: Date;
   place: string;
   isUrgent: Boolean;
@@ -103,6 +105,7 @@ const getUserPetitions = (req: Express.Request, res: Express.Response) => {
               isUrgent: petition.isUrgent,
               status: petition.status,
               targetDate: petition.targetDate,
+              creationDate: petition.creationDate,
               expTime: petition.expTime,
               userIdAsigned: petition.userIdAsigned,
               userQueueAsigned: petition.userQueueAsigned
@@ -137,7 +140,7 @@ const getPetitions = async (req: Express.Request, res: Express.Response) => {
   try {
     const petitions = await Petition.find().exec();
     const data: PetitionsWithUsername[] = [];
-    if (petitions.length > 0) {
+    if (petitions && petitions.length > 0) {
       (petitions as any[]).forEach(async (petition: any) => {
         const user = await User.findById(petition.userId).exec();
         if (user) {
@@ -153,6 +156,7 @@ const getPetitions = async (req: Express.Request, res: Express.Response) => {
             place: petition.place,
             isUrgent: petition.isUrgent,
             status: petition.status,
+            creationDate: petition.creationDate,
             targetDate: petition.targetDate,
             expTime: petition.expTime,
             userIdAsigned: petition.userIdAsigned,
@@ -199,6 +203,7 @@ const readOnePetition = async (req: Express.Request, res: Express.Response) => {
             userInfo: userInfo,
             place: petition.place,
             isUrgent: petition.isUrgent,
+            creationDate: petition.creationDate,
             status: petition.status,
             targetDate: petition.targetDate,
             expTime: petition.expTime,
@@ -277,29 +282,23 @@ const updateOnePetition = async (req: Express.Request, res: Express.Response) =>
 };
 
 const assignUserPetition = async (req: Express.Request, res: Express.Response) => {
-  const petId = req.params.petitionId;
+  
+  try{
+    const petId = req.params.petitionId;
 
-  if (req.params && petId) {
-    const petition = await Petition.findById(petId).exec();
+    if (req.params && petId) {
+      const petition = await Petition.findById(petId).exec();
 
-    if(req.params.uid != petition.userIdAsigned && !petition.userQueueAsigned.includes(req.params.uid) && req.params.uid != petition.userIdAsigned){
-      if(petition.userIdAsigned == null){
-        petition.userIdAsigned = req.params.uid;
-        petition.status = 'ASSIGNED';
-        petition.save((err: any, petition: typeof Petition) => {
-          if (err) {
-            res
-              .status(404)
-              .json(err);
-          } else {
-            res
-              .status(200)
-              .json(petition);
+      if(req.params.uid != petition.userIdAsigned && !petition.userQueueAsigned.includes(req.params.uid) && req.params.uid != petition.userIdAsigned){
+        if(petition.userIdAsigned == null){
+          petition.userIdAsigned = req.params.uid;
+          petition.status = 'ASSIGNED';
+          const user = await User.findById(petition.userId).exec();
+          const userAssigned = await User.findById(req.params.uid).exec();
+          if(user){
+            await emailService.sendSomeoneAssignedPetition(user,petition,userAssigned);
+            await emailService.userAssignedPetition(userAssigned, petition, user);
           }
-        });
-      } else{
-        if (petition.userQueueAsigned.length < 5){
-          petition.userQueueAsigned.push(req.params.uid);
           petition.save((err: any, petition: typeof Petition) => {
             if (err) {
               res
@@ -311,30 +310,51 @@ const assignUserPetition = async (req: Express.Request, res: Express.Response) =
                 .json(petition);
             }
           });
-        }else{
-          res
-            .status(400)
-            .json({
-              "message": "Cola llena"
+        } else{
+          if (petition.userQueueAsigned.length < 5){
+            petition.userQueueAsigned.push(req.params.uid);
+            petition.save((err: any, petition: typeof Petition) => {
+              if (err) {
+                res
+                  .status(404)
+                  .json(err);
+              } else {
+                res
+                  .status(200)
+                  .json(petition);
+              }
             });
+          }else{
+            res
+              .status(400)
+              .json({
+                "message": "Cola llena"
+              });
+          }
         }
+      } else{
+        res
+              .status(400)
+              .json({
+                "message": "Usuario ya está registrado"
+              });
       }
-    } else{
-      res
-            .status(400)
-            .json({
-              "message": "Usuario ya está registrado"
-            });
-    }
-    
+      
 
-  } else {
-    res
-      .status(404)
-      .json({
-        "message": "Not found, petitonId is required"
-      });
-  }
+    } else {
+      res
+        .status(404)
+        .json({
+          "message": "Not found, petitonId is required"
+        });
+    }
+} catch (err) {
+  logger.error("ERROR!" + err);
+
+  res
+    .status(400)
+    .json(err);
+}
 };
 
 const cancelAssignUserPetition = async (req: Express.Request, res: Express.Response) => {
@@ -346,6 +366,11 @@ const cancelAssignUserPetition = async (req: Express.Request, res: Express.Respo
     if((petition.userIdAsigned == req.params.uid) && (petition.userQueueAsigned.length > 0)){
       petition.userIdAsigned = petition.userQueueAsigned[0];
       petition.userQueueAsigned.shift();
+      const user = await User.findById(petition.userIdAsigned).exec();
+      const userHelped = await User.findById(petition.userId).exec();
+          if(user){
+            await emailService.fromQueueToAssigned(user,petition, userHelped);
+          }
     } else if (petition.userIdAsigned == req.params.uid){
       petition.userIdAsigned = null;
       petition.status = 'OPEN';
@@ -434,12 +459,17 @@ const _doAddPetition = async function (req: Express.Request, res: Express.Respon
     // Se obtiene la fecha antes de guardar porque se debe aumentar en 1 el mes ya que
     // se almacena en numeros del 0-11 por defecto
     var tempDate = new Date(req.body.targetDate);
+    var hour = req.body.expTime.split(":")[0];
+    var minute = req.body.expTime.split(":")[1];
+    tempDate.setHours(hour)
+    tempDate.setMinutes(minute)
     const petition = new Petition({
       title: req.body.title,
       userId: req.body.userId,
       body: req.body.body,
       place: req.body.place,
-      targetDate: new Date(tempDate.setMonth(tempDate.getMonth() + 1)),
+      targetDate: new Date(tempDate.setMonth(tempDate.getMonth())),
+      creationDate: new Date(),
       isUrgent: req.body.isUrgent,
       status: 'OPEN',
       expTime: req.body.expTime

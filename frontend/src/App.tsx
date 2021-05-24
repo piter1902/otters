@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from './Navbar';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import UserProfile from './user/UserProfile';
+import ExternalUserProfile from './user/ExternalUserProfile';
 import AdminPage from './user/AdminPage/AdminPage';
 import EstadisticasCovid from './estadisticas/EstadisticasCovid';
 import Login from './auth/Login';
@@ -13,6 +14,9 @@ import CreatePetition from './petitions/CreatePetition';
 import PostDetalle from './posts/PostDetalle';
 import PeticionDetalle from './petitions/PeticionDetalle';
 import NotFoundComponent from './NotFoundComponent';
+import useToken from './auth/Token/useToken';
+import PrivateRoute from './PrivateRoute';
+import AuthenticationRoute from './AuthenticationRoute';
 
 
 const App = () => {
@@ -22,54 +26,35 @@ const App = () => {
       <Switch>
         {/* Login page */}
         {/* Se dejan fuera para evitar la Navbar */}
-        <Route exact path="/login">
-          <Login></Login>
-        </Route>
-        <Route exact path="/register">
-          <Register></Register>
-        </Route>
+        <AuthenticationRoute path="/login" Component={Login}></AuthenticationRoute>
+        <AuthenticationRoute path="/register" Component={Register}></AuthenticationRoute>
         <div>
           <Navbar />
           <div className="container">
             {/* Perfil del usuario propio */}
-            <Route exact path="/cuenta">
-              <UserProfile />
-            </Route>
+
+            <PrivateRoute path="/cuenta" Component={UserProfile} ></PrivateRoute>
+            <PrivateRoute path="/perfil/:id" Component={ExternalUserProfile} ></PrivateRoute>
+
             {/* Página del administrador */}
-            <Route exact path="/admin">
-              <AdminPage />
-            </Route>
+            <PrivateRoute path="/admin" Component={AdminPage} ></PrivateRoute>
             {/* Estadisticas COVID (página principal) */}
             <Route exact path="/">
               <Redirect to="/estadisticas" />
             </Route>
-            <Route exact path="/estadisticas">
-              <EstadisticasCovid />
-            </Route>
+            <PrivateRoute path="/estadisticas" Component={EstadisticasCovid} ></PrivateRoute>
             {/* Vista detallada de post */}
-            <Route exact path="/postDetalle/:id">
-              <PostDetalle />
-            </Route>
+            <PrivateRoute path="/postDetalle/:id" Component={PostDetalle} ></PrivateRoute>
             {/* Vista detallada de peticion */}
-            <Route exact path="/peticionDetalle/:id">
-              <PeticionDetalle />
-            </Route>
+            <PrivateRoute path="/peticionDetalle/:id" Component={PeticionDetalle} ></PrivateRoute>
             {/* Foro */}
-            <Route exact path="/foro">
-              <PostList />
-            </Route>
+            <PrivateRoute path="/foro" Component={PostList} ></PrivateRoute>
             {/* Ayuda */}
-            <Route exact path="/peticionesayuda">
-              <PetitionList />
-            </Route>
+            <PrivateRoute path="/peticionesayuda" Component={PetitionList} ></PrivateRoute>
             {/* Creación de posts */}
-            <Route exact path="/createPost">
-              <CreatePost />
-            </Route>
+            <PrivateRoute path="/createPost" Component={CreatePost} ></PrivateRoute>
             {/* Creación de peticiones */}
-            <Route exact path="/createPetition">
-              <CreatePetition />
-            </Route>
+            <PrivateRoute path="/createPetition" Component={CreatePetition} ></PrivateRoute>
             {/* Error */}
             <Route exact path="/error">
               <NotFoundComponent />

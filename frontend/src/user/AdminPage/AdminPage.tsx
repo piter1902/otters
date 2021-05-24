@@ -24,9 +24,13 @@ const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
     // Comprobacion de rutas privadas
     useEffect(() => {
         const fetchUser = async () => {
-            const response = await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`, {
-                method: "GET"
-            });
+            const response =
+                await fetch(`${process.env.REACT_APP_BASEURL}/user/${token?.userId}`, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `${token?.type} ${token?.token}`
+                    }
+                });
             if (response.status === 200) {
                 // Set zone to zonaSalud by default
                 const isAdmin = ((await response.json()).isAdmin);
@@ -39,7 +43,7 @@ const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
                 history.push("/");
             }
         }
-        if (token != null) {
+        if (token !== null && token !== undefined) {
             fetchUser();
         } else {
             console.log("No hay token ??");
@@ -108,7 +112,7 @@ const AdminPage: JSXElementConstructor<AdminPageProps> = () => {
                     </div>
                 </div>
                 {/* Usuarios */}
-                <AdminPageUser registrados={stats.usuarios.registrados} verificados={stats.usuarios.verificados} />
+                <AdminPageUser registrados={stats.usuarios.registrados} verificados={stats.usuarios.verificados} idAdmin={token?.userId}/>
                 {/* Fuenta de datos */}
                 <AdminPageFetchData />
             </div>}

@@ -105,7 +105,7 @@ const Login: React.JSXElementConstructor<LoginProps> = () => {
             });
             // Recargamos la página
             history.push("/");
-            window.location.reload();
+            // window.location.reload();
         } else {
             // Error -> Mostrar una alerta
             const message = responseJson.error;
